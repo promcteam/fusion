@@ -102,7 +102,7 @@ public class ProfessionMigration {
     static String convertLegacyDivinityFormat(String oldItem) {
         oldItem = PrefixHelper.stripPrefix("DIVINITY", oldItem);
         String[] parts         = oldItem.split(":");
-        String[] divinityParts = parts[0].split("_");
+        String[] divinityParts = parts[0].split("_", 2);
 
         String module = null;
         String id;

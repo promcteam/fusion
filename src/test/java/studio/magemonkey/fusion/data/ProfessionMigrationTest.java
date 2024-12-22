@@ -48,5 +48,6 @@ class ProfessionMigrationTest {
         assertFalse(configString.contains("CUSTOMITEMS"));
         assertTrue(configString.contains("DIVINITY_custom_items"));
         assertTrue(configString.contains("~level"));
+        assertTrue(configString.contains("fire_essenceq1:1"));
     }
 }
