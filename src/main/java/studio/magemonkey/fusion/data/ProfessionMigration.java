@@ -117,16 +117,18 @@ public class ProfessionMigration {
         String amount   = null;
         String material = null;
 
-        if (parts.length > 1) {
-            level = parts[1];
+        int index = 1;
+
+        if (module != null && !module.equals("custom_items") && parts.length > index) {
+            level = parts[index++];
         }
 
-        if (parts.length > 2) {
-            amount = parts[2];
+        if (parts.length > index) {
+            amount = parts[index++];
         }
 
-        if (parts.length > 3) {
-            material = parts[3];
+        if (parts.length > index) {
+            material = parts[index++];
         }
 
         StringBuilder builder = new StringBuilder("DIVINITY_");

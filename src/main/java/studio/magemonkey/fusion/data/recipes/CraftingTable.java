@@ -93,6 +93,9 @@ public class CraftingTable implements ConfigurationSerializable {
 
     @SuppressWarnings("unchecked")
     public CraftingTable(Map<String, Object> map) throws MissingProviderException, MissingItemException {
+        long start = System.currentTimeMillis();
+
+
         this.recipes = new LinkedHashMap<>(5);
         DeserializationWorker dw = DeserializationWorker.start(map);
         this.name = dw.getString("name");
@@ -124,7 +127,10 @@ public class CraftingTable implements ConfigurationSerializable {
                 });
 
         List<Map<?, ?>> recipesSection = dw.getList("recipes", new ArrayList<>(2));
+        long            longest        = 0;
+        String          longestName    = null;
         for (Map<?, ?> recipeData : recipesSection) {
+            long rStart = System.currentTimeMillis();
             try {
                 Map<?, ?> results    = (Map<?, ?>) recipeData.get("results");
                 String    itemResult = (String) results.get("item");
@@ -151,25 +157,40 @@ public class CraftingTable implements ConfigurationSerializable {
                         .error("Exception when reading config, Invalid entry in config of " + this.name
                                 + " crafting table. Value: " + recipeData);
                 e.printStackTrace();
+            } finally {
+                long rEnd  = System.currentTimeMillis();
+                long delta = rEnd - rStart;
+                if (delta > longest) {
+                    longest = delta;
+                    longestName = (String) recipeData.get("name");
+                }
             }
         }
+
+        long end = System.currentTimeMillis();
+        Fusion.getInstance()
+                .getLogger()
+                .info("Loaded " + this.recipes.size() + " recipes for " + this.name + " in " + (end - start) + "ms "
+                        + "Longest recipe: " + longestName + " (" + longest + "ms)");
     }
 
     private static Pattern levelPattern    = Pattern.compile(".*~level:(\\d+).*");
-    private static     Pattern materialPattern = Pattern.compile(".*~material:(\\w+).*");
+    private static Pattern materialPattern = Pattern.compile(".*~material:(\\w+).*");
 
     private void buildDivinityResultItem(Map<?, ?> recipeData, String itemResult) {
         // Divinity format is: DIVINITY_<module>:<id>[~level:<level>][~material:<material>][:<amount>]
-        int level = -1;
-        int amount = 1;
-        ItemType type = null;
+        int      level  = -1;
+        int      amount = 1;
+        ItemType type   = null;
 
         Matcher levelMatcher = levelPattern.matcher(itemResult);
         if (levelMatcher.matches()) {
             try {
                 level = Integer.parseInt(levelMatcher.group(1));
             } catch (NumberFormatException ignored) {
-                Fusion.getInstance().getLogger().warning("Failed to get level for Divinity item " + itemResult + ". Using -1 instead.");
+                Fusion.getInstance()
+                        .getLogger()
+                        .warning("Failed to get level for Divinity item " + itemResult + ". Using -1 instead.");
             }
             itemResult = itemResult.replace("~level:" + levelMatcher.group(1), "");
         }
@@ -179,7 +200,10 @@ public class CraftingTable implements ConfigurationSerializable {
             try {
                 type = CodexEngine.get().getItemManager().getItemType(materialMatcher.group(1));
             } catch (MissingProviderException | MissingItemException ignored) {
-                Fusion.getInstance().getLogger().warning("Failed to get material item for Divinity item " + itemResult + ". Using the item's configuration instead.");
+                Fusion.getInstance()
+                        .getLogger()
+                        .warning("Failed to get material item for Divinity item " + itemResult
+                                + ". Using the item's configuration instead.");
             }
             itemResult = itemResult.replace("~material:" + materialMatcher.group(1), "");
         }
@@ -193,7 +217,7 @@ public class CraftingTable implements ConfigurationSerializable {
             return;
         }
 
-        String itemId    = itemArgs[1];
+        String itemId = itemArgs[1];
         if (!DivinityService.isCached(itemId)) {
             if (!DivinityService.cache(itemId, null)) {
                 Fusion.getInstance()
@@ -234,6 +258,7 @@ public class CraftingTable implements ConfigurationSerializable {
                     category.getRecipes().add(recipe);
                 }
                 i++;
+                long end = System.currentTimeMillis();
             }
         }
     }

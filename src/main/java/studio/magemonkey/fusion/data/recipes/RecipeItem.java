@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 
 public interface RecipeItem {
     String  CUSTOM_PREFIX   = "@ ";
-    Pattern divinityPattern = Pattern.compile("DIVINITY_([\\w-]+:)?([\\w-]+)\\b((~level:(\\d+))|(~material:([\\w-]+)\\b)){0,2}");
+    Pattern divinityPattern =
+            Pattern.compile("DIVINITY_([\\w-]+:)?([\\w-]+)\\b((~level:(\\d+))|(~material:([\\w-]+)\\b)){0,2}");
 
     int getAmount();
 
@@ -57,13 +58,14 @@ public interface RecipeItem {
                     // ~level:X conflicts so we can be sure that the amount is the last part.
                     itemString = itemString.replace(itemKey, "");
                     String[] amountSplit = StringUtils.split(itemString, ':');
-                    if (amountSplit.length > 1) {
+                    if (amountSplit.length > 0) {
                         try {
-                            amount = Integer.parseInt(amountSplit[1]);
+                            amount = Integer.parseInt(amountSplit[amountSplit.length - 1]);
                         } catch (NumberFormatException e) {
                             Fusion.getInstance()
                                     .getLogger()
-                                    .warning("Invalid amount found in configuration: " + amountSplit[1]);
+                                    .warning("Invalid amount found in configuration: "
+                                            + amountSplit[amountSplit.length - 1]);
                         }
                     }
 
@@ -107,8 +109,7 @@ public interface RecipeItem {
                 try {
                     itemBuilder.durability(Integer.parseInt(srrs[1]));
                 } catch (NumberFormatException e) {
-                    Fusion.getInstance()
-                            .error("Durability is invalid (" + srrs[1] + ") for material " + mat.name());
+                    Fusion.getInstance().error("Durability is invalid (" + srrs[1] + ") for material " + mat.name());
                 }
             }
 
@@ -116,8 +117,7 @@ public interface RecipeItem {
                 try {
                     itemBuilder.amount(Integer.parseInt(srrs[2]));
                 } catch (NumberFormatException e) {
-                    Fusion.getInstance()
-                            .error("Amount is invalid (" + srrs[2] + ") for material " + mat.name());
+                    Fusion.getInstance().error("Amount is invalid (" + srrs[2] + ") for material " + mat.name());
                 }
             }
 

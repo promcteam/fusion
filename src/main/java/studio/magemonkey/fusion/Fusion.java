@@ -72,11 +72,13 @@ public class Fusion extends RisePlugin implements Listener {
         hookManager = new HookManager();
 
         Cfg.init();
-        ProfessionsCfg.init();
-        EditorRegistry.reload();
-        SQLManager.init();
-        BrowseConfig.load();
-        DivinityService.init();
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            ProfessionsCfg.init();
+            EditorRegistry.reload();
+            SQLManager.init();
+            BrowseConfig.load();
+            DivinityService.init();
+        });
     }
 
     @Override

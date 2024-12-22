@@ -263,8 +263,8 @@ public class RecipeGui implements Listener {
                 Recipe[] allRecipesArray = allRecipes.toArray(new Recipe[allRecipeCount]);
 
                 Integer[] slots = resultSlots.toArray(new Integer[0]);
-                for (int slot : slots) {
-                    this.inventory.setItem(slot, null);
+                for (Integer slot : slots) {
+                    if (slot != null) this.inventory.setItem(slot, null);
                 }
 
                 /* Additionally, when crafting_queue: true */
@@ -496,7 +496,8 @@ public class RecipeGui implements Listener {
                     .sendMessage("fusion.error.noXP", player, new MessageData("recipe", recipe));
             return false;
         }
-        if (!CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
+        if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null
+                && !CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.error.noFunds", player, new MessageData("recipe", recipe));
@@ -666,7 +667,8 @@ public class RecipeGui implements Listener {
                 }
             });
         } else {
-            CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
+            if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null)
+                CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
             this.queue.addRecipe(this.recipes.get(slot).getRecipe());
         }
         return true;

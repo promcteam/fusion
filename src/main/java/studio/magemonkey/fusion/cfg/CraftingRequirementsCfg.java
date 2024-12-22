@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import studio.magemonkey.codex.compat.VersionManager;
 import studio.magemonkey.codex.util.messages.MessageUtil;
 import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.data.recipes.RecipeItem;
@@ -108,10 +108,8 @@ public class CraftingRequirementsCfg {
         line = line.replace("$<amount>", String.valueOf(amount)).replace("$<required>", String.valueOf(required));
 
 
-        ItemStack _item = item.getItemStack();
-        ItemMeta  meta  = _item.getItemMeta();
-        String itemName = meta != null && meta.hasDisplayName() ? meta.getDisplayName()
-                : ChatUT.serialize(Component.translatable(_item.getTranslationKey()));
+        ItemStack _item    = item.getItemStack();
+        String    itemName = VersionManager.getCompat().getItemName(_item);
 
         if (_item.hasItemMeta()) {
             line = getCustomHighlight(path) + line;

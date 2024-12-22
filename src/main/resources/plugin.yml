@@ -6,13 +6,14 @@ libraries: [ com.mysql:mysql-connector-j:${mysql.version}, org.apache.commons:co
 depend:
   - CodexCore
 softdepend:
-  - Sapphire
+  - AuraSkills
+  - AureliumSkills
   - Divinity
   - Fabled
-  - mcMMO
   - Jobs
-  - AureliumSkills
-  - AuraSkills
+  - Nexo
+  - Sapphire
+  - mcMMO
 api-version: 1.13
 commands:
   craft:
