@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.inventory.ItemStack;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.api.items.ItemType;
+import studio.magemonkey.codex.api.items.exception.CodexItemException;
 import studio.magemonkey.fusion.Fusion;
 
 public class RecipeEconomyItem implements RecipeItem {
@@ -24,7 +25,11 @@ public class RecipeEconomyItem implements RecipeItem {
     }
 
     public ItemType asItemType() {
-        return CodexEngine.get().getItemManager().getMainItemType(RecipeItem.fromConfig(this.itemName).getItemStack());
+        try {
+            return CodexEngine.get().getItemManager().getItemType(this.itemName);
+        } catch (CodexItemException e) {
+            return null;
+        }
     }
 
     @Override

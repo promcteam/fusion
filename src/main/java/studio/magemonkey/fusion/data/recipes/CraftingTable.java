@@ -110,7 +110,7 @@ public class CraftingTable implements ConfigurationSerializable {
         this.useCategories = dw.getBoolean("useCategories", true);
         this.iconItem = CodexEngine.get()
                 .getItemManager()
-                .getMainItemType(RecipeItem.fromConfig(dw.getString("icon")).getItemStack());
+                .getItemType(dw.getString("icon"));
         if (dw.getSection("pattern.items.fillItem") != null)
             this.fillItem = new ItemBuilder(dw.getSection("pattern.items.fillItem")).build();
         else

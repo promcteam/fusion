@@ -7,6 +7,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.api.items.ItemType;
+import studio.magemonkey.codex.api.items.exception.CodexItemException;
 import studio.magemonkey.codex.api.items.providers.VanillaProvider;
 import studio.magemonkey.codex.util.DeserializationWorker;
 import studio.magemonkey.fusion.Fusion;
@@ -48,8 +49,16 @@ public class Category implements ConfigurationSerializable {
     public Category(String name, String iconName, InventoryPattern pattern, int order) {
         this.name = name;
         this.iconName = iconName;
-        this.iconItem =
-                CodexEngine.get().getItemManager().getMainItemType(RecipeItem.fromConfig(iconName).getItemStack());
+
+        try {
+            iconItem = CodexEngine.get().getItemManager().getItemType(iconName);
+        } catch (CodexItemException e) {
+            Fusion.getInstance().getLogger().severe("Invalid category icon for: " + name);
+            Fusion.getInstance().getLogger().warning(e.getMessage());
+            Fusion.getInstance().getLogger().warning("Using default icon instead.");
+            iconItem = new VanillaProvider.VanillaItemType(Material.PAPER);
+        }
+
         this.pattern = pattern;
         this.order = order;
     }
@@ -59,10 +68,16 @@ public class Category implements ConfigurationSerializable {
         name = dw.getString("name");
         order = dw.getInt("order");
         iconName = dw.getString("icon");
-        iconItem = CodexEngine.get().getItemManager().getMainItemType(RecipeItem.fromConfig(iconName).getItemStack());
-        if (iconItem == null) {
+
+        try {
+            iconItem = CodexEngine.get().getItemManager().getItemType(iconName);
+        } catch (CodexItemException e) {
             Fusion.getInstance().getLogger().severe("Invalid category icon for: " + name);
+            Fusion.getInstance().getLogger().warning(e.getMessage());
+            Fusion.getInstance().getLogger().warning("Using default icon instead.");
+            iconItem = new VanillaProvider.VanillaItemType(Material.PAPER);
         }
+
 
         pattern = dw.getSection("pattern") != null ? new InventoryPattern(dw.getSection("pattern")) : null;
     }
