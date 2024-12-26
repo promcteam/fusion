@@ -1,4 +1,4 @@
-# You can configurate those profession ingame via gui
+  # You can configurate those profession ingame via gui
 # Use `/fusion-editor profession armor_smithing` to open the editor for this profession
 
 # The internal id of profession that is used to identify the profession (for example for `/craft use <profession-id`)

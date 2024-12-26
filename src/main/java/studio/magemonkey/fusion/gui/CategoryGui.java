@@ -110,7 +110,7 @@ public class CategoryGui implements Listener {
                 Category category = allCategoryArray[k];
                 int      slot     = slots[i];
                 this.categories.put(slot, new RecipeGui(player, table, category));
-                this.inventory.setItem(slot, category.getIconItem().create());
+                this.inventory.setItem(slot, category.getDisplayIcon());
             }
 
             for (int k = 0; k < inventory.getSize(); k++) {
@@ -317,6 +317,7 @@ public class CategoryGui implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         int    slot   = event.getSlot();
+        if (slot < 0) return;
 
         Character c = table.getPattern().getSlot(slot);
         executeCommands(c, event.getWhoClicked());

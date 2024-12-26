@@ -91,7 +91,7 @@ public class PlayerInitialGUI extends PlayerCustomGUI {
                             }
                         } while (recipes.isEmpty());
 
-                        inv.setItem(k, category.getIconItem().create());
+                        inv.setItem(k, category.getDisplayIcon());
                         playerCustomGUI.slotMap.put(k, category);
                     }
                 }
