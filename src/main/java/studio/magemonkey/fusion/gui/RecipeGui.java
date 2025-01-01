@@ -268,6 +268,13 @@ public class RecipeGui implements Listener {
 
             /* Additionally, when crafting_queue: true */
             if (Cfg.craftingQueue) {
+
+                // Clear all queue slots
+                Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
+                for (int slot : _queuedSlots) {
+                    this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
+                }
+
                 this.queue.getQueuedItems().clear();
                 Collection<QueueItem> allQueuedItems = queue.getQueue();
                 int queueAllItemsCount = allQueuedItems.size();
@@ -302,10 +309,6 @@ public class RecipeGui implements Listener {
                             this.inventory.setItem(slot, queuedItems[j].getIcon().clone());
                         }
                     }
-                }
-                Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
-                for (int slot : _queuedSlots) {
-                    this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
                 }
             }
             updateBlockedSlots(new MessageData[]{
@@ -819,9 +822,14 @@ public class RecipeGui implements Listener {
                 QueueItem item = queue.getQueuedItems().get(event.getSlot());
                 if (item == null) return;
                 if (item.isDone()) {
-                    // Remove the item from the queue
-                    queue.finishRecipe(item);
-                    this.reloadRecipes();
+                    if (event.isLeftClick()) {
+                        queue.finishRecipe(item);
+                        this.reloadRecipes();
+                    } else if (event.isRightClick()) {
+                        int queueSize = queue.getQueue().size(); // Estimated time that is required to finish all recipes
+                        queue.finishAllRecipes();
+                        Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), this::reloadRecipes, queueSize + 1);
+                    }
                 } else {
                     queue.removeRecipe(item, true);
                 }

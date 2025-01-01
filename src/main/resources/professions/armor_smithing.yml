@@ -171,7 +171,8 @@ pattern:
           - ' '
           - '&7The item is &afinished&7!'
           - ' '
-          - '&eClick to obtain'
+          - '&eLeft Click to obtain'
+          - '&eRight Click to obtain all'
         flags: []
         enchants: {}
     # The fill item used in the pattern. It can also be `f` instead

@@ -1,6 +1,7 @@
 package studio.magemonkey.fusion.data.queue;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -92,6 +93,11 @@ public class CraftingQueue {
                 .addQueueItem(player, ProfessionsCfg.getTable(profession), this, item);
     }
 
+    public void finishAllRecipes() {
+        for(QueueItem item : queue) {
+            Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), () -> finishRecipe(item), 1);
+        }
+    }
 
     public void finishRecipe(QueueItem item) {
         if (item.isDone()) {

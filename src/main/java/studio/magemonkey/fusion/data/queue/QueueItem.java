@@ -87,6 +87,6 @@ public class QueueItem {
     }
 
     public String getRecipePath() {
-        return profession + "." + category.getName() + "." + recipe.getName();
+        return recipe.getRecipePath();
     }
 }
