@@ -2,20 +2,15 @@ package studio.magemonkey.fusion.gui;
 
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.data.recipes.CalculatedRecipe;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.data.recipes.Recipe;
 import studio.magemonkey.fusion.data.recipes.RecipeItem;
-import studio.magemonkey.fusion.util.ChatUT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,25 +66,5 @@ public class RecipeShowBook {
         Bukkit.getConsoleSender().sendMessage("Opening book for " + player.getName());
         Fusion.getPlayerAudience(player).openBook(book);
         Fusion.getPlayerAudience(player).sendMessage(Component.text("Opened book"));
-
-        // Create a written book
-        ItemStack _book = new ItemStack(Material.WRITTEN_BOOK);
-        BookMeta meta = (BookMeta) book.getItemMeta();
-
-        if (meta != null) {
-            // Title and author
-            meta.setTitle("Interactive Book");
-            meta.setAuthor("Adventure");
-
-            // Create a page with a clickable and hoverable text
-            Component page = Component.text("Click here!")
-                    .clickEvent(ClickEvent.runCommand("/say Hello, world!"))
-                    .hoverEvent(HoverEvent.showText(Component.text("Say something in chat!")));
-
-            // Convert Adventure Component to JSON and add it as a page
-            meta.spigot().addPage(Component.toJson(page));
-
-            // Set the meta back to the book
-            book.setItemMeta(meta);
     }
 }
