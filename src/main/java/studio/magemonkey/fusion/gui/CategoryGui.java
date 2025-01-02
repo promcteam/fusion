@@ -99,7 +99,9 @@ public class CategoryGui implements Listener {
                     new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(table.getName()))),
                     new MessageData("gui", table.getName()),
                     new MessageData("player", player.getName()),
-                    new MessageData("bal", CodexEngine.get().getVault().getBalance(player))
+                    new MessageData("bal",
+                            CodexEngine.get().getVault() == null ? 0
+                                    : CodexEngine.get().getVault().getBalance(player))
             });
 
             for (int k = (page * pageSize), e = Math.min(slots.length, allCategoryArray.length);
@@ -108,7 +110,7 @@ public class CategoryGui implements Listener {
                 Category category = allCategoryArray[k];
                 int      slot     = slots[i];
                 this.categories.put(slot, new RecipeGui(player, table, category));
-                this.inventory.setItem(slot, category.getIconItem().create());
+                this.inventory.setItem(slot, category.getDisplayIcon());
             }
 
             for (int k = 0; k < inventory.getSize(); k++) {
@@ -315,6 +317,7 @@ public class CategoryGui implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         int    slot   = event.getSlot();
+        if (slot < 0) return;
 
         Character c = table.getPattern().getSlot(slot);
         executeCommands(c, event.getWhoClicked());
@@ -322,11 +325,6 @@ public class CategoryGui implements Listener {
         if (table.getPattern().getCloseOnClickSlots().contains(c)) {
             Bukkit.getScheduler().runTask(Fusion.getInstance(), () -> event.getWhoClicked().closeInventory());
         }
-
-        Bukkit.getConsoleSender().sendMessage("Slot: " + slot);
-        Bukkit.getConsoleSender().sendMessage("Next Page: " + nextPage);
-        Bukkit.getConsoleSender().sendMessage("Prev Page: " + prevPage);
-        Bukkit.getConsoleSender().sendMessage("Page: " + page);
 
         if ((nextPage != -1) && (event.getSlot() == nextPage)) {
             this.nextPage();

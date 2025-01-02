@@ -10,31 +10,30 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class DivinityService {
-
     public static DivinityCfg               divinityCfg;
-    public static Map<String, ItemGenEntry> ItemGenResults = new HashMap<>();
+    public static Map<String, ItemGenEntry> itemGenResults = new HashMap<>();
 
-    public static boolean isCached(String namespace) {
-        return ItemGenResults.containsKey(namespace);
+    public static boolean isCached(String itemId) {
+        return itemGenResults.containsKey(itemId);
     }
 
-    public static boolean cache(String namespace, Consumer<ItemGenEntry> callback) {
+    public static boolean cache(String itemId, Consumer<ItemGenEntry> callback) {
         ItemGeneratorManager.GeneratorItem item =
-                Divinity.getInstance().getModuleCache().getTierManager().getItemById(namespace);
+                Divinity.getInstance().getModuleCache().getTierManager().getItemById(itemId);
         if (item == null) {
             Fusion.getInstance()
                     .getLogger()
-                    .warning("Failed to cache item " + namespace + " from Divinity as it does not exist.");
+                    .warning("Failed to cache item " + itemId + " from Divinity as it does not exist.");
             return false;
         }
-        ItemGenResults.put(namespace, new ItemGenEntry(item));
+        itemGenResults.put(itemId, new ItemGenEntry(item));
         if (callback != null)
-            callback.accept(ItemGenResults.get(namespace));
+            callback.accept(itemGenResults.get(itemId));
         return true;
     }
 
     public static void init() {
-        ItemGenResults.clear();
+        itemGenResults.clear();
         divinityCfg = new DivinityCfg();
         Fusion.getInstance().getLogger().info("Divinity Service loaded.");
     }

@@ -3,6 +3,7 @@
 
 # The internal id of profession that is used to identify the profession (for example for `/craft use <profession-id`)
 name: weapon_smithing
+version: 1.0
 
 # Visuals for the professions in the gui
 icon: DIAMOND_SWORD

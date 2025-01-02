@@ -1,15 +1,18 @@
 package studio.magemonkey.fusion.cfg.hooks;
 
 public enum HookType {
-
+    AuraSkills("AuraSkills"),
     Divinity("Divinity"),
-    PlaceholderAPI("PlaceholderAPI"),
-
-    Vault("Vault"),
     Fabled("Fabled"),
-    mcMMO("mcMMO"),
     Jobs("Jobs"),
-    AuraSkills("AuraSkills");
+    mcMMO("mcMMO"),
+    Oraxen("Oraxen"),
+    PlaceholderAPI("PlaceholderAPI"),
+    Vault("Vault");
+
+
+
+
 
     private final String pluginName;
 

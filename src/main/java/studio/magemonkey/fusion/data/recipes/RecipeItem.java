@@ -5,19 +5,26 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.api.items.ItemType;
+import studio.magemonkey.codex.api.items.exception.MissingItemException;
+import studio.magemonkey.codex.api.items.exception.MissingProviderException;
+import studio.magemonkey.codex.items.CodexItemManager;
 import studio.magemonkey.codex.legacy.item.ItemBuilder;
-import studio.magemonkey.divinity.Divinity;
 import studio.magemonkey.fusion.Fusion;
-import studio.magemonkey.fusion.cfg.hooks.HookType;
 import studio.magemonkey.fusion.cfg.hooks.divinity.DivinityRecipeMeta;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface RecipeItem {
-    String CUSTOM_PREFIX = "@ ";
+    String  CUSTOM_PREFIX   = "@ ";
+    Pattern divinityPattern =
+            Pattern.compile("DIVINITY_([\\w-]+:)?([\\w-]+)\\b((~level:(\\d+))|(~material:([\\w-]+)\\b)){0,2}");
 
     int getAmount();
 
@@ -26,308 +33,134 @@ public interface RecipeItem {
     Object toConfig();
 
     static RecipeItem fromConfig(Object obj) {
+        if (obj instanceof Map) {
+            //noinspection unchecked
+            return getItemBuilder((Map<String, Object>) obj);
+        }
+
+        int        amount = 1;
         RecipeItem result = null;
 
-        try {
-            ItemStack item   = new ItemStack(Material.STONE);
-            int       amount = 1;
-
-            if (obj instanceof String args) {
-                args = args.toUpperCase();
-                if (args.startsWith("VANILLA_")) {
-                    String material = args.split("_", 2)[1];
-                    amount = Integer.parseInt(material.split(":")[1]);
-                    material = material.split(":")[0];
-
-                    Material mat = Material.matchMaterial(material);
-                    if (mat == null) {
-                        Fusion.getInstance()
-                                .getLogger()
-                                .warning("Invalid material found in configuration: " + material);
-                        return null;
-                    }
-                    result = new RecipeCustomItem(ItemBuilder.newItem(mat).build(), amount, false);
-                } else if (args.startsWith("DIVINITY_")) {
-                    if (!Fusion.getHookManager().isHooked(HookType.Divinity)) {
-                        Fusion.getInstance()
-                                .getLogger()
-                                .warning(
-                                        "Divinity is not hooked, but a Divinity item was found in the configuration. Skipping...");
-                        return null;
-                    }
-                    int level = -1;
-
-                    // DIVINITY_<module>_<item_id>
-                    String[] divinityArgs = args.split("_", 3);
-
-                    // Get the module
-                    String module = divinityArgs[1];
-                    // Get the item_id
-                    String namespace = divinityArgs[2].split(":")[0];
-
-                    // Get the item args without the first position
-                    String[] itemArgs = new String[divinityArgs[2].split(":").length - 1];
-                    if (divinityArgs[2].split(":").length - 1 >= 0)
-                        System.arraycopy(divinityArgs[2].split(":"),
-                                1,
-                                itemArgs,
-                                0,
-                                divinityArgs[2].split(":").length - 1);
-
-                    switch (module.toLowerCase()) {
-                        case "arrows", "ar" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getArrowManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "consumables", "co" -> {
-
-                        }
-                        case "customitems", "ci" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            }
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getCustomItemsManager()
-                                    .getItemById(namespace)
-                                    .create();
-                        }
-                        case "dismantle", "di" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getResolveManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "essences", "es" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getEssenceManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "extractor", "ex" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getExtractManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "fortify", "fo" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getFortifyManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "gems", "ge" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getGemManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "identify", "id" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getIdentifyManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "itemgenerator", "itemgen", "it" -> {
-                            Material material = null;
-
-                            switch (itemArgs.length) {
-                                case 1 -> amount = Integer.parseInt(itemArgs[0]);
-                                case 2 -> {
-                                    level = Integer.parseInt(itemArgs[0]);
-                                    amount = Integer.parseInt(itemArgs[1]);
-                                }
-                                case 3 -> {
-                                    level = Integer.parseInt(itemArgs[0]);
-                                    amount = Integer.parseInt(itemArgs[1]);
-                                    material = Material.matchMaterial(itemArgs[2]);
-                                }
-                            }
-
-                            if (material == null) {
-                                item = Divinity.getInstance()
-                                        .getModuleCache()
-                                        .getTierManager()
-                                        .getItemById(namespace)
-                                        .create(level);
-                            } else {
-                                try {
-                                    item = Divinity.getInstance()
-                                            .getModuleCache()
-                                            .getTierManager()
-                                            .getItemById(namespace)
-                                            .create(level,
-                                                    0,
-                                                    CodexEngine.get()
-                                                            .getItemManager()
-                                                            .getItemType(material.toString()));
-                                } catch (Exception e) {
-                                    Fusion.getInstance()
-                                            .getLogger()
-                                            .warning("Invalid material found for Divinity-ItemGenerator: " + material);
-                                    return null;
-                                }
-                            }
-                        }
-                        case "magicdust", "ma" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getMagicDustManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                        case "runes", "ru" -> {
-                            if (itemArgs.length == 1) {
-                                amount = Integer.parseInt(itemArgs[0]);
-                            } else if (itemArgs.length == 2) {
-                                level = Integer.parseInt(itemArgs[0]);
-                                amount = Integer.parseInt(itemArgs[1]);
-                            }
-
-                            item = Divinity.getInstance()
-                                    .getModuleCache()
-                                    .getRuneManager()
-                                    .getItemById(namespace)
-                                    .create(level);
-                        }
-                    }
-
-                    result = new RecipeCustomItem(item, amount, false);
+        if (obj instanceof String itemString) {
+            CodexItemManager items = CodexEngine.get().getItemManager();
+            try {
+                Matcher divMatcher = divinityPattern.matcher(itemString);
+                String  itemKey;
+                if (divMatcher.find()) {
+                    itemKey = divMatcher.group(0);
                 } else {
-                    String[] itemArgs   = args.split(":");
-                    Material mat        = Material.matchMaterial(itemArgs[0]);
-                    int      durability = -1;
-
-                    if (itemArgs.length > 1) {
-                        amount = Integer.parseInt(itemArgs[1]);
-                        if (itemArgs.length > 2) {
-                            durability = Integer.parseInt(itemArgs[2]);
+                    itemKey = itemString.split(":")[0];
+                }
+                ItemType type = items.getItemType(itemKey);
+                if (type != null) {
+                    // The amount *should* be the last part of the string, after the colon.
+                    // We'll replace the Divinity format with a blank string to get rid of possible
+                    // ~level:X conflicts so we can be sure that the amount is the last part.
+                    itemString = itemString.replace(itemKey, "");
+                    String[] amountSplit = StringUtils.split(itemString, ':');
+                    if (amountSplit.length > 0) {
+                        try {
+                            amount = Integer.parseInt(amountSplit[amountSplit.length - 1]);
+                        } catch (NumberFormatException e) {
+                            Fusion.getInstance()
+                                    .getLogger()
+                                    .warning("Invalid amount found in configuration: "
+                                            + amountSplit[amountSplit.length - 1]);
                         }
                     }
 
-
-                    if (durability == -1) {
-                        result = new RecipeCustomItem(ItemBuilder.newItem(mat).build(), amount, false);
-                    } else {
-                        result = new RecipeCustomItem(ItemBuilder.newItem(mat).durability(durability).build(),
-                                amount,
-                                false);
-                    }
+                    result = new RecipeCustomItem(type.create(), amount, false);
                 }
+            } catch (MissingProviderException | MissingItemException e) {
+                throw new RuntimeException(e);
+            }
 
+            if (result == null) {
+                result = buildInternalItem(obj);
+            }
+        }
 
-                String  str    = obj.toString();
-                boolean custom = str.startsWith(CUSTOM_PREFIX);
-                if (custom) {
-                    str = str.substring(CUSTOM_PREFIX.length());
-                }
-                String[] srrs = StringUtils.split(str, ':');
-                if (srrs.length == 0) {
-                    return null;
-                }
-                if (!custom && (srrs.length == 2)) {
-                    try {
-                        RecipeEconomyItem recipeEconomyItem = new RecipeEconomyItem(srrs[0], Integer.parseInt(srrs[1]));
-                        ItemType          itemType          = recipeEconomyItem.asItemType();
-                        if (itemType != null) {
-                            result = recipeEconomyItem;
-                        }
-                    } catch (Exception e) {
-                        Fusion.getInstance()
-                                .error("Error on loading configuration of RecipeItem: " + obj + ", exception: "
-                                        + e.getMessage() + ", more in console.");
-                        throw new RuntimeException(e);
-                    }
-                }
-            } else if (obj instanceof Map) {
-                @SuppressWarnings("unchecked")
-                ItemBuilder itemBuilder = new ItemBuilder(((Map<String, Object>) obj));
+        return result;
+    }
 
-                // In case we face an enchantment book, properly handle the enchantments
-                // in a seperated meta before handling the item later on
-                if (itemBuilder.getMaterial() == Material.ENCHANTED_BOOK) {
-                    Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(itemBuilder.getEnchants());
-                    itemBuilder.clearEnchants();
-                    item = itemBuilder.build().clone();
-                    EnchantmentStorageMeta storage = (EnchantmentStorageMeta) item.getItemMeta();
-                    for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                        storage.addStoredEnchant(entry.getKey(), entry.getValue(), true);
-                    }
-                    item.setItemMeta(storage);
-                    result = new RecipeCustomItem(item, itemBuilder.getAmount(), false);
-                } else {
-                    result = new RecipeCustomItem(itemBuilder.build(), itemBuilder.getAmount(), false);
+    private static @Nullable RecipeItem buildInternalItem(Object obj) {
+        RecipeItem result = null;
+        String     str    = obj.toString();
+        boolean    custom = str.startsWith(CUSTOM_PREFIX);
+        if (custom) {
+            str = str.substring(CUSTOM_PREFIX.length());
+        }
+
+        String[] srrs = StringUtils.split(str, ':');
+        if (srrs.length == 0) {
+            return null;
+        }
+
+        if (custom) {
+            Material mat = Material.matchMaterial(srrs[0]);
+            if (mat == null) {
+                Fusion.getInstance().getLogger().warning("Invalid material found in configuration: " + srrs[0]);
+                return null;
+            }
+
+            ItemBuilder itemBuilder = ItemBuilder.newItem(mat);
+
+            if (srrs.length > 1) {
+                try {
+                    itemBuilder.durability(Integer.parseInt(srrs[1]));
+                } catch (NumberFormatException e) {
+                    Fusion.getInstance().error("Durability is invalid (" + srrs[1] + ") for material " + mat.name());
                 }
             }
-        } catch (NumberFormatException e) {
-            Fusion.getInstance()
-                    .error("Error on loading configuration of RecipeItem: " + obj + ", exception: " + e.getMessage()
-                            + ", more in console.");
-            throw new RuntimeException(e);
+
+            if (srrs.length > 2) {
+                try {
+                    itemBuilder.amount(Integer.parseInt(srrs[2]));
+                } catch (NumberFormatException e) {
+                    Fusion.getInstance().error("Amount is invalid (" + srrs[2] + ") for material " + mat.name());
+                }
+            }
+
+            result = new RecipeCustomItem(itemBuilder.build(), 1, true);
+        } else if (srrs.length == 2) {
+            try {
+                RecipeEconomyItem recipeEconomyItem = new RecipeEconomyItem(srrs[0], Integer.parseInt(srrs[1]));
+                ItemType          itemType          = recipeEconomyItem.asItemType();
+                if (itemType != null) {
+                    result = recipeEconomyItem;
+                }
+            } catch (Exception e) {
+                Fusion.getInstance()
+                        .error("Error on loading configuration of RecipeItem: " + obj + ", exception: " + e.getMessage()
+                                + ", more in console.");
+                throw new RuntimeException(e);
+            }
         }
+
         return result;
+    }
+
+    private static @NotNull RecipeItem getItemBuilder(Map<String, Object> obj) {
+        ItemBuilder itemBuilder = new ItemBuilder(obj);
+        ItemStack   item;
+
+        // In case we face an enchantment book, properly handle the enchantments
+        // in a seperated meta before handling the item later on
+        if (itemBuilder.getMaterial() == Material.ENCHANTED_BOOK) {
+            Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(itemBuilder.getEnchants());
+            itemBuilder.clearEnchants();
+            item = itemBuilder.build().clone();
+            EnchantmentStorageMeta storage = (EnchantmentStorageMeta) item.getItemMeta();
+            if (storage != null) {
+                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                    storage.addStoredEnchant(entry.getKey(), entry.getValue(), true);
+                }
+                item.setItemMeta(storage);
+            }
+            return new RecipeCustomItem(item, itemBuilder.getAmount(), false);
+        }
+
+        return new RecipeCustomItem(itemBuilder.build(), itemBuilder.getAmount(), false);
     }
 
     static RecipeItem fromDivinityRecipeMeta(DivinityRecipeMeta meta) {

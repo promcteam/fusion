@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import studio.magemonkey.codex.legacy.item.ItemBuilder;
 import studio.magemonkey.fusion.Fusion;
+import studio.magemonkey.fusion.data.ProfessionMigration;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.queue.QueueItem;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
@@ -104,6 +105,10 @@ public class ProfessionsCfg {
                     Bukkit.getConsoleSender().sendMessage("loading " + file.getName());
                     cfg.load(file);
                     addDefs(cfg);
+
+                    // Perform migrations
+                    ProfessionMigration.migrate(cfg);
+
                     cfg.save(file);
                     cfg.load(file);
                     // Get the YAMLs whole content as a map

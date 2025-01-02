@@ -271,7 +271,9 @@ public class ProfessionConditions implements ConfigurationSerializable {
                 new MessageData("profession", profession),
                 new MessageData("unlocked", unlocked),
                 new MessageData("limit", allowed),
-                new MessageData("bal", Objects.requireNonNull(CodexEngine.get().getVault()).getBalance(_player)),
+                new MessageData("bal",
+                        CodexEngine.get().getVault() == null ? 0
+                                : CodexEngine.get().getVault().getBalance(_player)),
 
                 new MessageData("costs.money", moneyCost),
                 new MessageData("costs.exp", expCost),

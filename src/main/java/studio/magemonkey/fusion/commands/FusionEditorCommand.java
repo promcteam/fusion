@@ -23,6 +23,7 @@ import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.api.CommandType;
 import studio.magemonkey.codex.api.DelayedCommand;
 import studio.magemonkey.codex.api.items.ItemType;
+import studio.magemonkey.codex.api.items.exception.CodexItemException;
 import studio.magemonkey.codex.util.DeserializationWorker;
 import studio.magemonkey.codex.util.messages.MessageData;
 import studio.magemonkey.fabled.Fabled;
@@ -50,8 +51,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
                              @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
-        if (!(sender instanceof Player))
-            return true;
+        if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
         Editor editor = EditorRegistry.getCurrentEditor(player);
         if (args.length == 0) {
@@ -403,13 +403,16 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
 
     private boolean isValidItem(String item) {
         try {
-            //If the material in uppercase is valid, return true
+            // If the material in uppercase is valid, return true
             Material.valueOf(item.toUpperCase());
             return true;
         } catch (IllegalArgumentException e) {
-            // If the is a custom item from divinity without "DIVINITY_" prefix, return true
-            return CodexEngine.get().getItemManager().getMainItemType(RecipeItem.fromConfig(item).getItemStack())
-                    != null;
+            // If this is a custom item from divinity without "DIVINITY_" prefix, return true
+            try {
+                return CodexEngine.get().getItemManager().getItemType(item) != null;
+            } catch (CodexItemException ignored) {
+                return false;
+            }
         }
     }
 
@@ -549,10 +552,12 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             CodexEngine.get().getMessageUtil().sendMessage("editor.invalidItem", player, new MessageData("item", icon));
             return;
         }
-        professionEditor.getTable()
-                .setIconItem(CodexEngine.get()
-                        .getItemManager()
-                        .getMainItemType(RecipeItem.fromConfig(icon).getItemStack()));
+        try {
+            professionEditor.getTable().setIconItem(CodexEngine.get().getItemManager().getItemType(icon));
+        } catch (CodexItemException e) {
+            CodexEngine.get().getMessageUtil().sendMessage("editor.invalidItem", player, new MessageData("item", icon));
+            return;
+        }
         CodexEngine.get()
                 .getMessageUtil()
                 .sendMessage("editor.professionIconChanged",
@@ -608,12 +613,18 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             }
             professionEditor.getTable().getCategories().get(categoryName).setName(categoryName);
             ItemType oldIcon = professionEditor.getTable().getCategories().get(categoryName).getIconItem();
-            professionEditor.getTable()
-                    .getCategories()
-                    .get(categoryName)
-                    .setIconItem(CodexEngine.get()
-                            .getItemManager()
-                            .getMainItemType(RecipeItem.fromConfig(categoryIcon).getItemStack()));
+            try {
+                professionEditor.getTable()
+                        .getCategories()
+                        .get(categoryName)
+                        .setIconItem(CodexEngine.get().getItemManager().getItemType(categoryIcon));
+            } catch (CodexItemException e) {
+                CodexEngine.get()
+                        .getMessageUtil()
+                        .sendMessage("editor.invalidItem", player, new MessageData("item", categoryIcon));
+                professionEditor.getTable().getCategories().get(categoryName).setIconItem(oldIcon);
+                return;
+            }
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("editor.categoryEdited",
@@ -741,8 +752,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < args.length; i++) {
                 builder.append(args[i]);
-                if (i < args.length - 1)
-                    builder.append(" ");
+                if (i < args.length - 1) builder.append(" ");
             }
             professionEditor.getPatternItemsEditor()
                     .getPatternItemEditor()
@@ -766,8 +776,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < args.length; i++) {
                 builder.append(args[i]);
-                if (i < args.length - 1)
-                    builder.append(" ");
+                if (i < args.length - 1) builder.append(" ");
             }
             browseEditor.getPatternItemsEditor().getPatternItemEditor().getBuilder().newLoreLine(builder.toString());
             browseEditor.getPatternItemsEditor().getPatternItemEditor().reload(true);
@@ -796,8 +805,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
                 commandBuilder = new StringBuilder();
                 for (int i = 2; i < args.length; i++) {
                     commandBuilder.append(args[i]);
-                    if (i < args.length - 1)
-                        commandBuilder.append(" ");
+                    if (i < args.length - 1) commandBuilder.append(" ");
                 }
                 professionEditor.getPatternItemsEditor()
                         .getPatternItemEditor()
@@ -832,8 +840,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
                 commandBuilder = new StringBuilder();
                 for (int i = 2; i < args.length; i++) {
                     commandBuilder.append(args[i]);
-                    if (i < args.length - 1)
-                        commandBuilder.append(" ");
+                    if (i < args.length - 1) commandBuilder.append(" ");
                 }
                 browseEditor.getPatternItemsEditor()
                         .getPatternItemEditor()
@@ -1032,8 +1039,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             commandBuilder = new StringBuilder();
             for (int i = 2; i < args.length; i++) {
                 commandBuilder.append(args[i]);
-                if (i < args.length - 1)
-                    commandBuilder.append(" ");
+                if (i < args.length - 1) commandBuilder.append(" ");
             }
             professionEditor.getRecipeEditor()
                     .getRecipeItemEditor()
@@ -1354,8 +1360,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             case "aura_skills":
             case "aura_stats":
                 if (!Bukkit.getPluginManager().isPluginEnabled("AuraSkills") || !Bukkit.getPluginManager()
-                        .isPluginEnabled("AureliumSkills"))
-                    return;
+                        .isPluginEnabled("AureliumSkills")) return;
                 switch (conditionKey) {
                     case "aura_abilities":
                         if (AuraSkillsApi.get().getGlobalRegistry().getAbility(NamespacedId.fromString(conditionValue))
@@ -1673,8 +1678,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             case "aura_skills":
             case "aura_stats":
                 if (!Bukkit.getPluginManager().isPluginEnabled("AuraSkills") || !Bukkit.getPluginManager()
-                        .isPluginEnabled("AureliumSkills"))
-                    return;
+                        .isPluginEnabled("AureliumSkills")) return;
                 switch (conditionKey) {
                     case "aura_abilities":
                         if (AuraSkillsApi.get().getGlobalRegistry().getAbility(NamespacedId.fromString(conditionValue))

@@ -1,7 +1,8 @@
-import org.junit.jupiter.api.Test;
-import studio.magemonkey.fusion.util.CharacterIncrementer;
+package studio.magemonkey.fusion.util;
 
-public class FusionTest {
+import org.junit.jupiter.api.Test;
+
+public class CharacterIncrementerTest {
 
     @Test
     public void testNextChar() {

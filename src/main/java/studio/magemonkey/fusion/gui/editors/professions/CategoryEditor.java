@@ -44,7 +44,7 @@ public class CategoryEditor extends Editor implements Listener {
         InventoryUtils.fillInventory(getInventory(), getIcons().get("fill"));
         int slot = 9;
         for (Map.Entry<String, Category> entry : table.getCategories().entrySet()) {
-            ItemStack icon = entry.getValue().getIconItem().create();
+            ItemStack icon = entry.getValue().getDisplayIcon();
             if (icon.getType().isAir()) continue;
             slots.put(slot, entry.getValue());
             slot++;

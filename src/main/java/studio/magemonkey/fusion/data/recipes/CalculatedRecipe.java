@@ -79,11 +79,14 @@ public class CalculatedRecipe {
 
             String moneyLine = null;
             if (recipe.getConditions().getMoneyCost() != 0) {
-                if (!CodexEngine.get().getVault().canPay(player, recipe.getConditions().getMoneyCost())) {
+                if (CodexEngine.get().getVault() == null || !CodexEngine.get()
+                        .getVault()
+                        .canPay(player, recipe.getConditions().getMoneyCost())) {
                     canCraft = false;
                 }
                 moneyLine = CraftingRequirementsCfg.getMoney("recipes",
-                        CodexEngine.get().getVault().getBalance(player),
+                        CodexEngine.get().getVault() == null ? 0
+                                : CodexEngine.get().getVault().getBalance(player),
                         recipe.getConditions().getMoneyCost());
             }
 
@@ -144,7 +147,7 @@ public class CalculatedRecipe {
             List<Pair<ItemStack, Integer>> eqItems = Recipe.getItems(items);
 
 
-            Collection<RecipeItem> localPattern       = new HashSet<>(recipe.getConditions().getRequiredItems());
+            Collection<RecipeItem> localPattern       = new LinkedHashSet<>(recipe.getConditions().getRequiredItems());
             boolean                isExtensionEnabled = CraftingRequirementsCfg.hasExtensionEnabled("recipes");
             boolean                isVanillaOnly      = CraftingRequirementsCfg.hasOnlyVanillaExtension("recipes");
             for (Iterator<RecipeItem> it = localPattern.iterator(); it.hasNext(); ) {
@@ -242,7 +245,7 @@ public class CalculatedRecipe {
         } catch (Exception e) {
             Fusion.getInstance()
                     .error("The recipe-item seems not to be recognized. Please check your setup on the following recipe '"
-                            + recipe.getName() + "':");
+                            + recipe.getName());
             Fusion.getInstance().error("Result: " + recipe.getResults().getResultName());
             Fusion.getInstance().error("Pattern Items: ");
             for (Object patternItem : recipe.getConditions().getRequiredItemNames()) {
@@ -287,7 +290,6 @@ public class CalculatedRecipe {
 
         // Check for name
         if (im1.hasDisplayName()) {
-
             String displayName1 = im1.getDisplayName().trim();
             String displayName2 = im2.hasDisplayName() ? im2.getDisplayName().trim() : "";
             if (!displayName1.equals(displayName2))

@@ -262,8 +262,8 @@ public class RecipeGui implements Listener {
             Recipe[] allRecipesArray = allRecipes.toArray(new Recipe[allRecipeCount]);
 
             Integer[] slots = resultSlots.toArray(new Integer[0]);
-            for (int slot : slots) {
-                this.inventory.setItem(slot, null);
+            for (Integer slot : slots) {
+                if (slot != null) this.inventory.setItem(slot, null);
             }
 
             /* Additionally, when crafting_queue: true */
@@ -313,7 +313,9 @@ public class RecipeGui implements Listener {
                     new MessageData("category", category),
                     new MessageData("gui", getName()),
                     new MessageData("player", player.getName()),
-                    new MessageData("bal", CodexEngine.get().getVault().getBalance(player))
+                    new MessageData("bal",
+                            CodexEngine.get().getVault() == null ? 0
+                                    : CodexEngine.get().getVault().getBalance(player))
             });
 
             for (int k = (page * pageSize), e = Math.min(slots.length, calculatedRecipes.length);
@@ -338,8 +340,9 @@ public class RecipeGui implements Listener {
         } catch (
                 Exception e) {
             this.inventory.clear();
-            this.player.closeInventory();
-            throw new RuntimeException("Exception was thrown when reloading recipes for: " + this.player.getName(), e);
+            Bukkit.getScheduler().runTask(Fusion.getInstance(), this.player::closeInventory);
+            throw new RuntimeException("Exception was thrown when reloading recipes for: " + this.player.getName(),
+                    e);
         } finally {
             if (Cfg.craftingQueue && !queue.getQueuedItems().isEmpty()) {
                 boolean requiresUpdate = false;
@@ -491,7 +494,8 @@ public class RecipeGui implements Listener {
                     .sendMessage("fusion.error.noXP", player, new MessageData("recipe", recipe));
             return false;
         }
-        if (!CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
+        if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null
+                && !CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.error.noFunds", player, new MessageData("recipe", recipe));
@@ -661,7 +665,8 @@ public class RecipeGui implements Listener {
                 }
             });
         } else {
-            CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
+            if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null)
+                CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
             this.queue.addRecipe(this.recipes.get(slot).getRecipe());
         }
         return true;

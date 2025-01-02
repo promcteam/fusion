@@ -1,8 +1,9 @@
-# You can configurate those profession ingame via gui
+  # You can configurate those profession ingame via gui
 # Use `/fusion-editor profession armor_smithing` to open the editor for this profession
 
 # The internal id of profession that is used to identify the profession (for example for `/craft use <profession-id`)
 name: armor_smithing
+version: 1.0
 
 # Visuals for the professions in the gui
 icon: IRON_CHESTPLATE
@@ -30,7 +31,7 @@ pattern:
   # The items that can be used for the pattern section.
   # Each item represents one slot in the pattern.
   # The following characters are predefined for specific tasks:
-  # `o`, `=` -> Recipe Slots wich are empty or filled with a recipe
+  # `o`, `=` -> Recipe Slots which are empty or filled with a recipe
   # `<`, `>` -> Previous and Next page buttons for recipe items
   # `{`, `}` -> Previous and Next page buttons for queue items
   # `-` -> Queue slot, this slot is used to display the queue slot when not filled
@@ -241,7 +242,7 @@ recipes:
       professionLevel: 1
       mastery: false
 
-  # A iron chestplate which takes 20 seconds to craft
+  # An iron chestplate which takes 20 seconds to craft
   - name: IronChestplate
     craftingTime: 20
     # Provides you a iron chestplate, 50 profession exp and 20 vanilla exp

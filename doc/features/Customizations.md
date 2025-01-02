@@ -252,30 +252,30 @@ We encourage you to use [Divinity](https://www.spigotmc.org/resources/divinity-c
 The current possible way of using Divinity items is by using the `DIVINITY_<module>_<item>` type.
 The following modules exist:
 
-| Module Item (long)                                    | Module Item (short)                        | Extras |
-|-------------------------------------------------------|--------------------------------------------|--------|
-| DIVINITY_ARROWS_[item]:[level]:[amount]               | DIVINITY_AR_[item]:[level]:[amount]        |        |
-| DIVINITY_CONSUMABLES_[item]:[level]:[amount]          | DIVINITY_CO_[item]:[level]:[amount]        |        | 
-| DIVINITY_CUSTOMITEMS_[item]:[amount]                  | DIVINITY_CI_[item]:[amount]                |        | 
-| DIVINITY_DISMANTLE_[item]:[level]:[amount]            | DIVINITY_DI_[item]:[level]:[amount]        |        | 
-| DIVINITY_ESSENCES_[item]:[level]:[amount]             | DIVINITY_ES_[item]:[level]:[amount]        |        | 
-| DIVINITY_EXTRACTOR_[item]:[level]:[amount]            | DIVINITY_EX_[item]:[level]:[amount]        |        | 
-| DIVINITY_FORTIFY_[item]:[level]:[amount]              | DIVINITY_FO_[item]:[level]:[amount]        |        | 
-| DIVINITY_GEMS_[item]:[level]:[amount]                 | DIVINITY_GE_[item]:[level]:[amount]        |        | 
-| DIVINITY_IDENTIFY_[item]:[level]:[amount]             | DIVINITY_ID_[item]:[level]:[amount]        |        | 
-| DIVINITY_ITEMGENERATOR_[item]:[level]:[amount]:[type] | DIVINITY_IG_[item]:[level]:[amount]:[type] |        | 
-| DIVINITY_MAGICDUST_[item]:[level]:[amount]            | DIVINITY_MA_[item]:[level]:[amount]        |        | 
-| DIVINITY_RUNES_[item]:[level]:[amount]                | DIVINITY_RU_[item]:[level]:[amount]        |        |
+```
+DIVINITY_arrows:[item][~level:<level>][:<amount]
+DIVINITY_consumables:[item][~level:<level>][:<amount] 
+DIVINITY_custom_items:[item][:amount] 
+DIVINITY_dismantle:[item][~level:<level>][:<amount] 
+DIVINITY_essences:[item][~level:<level>][:<amount] 
+DIVINITY_extractor:[item][~level:<level>][:<amount] 
+DIVINITY_fortify:[item][~level:<level>][:<amount] 
+DIVINITY_gems:[item][~level:<level>][:<amount] 
+DIVINITY_identify:[item][~level:<level>][:<amount] 
+DIVINITY_item_generator:[item][~level:<level>][~material:<type>][:<amount] 
+DIVINITY_magic_dust:[item][~level:<level>][:<amount] 
+DIVINITY_runes:[item][~level:<level>][:<amount]
+```
 
 
 ### Key-Value Conditions + Supported Plugins
-| Condition Key       | Possible Condition Values     | Belong to (Hooks)                                                                                                  |
-|---------------------|-------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| professions         | Any profession of this plugin | Natively, Fusion                                                                                                   |
-| fabled              | Class-IDs of Fabled           | [Fabled](https://www.spigotmc.org/resources/fabled-an-rpg-engine-by-magemonkey-studio-formerly-proskillapi.91913/) |
-| mcmmo               | PrimarySkillTypes of mcMMO    | [mcMMO](https://www.spigotmc.org/resources/official-mcmmo-original-author-returns.64348/)                          |
-| jobs                | Levels of Jobs                | [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/)                                                 |
-| aura_abilities      | Abilities from AuraSkills     | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
-| aura_mana_abilities | Mana Abilities from AuraSkills| [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
-| aura_skills         | Skills from AuraSkills        | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
-| aura_stats          | Stats from AuraSkills         | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
+| Condition Key       | Possible Condition Values      | Belong to (Hooks)                                                                                                  |
+|---------------------|--------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| professions         | Any profession of this plugin  | Natively, Fusion                                                                                                   |
+| fabled              | Class-IDs of Fabled            | [Fabled](https://www.spigotmc.org/resources/fabled-an-rpg-engine-by-magemonkey-studio-formerly-proskillapi.91913/) |
+| mcmmo               | PrimarySkillTypes of mcMMO     | [mcMMO](https://www.spigotmc.org/resources/official-mcmmo-original-author-returns.64348/)                          |
+| jobs                | Levels of Jobs                 | [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/)                                                 |
+| aura_abilities      | Abilities from AuraSkills      | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
+| aura_mana_abilities | Mana Abilities from AuraSkills | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
+| aura_skills         | Skills from AuraSkills         | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
+| aura_stats          | Stats from AuraSkills          | [AuraSkills](https://www.spigotmc.org/resources/auraskills.81069/)                                                 |
