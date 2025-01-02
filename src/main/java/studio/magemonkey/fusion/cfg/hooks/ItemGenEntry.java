@@ -108,6 +108,4 @@ public class ItemGenEntry {
 
         return names;
     }
-
-
 }
