@@ -50,11 +50,10 @@ public class FusionPlayer {
     }
 
     public CraftingQueue getQueue(String profession, Category category) {
-        String path = profession + "." + category.getName();
-        if (!cachedQueues.containsKey(path)) {
-            cachedQueues.put(path, new CraftingQueue(getPlayer(), profession, category));
+        if (!cachedQueues.containsKey(profession)) {
+            cachedQueues.put(profession, new CraftingQueue(getPlayer(), profession, category));
         }
-        return cachedQueues.get(path);
+        return cachedQueues.get(profession);
     }
 
     public void cacheGui(String id, RecipeGui gui) {
