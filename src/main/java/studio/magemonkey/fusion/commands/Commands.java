@@ -347,11 +347,11 @@ public class Commands implements CommandExecutor, TabCompleter {
             if ("master".startsWith(args[0])) entries.add("master");
             if ("forget".startsWith(args[0])) entries.add("forget");
             if ("join".startsWith(args[0])) entries.add("join");
-            if (Fusion.getInstance().checkPermission(sender, "fusion.admin.use") && "storage".startsWith(args[0]))
+            if (sender.hasPermission("fusion.admin.use") && "storage".startsWith(args[0]))
                 entries.add("storage");
-            if (Fusion.getInstance().checkPermission(sender, "fusion.auto") && "auto".startsWith(args[0]))
+            if (sender.hasPermission("fusion.auto") && "auto".startsWith(args[0]))
                 entries.add("auto");
-            if (Fusion.getInstance().checkPermission(sender, "fusion.reload") && "reload".startsWith(args[0]))
+            if (sender.hasPermission("fusion.reload") && "reload".startsWith(args[0]))
                 entries.add("reload");
         } else if (args.length == 2) {
             List<Profession> professions =
@@ -377,13 +377,12 @@ public class Commands implements CommandExecutor, TabCompleter {
                         if (name.startsWith(args[1])) entries.add(name);
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("storage") && Fusion.getInstance()
-                    .checkPermission(sender, "fusion.admin")) {
+            } else if (args[0].equalsIgnoreCase("storage") && sender.hasPermission("fusion.admin")) {
                 if ("local".startsWith(args[1])) entries.add("local");
                 if ("sql".startsWith(args[1])) entries.add("sql");
             }
         } else if (args.length == 3) {
-            if (Fusion.getInstance().checkPermission(sender, "fusion.admin.use") && args[0].equalsIgnoreCase("use")) {
+            if (sender.hasPermission("fusion.admin.use") && args[0].equalsIgnoreCase("use")) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getName().startsWith(args[2])) entries.add(player.getName());
                 }
