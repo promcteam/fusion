@@ -57,7 +57,7 @@ public class CategoryGui implements Listener {
         this.categories.clear();
         this.resultSlots.clear();
         this.inventory = Bukkit.createInventory(null,
-                table.getPattern().getInventorySize(),
+                table.getCatPattern().getInventorySize(),
                 ChatUT.hexString(table.getInventoryName()));
         mapSlots();
         reloadCategories();
@@ -141,11 +141,11 @@ public class CategoryGui implements Listener {
         boolean includeBack = false;
 
         int                           k     = -1;
-        HashMap<Character, ItemStack> items = table.getPattern().getItems();
+        HashMap<Character, ItemStack> items = table.getCatPattern().getItems();
 
         ArrayList<Integer> leaveBlank = new ArrayList<>();
         ArrayList<Integer> fill       = new ArrayList<>();
-        for (String row : table.getPattern().getPattern()) {
+        for (String row : table.getCatPattern().getPattern()) {
             for (char c : row.toCharArray()) {
                 k++;
                 ItemStack item = ItemUtils.replaceText(items.get(c), data);
@@ -180,10 +180,10 @@ public class CategoryGui implements Listener {
 
     private void mapSlots() {
         this.resultSlots.clear();
-        this.slots = new Slot[table.getPattern().getPattern().length * 9];
+        this.slots = new Slot[table.getCatPattern().getPattern().length * 9];
         int k        = -1;
         int prevPage = -1, nextPage = -1;
-        for (String row : table.getPattern().getPattern()) {
+        for (String row : table.getCatPattern().getPattern()) {
             for (char c : row.toCharArray()) {
                 k++;
                 switch (c) {
@@ -258,7 +258,7 @@ public class CategoryGui implements Listener {
     }
 
     public void executeCommands(Character c, HumanEntity player) {
-        Collection<DelayedCommand> patternCommands = table.getPattern().getCommands(c);
+        Collection<DelayedCommand> patternCommands = table.getCatPattern().getCommands(c);
         if (patternCommands != null && !patternCommands.isEmpty()) {
             DelayedCommand.invoke(Fusion.getInstance(), player, patternCommands,
                     Replacer.replacer("{crafting}", table.getName()),
@@ -279,11 +279,11 @@ public class CategoryGui implements Listener {
             return;
         }
 
-        Character c = table.getPattern().getSlot(event.getRawSlot());
+        Character c = table.getCatPattern().getSlot(event.getRawSlot());
         executeCommands(c, event.getWhoClicked());
 
         //Close on click
-        if (table.getPattern().getCloseOnClickSlots().contains(c)) {
+        if (table.getCatPattern().getCloseOnClickSlots().contains(c)) {
             Bukkit.getScheduler().runTask(Fusion.getInstance(), () -> event.getWhoClicked().closeInventory());
         }
 
@@ -319,10 +319,10 @@ public class CategoryGui implements Listener {
         int    slot   = event.getSlot();
         if (slot < 0) return;
 
-        Character c = table.getPattern().getSlot(slot);
+        Character c = table.getCatPattern().getSlot(slot);
         executeCommands(c, event.getWhoClicked());
 
-        if (table.getPattern().getCloseOnClickSlots().contains(c)) {
+        if (table.getCatPattern().getCloseOnClickSlots().contains(c)) {
             Bukkit.getScheduler().runTask(Fusion.getInstance(), () -> event.getWhoClicked().closeInventory());
         }
 

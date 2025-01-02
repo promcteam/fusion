@@ -113,7 +113,6 @@ public class FusionQueuesSQL {
             select.setString(2, "%" + profession + "." + category.getName() + "%");
             try (ResultSet result = select.executeQuery()) {
                 while (result.next()) {
-                    Bukkit.getConsoleSender().sendMessage("Result: " + result.getString("RecipePath"));
                     entries.add(new QueueItem(
                             result.getInt("Id"),
                             profession,
@@ -139,7 +138,6 @@ public class FusionQueuesSQL {
             String profession = entry.getKey();
             for (Category category : entry.getValue().getCategories().values()) {
                 String path = profession + "." + category.getName();
-                Bukkit.getConsoleSender().sendMessage("Path: " + path);
                 if (entries.containsKey(path)) continue;
                 entries.putIfAbsent(path, new CraftingQueue(player, profession, category));
             }

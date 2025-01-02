@@ -63,7 +63,6 @@ public class RecipeShowBook {
 
         Book book = builder.build();
 
-        Bukkit.getConsoleSender().sendMessage("Opening book for " + player.getName());
         Fusion.getPlayerAudience(player).openBook(book);
         Fusion.getPlayerAudience(player).sendMessage(Component.text("Opened book"));
     }

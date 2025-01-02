@@ -97,9 +97,12 @@ public class RecipeGui implements Listener {
         this.name = table.getName();
         this.inventoryName = ChatUT.hexString(table.getInventoryName());
         this.recipes = new HashMap<>(20);
-        this.category = category != null ? category : new Category("master", "PAPER", table.getPattern(), 1);
+        this.category = category != null ? category : new Category("master", "PAPER", this.table.getPattern(), 1);
+        if(this.category.getPattern() == null)
+            this.category.setPattern(table.getPattern());
+
         if (this.category.getName().equals("master")) {
-            this.category.getRecipes().addAll(table.getRecipes().values());
+            this.category.getRecipes().addAll(this.table.getRecipes().values());
         }
         setPattern();
         if (Cfg.craftingQueue && pattern != null) {
@@ -444,14 +447,12 @@ public class RecipeGui implements Listener {
     }
 
     public void setPattern() {
-        this.pattern = this.category.getPattern();
-        if (this.pattern == null)
-            this.pattern = table.getPattern();
+        this.pattern = category.getPattern();
         mapSlots();
     }
 
     public void resetPattern() {
-        this.pattern = table.getPattern();
+        this.pattern = category.getPattern();
         mapSlots();
     }
 

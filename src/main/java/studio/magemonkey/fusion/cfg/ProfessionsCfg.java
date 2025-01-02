@@ -102,7 +102,7 @@ public class ProfessionsCfg {
             if (file.getName().endsWith(".yml")) {
                 FileConfiguration cfg = new YamlConfiguration();
                 try {
-                    Bukkit.getConsoleSender().sendMessage("loading " + file.getName());
+                    Bukkit.getConsoleSender().sendMessage("Loading " + file.getName());
                     cfg.load(file);
                     addDefs(cfg);
 

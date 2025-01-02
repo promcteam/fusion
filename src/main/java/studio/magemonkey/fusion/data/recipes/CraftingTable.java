@@ -84,7 +84,7 @@ public class CraftingTable implements ConfigurationSerializable {
         this.inventoryName = inventoryName;
         this.iconItem = iconItem;
         this.pattern = pattern;
-        this.catPattern = null;
+        this.catPattern = pattern;
         this.recipes = new LinkedHashMap<>(5);
         this.fillItem = fillItem;
         this.masteryUnlock = masteryUnlock;
@@ -104,7 +104,7 @@ public class CraftingTable implements ConfigurationSerializable {
         this.catPattern =
                 dw.getSection("categoryPattern") != null && dw.getSection("categoryPattern").containsKey("pattern")
                         ? new InventoryPattern(dw.getSection("categoryPattern"))
-                        : null;
+                        : pattern;
         this.masteryUnlock = dw.getInt("masteryUnlock");
         this.masteryFee = dw.getInt("masteryFee");
         this.useCategories = dw.getBoolean("useCategories", true);
@@ -122,7 +122,7 @@ public class CraftingTable implements ConfigurationSerializable {
                 .filter(c -> c.getIconItem() != null)
                 .forEach(c -> {
                     if (c.getPattern() == null)
-                        c.setPattern(catPattern);
+                        c.setPattern(pattern);
                     categories.put(c.getName(), c);
                 });
 
