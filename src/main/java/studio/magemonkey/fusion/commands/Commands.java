@@ -22,6 +22,7 @@ import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
+import studio.magemonkey.fusion.gui.RecipeShowBook;
 import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
@@ -250,6 +251,15 @@ public class Commands implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 BrowseGUI.open(player);
+                return true;
+            } else if(args[0].equalsIgnoreCase("show")) {
+                if (!(sender instanceof Player player)) {
+                    CodexEngine.get()
+                            .getMessageUtil()
+                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
+                    return true;
+                }
+                RecipeShowBook.showIngredientUsage(player);
                 return true;
             } else if (args[0].equalsIgnoreCase("level")) {
                 if (!(sender instanceof Player)) {

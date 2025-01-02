@@ -1,6 +1,9 @@
 package studio.magemonkey.fusion;
 
 import lombok.Getter;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -61,6 +64,9 @@ public class Fusion extends RisePlugin implements Listener {
     @Getter
     private static HookManager hookManager;
 
+    @Getter
+    private static BukkitAudiences audiences;
+
     @Override
     public void reloadConfig() {
         super.reloadConfig();
@@ -118,6 +124,7 @@ public class Fusion extends RisePlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
+        audiences = BukkitAudiences.create(this);
         this.reloadConfig();
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             Fusion.getInstance().getLogger().info("Attempting to migrate data into SQL [ExperienceManager].");
@@ -202,5 +209,9 @@ public class Fusion extends RisePlugin implements Listener {
 
     public static void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, Fusion.getInstance());
+    }
+
+    public static Audience getPlayerAudience(Player player) {
+        return audiences.sender(player);
     }
 }
