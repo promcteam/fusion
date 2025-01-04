@@ -22,7 +22,7 @@ import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
-import studio.magemonkey.fusion.gui.RecipeShowBook;
+import studio.magemonkey.fusion.gui.IngredientUsage;
 import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
@@ -259,7 +259,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                             .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
                     return true;
                 }
-                RecipeShowBook.showIngredientUsage(player);
+                IngredientUsage.showIngredientUsage(player);
                 return true;
             } else if (args[0].equalsIgnoreCase("level")) {
                 if (!(sender instanceof Player)) {
@@ -353,6 +353,8 @@ public class Commands implements CommandExecutor, TabCompleter {
                 entries.add("auto");
             if (sender.hasPermission("fusion.reload") && "reload".startsWith(args[0]))
                 entries.add("reload");
+            if(sender.hasPermission("fusion.show") && "show".startsWith(args[0]))
+                entries.add("show");
         } else if (args.length == 2) {
             List<Profession> professions =
                     new ArrayList<>(PlayerLoader.getPlayer(((Player) sender).getUniqueId()).getProfessions());

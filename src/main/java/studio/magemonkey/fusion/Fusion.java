@@ -1,8 +1,6 @@
 package studio.magemonkey.fusion;
 
 import lombok.Getter;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,10 +17,7 @@ import studio.magemonkey.codex.legacy.placeholder.PlaceholderRegistry;
 import studio.magemonkey.codex.legacy.placeholder.PlaceholderType;
 import studio.magemonkey.codex.util.ItemUtils;
 import studio.magemonkey.fusion.api.FusionAPI;
-import studio.magemonkey.fusion.cfg.BrowseConfig;
-import studio.magemonkey.fusion.cfg.Cfg;
-import studio.magemonkey.fusion.cfg.CraftingRequirementsCfg;
-import studio.magemonkey.fusion.cfg.ProfessionsCfg;
+import studio.magemonkey.fusion.cfg.*;
 import studio.magemonkey.fusion.cfg.editors.EditorRegistry;
 import studio.magemonkey.fusion.cfg.hooks.HookManager;
 import studio.magemonkey.fusion.cfg.hooks.HookType;
@@ -34,6 +29,7 @@ import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.recipes.*;
 import studio.magemonkey.fusion.deprecated.PConfigManager;
 import studio.magemonkey.fusion.gui.BrowseGUI;
+import studio.magemonkey.fusion.gui.show.ShowRecipesGui;
 import studio.magemonkey.fusion.util.ExperienceManager;
 import studio.magemonkey.fusion.util.LevelFunction;
 
@@ -83,6 +79,7 @@ public class Fusion extends RisePlugin implements Listener {
             EditorRegistry.reload();
             SQLManager.init();
             BrowseConfig.load();
+            ShowRecipesCfg.load();
             DivinityService.init();
         });
     }
@@ -124,7 +121,6 @@ public class Fusion extends RisePlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        audiences = BukkitAudiences.create(this);
         this.reloadConfig();
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             Fusion.getInstance().getLogger().info("Attempting to migrate data into SQL [ExperienceManager].");
@@ -209,9 +205,5 @@ public class Fusion extends RisePlugin implements Listener {
 
     public static void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, Fusion.getInstance());
-    }
-
-    public static Audience getPlayerAudience(Player player) {
-        return audiences.sender(player);
     }
 }

@@ -3,6 +3,7 @@ package studio.magemonkey.fusion.util;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import studio.magemonkey.codex.legacy.item.ItemBuilder;
+import studio.magemonkey.fusion.data.recipes.RecipeItem;
 
 public final class Utils {
 

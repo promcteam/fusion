@@ -3,6 +3,9 @@ package studio.magemonkey.fusion.gui;
 import lombok.Getter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import studio.magemonkey.codex.CodexEngine;
+import studio.magemonkey.codex.util.messages.MessageData;
+import studio.magemonkey.codex.util.messages.MessageUtil;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
@@ -31,6 +34,21 @@ public class ProfessionGuiRegistry {
                     new RecipeGui(player, table, new Category("master", "PAPER", table.getPattern(), 1)));
             recipeGuis.get(player.getUniqueId()).open(player);
         }
+    }
+
+    public void open(Player player, Category category) {
+        CraftingTable table = ProfessionsCfg.getTable(profession);
+        if (table.getUseCategories() && !table.getCategories().isEmpty()) {
+            if(table.getCategories().containsKey(category.getName())) {
+                categoryGuis.put(player.getUniqueId(), new CategoryGui(player, table));
+                categoryGuis.get(player.getUniqueId()).open(player, category);
+            } else {
+                CodexEngine.get().getMessageUtil().sendMessage("fusion.error.categoryNotAvailable", player, new MessageData("sender", player.getPlayer()));
+            }
+        } else {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noCategories", player, new MessageData("sender", player.getPlayer()));
+        }
+
     }
 
     public void closeAll() {

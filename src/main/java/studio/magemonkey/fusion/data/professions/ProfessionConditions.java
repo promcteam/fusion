@@ -220,7 +220,6 @@ public class ProfessionConditions implements ConfigurationSerializable {
 
             conditions = (Map<String, Object>) conditionsSection.get("mcmmo");
             if (Fusion.getHookManager().isHooked(HookType.mcMMO) && conditions != null) {
-                Bukkit.getConsoleSender().sendMessage("Found mcMMO conditions: " + conditions);
                 for (Map.Entry<String, Object> entry : conditions.entrySet()) {
                     mcMMOConditions.put(entry.getKey(), (int) entry.getValue());
                 }
