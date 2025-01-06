@@ -5,7 +5,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.util.messages.MessageData;
-import studio.magemonkey.codex.util.messages.MessageUtil;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
@@ -31,7 +30,7 @@ public class ProfessionGuiRegistry {
             categoryGuis.get(player.getUniqueId()).open(player);
         } else {
             recipeGuis.put(player.getUniqueId(),
-                    new RecipeGui(player, table, new Category("master", "PAPER", table.getPattern(), 1)));
+                    new RecipeGui(player, table, new Category("master", "PAPER", table.getRecipePattern(), 1)));
             recipeGuis.get(player.getUniqueId()).open(player);
         }
     }

@@ -36,16 +36,16 @@ public class PatternEditor extends Editor implements Listener {
         super(parentEditor,
                 EditorRegistry.getPatternEditorCfg().getTitle(isCategoryPattern ? "Category" : "Master"),
                 (isCategoryPattern && table.getCatPattern() != null) ? table.getCatPattern().getInventorySize()
-                        : table.getPattern().getInventorySize());
+                        : table.getRecipePattern().getInventorySize());
         this.player = player;
         this.table = table;
         this.isCategoryPattern = isCategoryPattern;
         this.browseEditor = null;
 
         setIcons(EditorRegistry.getPatternEditorCfg().getIcons(table));
-        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getPattern();
+        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getRecipePattern();
         if (isCategoryPattern && this.pattern == null) {
-            table.setCatPattern(InventoryPattern.copy(table.getPattern()));
+            table.setCatPattern(InventoryPattern.copy(table.getRecipePattern()));
             this.pattern = table.getCatPattern();
             CodexEngine.get().getMessageUtil().sendMessage("editor.defaultCategoryPattern", player);
         }

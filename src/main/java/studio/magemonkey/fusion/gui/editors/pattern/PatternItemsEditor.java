@@ -49,10 +49,10 @@ public class PatternItemsEditor extends Editor implements Listener {
         this.browseEditor = null;
 
         setIcons(EditorRegistry.getPatternItemEditorCfg().getIcons(table));
-        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getPattern();
+        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getRecipePattern();
         if (this.pattern == null) {
             // TODO Translation
-            table.setCatPattern(InventoryPattern.copy(table.getPattern()));
+            table.setCatPattern(InventoryPattern.copy(table.getRecipePattern()));
             this.pattern = table.getCatPattern();
             player.sendMessage("§cNo category pattern found. Using default pattern as reference.");
         }

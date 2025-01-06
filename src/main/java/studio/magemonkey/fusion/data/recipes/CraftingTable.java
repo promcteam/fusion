@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class CraftingTable implements ConfigurationSerializable {
     private String                          name;
     private String                          inventoryName;
-    private InventoryPattern                pattern;
+    private InventoryPattern recipePattern;
     private InventoryPattern                catPattern;
     private ItemStack                       fillItem;
     private Map<String, Recipe>             recipes;
@@ -54,7 +54,7 @@ public class CraftingTable implements ConfigurationSerializable {
     public CraftingTable(String name,
                          String inventoryName,
                          ItemType iconItem,
-                         InventoryPattern pattern,
+                         InventoryPattern recipePattern,
                          InventoryPattern catPattern,
                          boolean useCategories,
                          ItemStack fillItem,
@@ -65,7 +65,7 @@ public class CraftingTable implements ConfigurationSerializable {
         this.name = name;
         this.inventoryName = inventoryName;
         this.iconItem = iconItem;
-        this.pattern = pattern;
+        this.recipePattern = recipePattern;
         this.catPattern = catPattern;
         this.useCategories = useCategories;
         this.recipes = recipes;
@@ -78,15 +78,15 @@ public class CraftingTable implements ConfigurationSerializable {
     public CraftingTable(String name,
                          String inventoryName,
                          ItemType iconItem,
-                         InventoryPattern pattern,
+                         InventoryPattern recipePattern,
                          ItemStack fillItem,
                          int masteryUnlock,
                          int masteryFee) {
         this.name = name;
         this.inventoryName = inventoryName;
         this.iconItem = iconItem;
-        this.pattern = pattern;
-        this.catPattern = pattern;
+        this.recipePattern = recipePattern;
+        this.catPattern = recipePattern;
         this.recipes = new LinkedHashMap<>(5);
         this.fillItem = fillItem;
         this.masteryUnlock = masteryUnlock;
@@ -102,11 +102,11 @@ public class CraftingTable implements ConfigurationSerializable {
         DeserializationWorker dw = DeserializationWorker.start(map);
         this.name = dw.getString("name");
         this.inventoryName = dw.getString("inventoryName");
-        this.pattern = new InventoryPattern(dw.getSection("pattern"));
+        this.recipePattern = new InventoryPattern(dw.getSection("recipePattern"));
         this.catPattern =
                 dw.getSection("categoryPattern") != null && dw.getSection("categoryPattern").containsKey("pattern")
                         ? new InventoryPattern(dw.getSection("categoryPattern"))
-                        : pattern;
+                        : recipePattern;
         this.masteryUnlock = dw.getInt("masteryUnlock");
         this.masteryFee = dw.getInt("masteryFee");
         this.maxLevel = dw.getInt("maxLevel", -1);
@@ -114,8 +114,8 @@ public class CraftingTable implements ConfigurationSerializable {
         this.iconItem = CodexEngine.get()
                 .getItemManager()
                 .getItemType(dw.getString("icon"));
-        if (dw.getSection("pattern.items.fillItem") != null)
-            this.fillItem = new ItemBuilder(dw.getSection("pattern.items.fillItem")).build();
+        if (dw.getSection("recipePattern.items.fillItem") != null)
+            this.fillItem = new ItemBuilder(dw.getSection("recipePattern.items.fillItem")).build();
         else
 //            this.fillItem = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
             this.fillItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -125,7 +125,7 @@ public class CraftingTable implements ConfigurationSerializable {
                 .filter(c -> c.getIconItem() != null)
                 .forEach(c -> {
                     if (c.getPattern() == null)
-                        c.setPattern(pattern);
+                        c.setPattern(recipePattern);
                     categories.put(c.getName(), c);
                 });
 
@@ -351,7 +351,7 @@ public class CraftingTable implements ConfigurationSerializable {
         return SerializationBuilder.start(4)
                 .append("name", this.name)
                 .append("icon", this.iconItem.getNamespacedID())
-                .append("pattern", this.pattern.serialize())
+                .append("recipePattern", this.recipePattern.serialize())
                 .append("categoryPattern", this.catPattern != null ? this.catPattern.serialize() : null)
                 .append("inventoryName", this.inventoryName)
                 .append("masteryUnlock", this.masteryUnlock)
@@ -368,11 +368,11 @@ public class CraftingTable implements ConfigurationSerializable {
         File                file   = ProfessionsCfg.getFiles().get(this.name);
         Map<String, Object> map    = this.serialize();
 
-        Map<String, Object> patterntemsMap    = (Map<String, Object>) map.get("pattern");
+        Map<String, Object> recipePatterntemsMap    = (Map<String, Object>) map.get("recipePattern");
         Map<String, Object> catPatterntemsMap = (Map<String, Object>) map.get("categoryPattern");
-        patterntemsMap.remove("f");
-        patterntemsMap.remove("q");
-        patterntemsMap.remove("o");
+        recipePatterntemsMap.remove("f");
+        recipePatterntemsMap.remove("q");
+        recipePatterntemsMap.remove("o");
         if (this.catPattern != null) {
             catPatterntemsMap.remove("f");
             catPatterntemsMap.remove("q");
@@ -381,7 +381,7 @@ public class CraftingTable implements ConfigurationSerializable {
         config.set("name", map.get("name"));
         config.set("inventoryName", map.get("inventoryName"));
         config.set("icon", map.get("icon"));
-        config.set("pattern", patterntemsMap);
+        config.set("recipePattern", recipePatterntemsMap);
         config.set("categoryPattern", catPatterntemsMap);
         config.set("masteryUnlock", map.get("masteryUnlock"));
         config.set("masteryFee", map.get("masteryFee"));
@@ -411,7 +411,7 @@ public class CraftingTable implements ConfigurationSerializable {
         return new CraftingTable(source.getName(),
                 source.getInventoryName(),
                 source.getIconItem(),
-                InventoryPattern.copy(source.getPattern()),
+                InventoryPattern.copy(source.getRecipePattern()),
                 InventoryPattern.copy(source.getCatPattern()),
                 source.getUseCategories(),
                 source.getFillItem(),
