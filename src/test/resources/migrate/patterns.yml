@@ -1,0 +1,264 @@
+version: 1.1
+pattern:
+  pattern:
+    - '111111111'
+    - 11ooooo11
+    - 11ooooo11
+    - 11ooooo11
+    - '111111111'
+    - <1{---}1>
+  items:
+    fillItem:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: ' '
+      lore: []
+      flags: []
+      enchants: {}
+    <:
+      material: GREEN_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §ePrev recipes page.
+      lore: []
+      flags: []
+      enchants: {}
+    '>':
+      material: GREEN_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §eNext recipes page.
+      lore: []
+      flags: []
+      enchants: {}
+    '{':
+      material: LIME_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: Previous queued items
+      lore: []
+      flags: []
+      enchants: {}
+    '}':
+      material: LIME_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: Next queued items
+      lore: []
+      flags: []
+      enchants: {}
+    '0':
+      material: OAK_SIGN
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: '§6Weapon Smithing: §cLevel $<level>'
+      lore:
+        - ' §7The recipes above can be crafted'
+        - ' §7with the weapon smithing profession.'
+        - §8--------------------
+        - ' §7You need level §a40 weapon smithing'
+        - ' §a& $500 to unlock its §7mastery.'
+        - ' §7A mastery allows to craft new items.'
+      flags: []
+      enchants: {}
+    '1':
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: ' '
+      lore: []
+      flags: []
+      enchants: {}
+    '2':
+      material: GRAY_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §6Example Slot
+      lore:
+        - ' §7Personalize your crafting menu'
+        - ' §7with slots like this one.'
+      flags: []
+      enchants: {}
+    '3':
+      material: PAPER
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §6Enable Autocraft
+      lore:
+        - ' §7Turn on autocrafting. Epic and '
+        - ' §7above can toggle autocrafting!'
+        - §8--------------------
+        - ' §aLeft click to toggle auto crafting.'
+        - §4Keep in mind!
+        - ' §7Autocrafting can only be used when'
+        - '§7craftingQueue: §afalse §7in §7config.yml§7'
+      flags: []
+      enchants: {}
+    queue-items:
+      '-':
+        material: GRAY_STAINED_GLASS_PANE
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: §cQueue Slot
+        lore:
+          - §7This slot is empty.
+        flags: []
+        enchants: {}
+      Unfinished:
+        material: '%material%'
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: '&cQueue Slot'
+        lore:
+          - '&7&oThis item is in the crafting queue'
+          - ' '
+          - '&7Time left: &c%time%'
+          - ' '
+          - '&eClick to cancel'
+        flags: []
+        enchants: {}
+      Finished:
+        material: '%material%'
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: '&cQueue Slot'
+        lore:
+          - '&7&oThis item is in the crafting queue'
+          - ' '
+          - '&7The item is &afinished&7!'
+          - ' '
+          - '&eClick to obtain'
+        flags: []
+        enchants: {}
+  commands:
+    '-': []
+    '3':
+      - delay: 0
+        as: PLAYER
+        cmd: craft auto
+    o: []
+
+categoryPattern:
+  pattern:
+    - '111111111'
+    - 11o1o1o11
+    - '111111111'
+  items:
+    <:
+      material: RED_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: '&eVorherige Rezeptseite'
+      lore: []
+      flags: []
+      enchants: {}
+    '>':
+      material: LIME_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: '&eNächste Rezeptseite'
+      lore: []
+      flags: []
+      enchants: {}
+    '{':
+      material: LIME_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: Previous queued items
+      lore: []
+      flags: []
+      enchants: {}
+    '}':
+      material: LIME_DYE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: Next queued items
+      lore: []
+      flags: []
+      enchants: {}
+    queue-items:
+      '-':
+        material: WHITE_STAINED_GLASS_PANE
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: '&cWarteschlange'
+        lore:
+          - '&7Dieser Slot ist leer.'
+        flags: []
+        enchants: {}
+      Unfinished:
+        material: '%material%'
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: '&cWarteschlange'
+        lore:
+          - '&7Verbleibende Zeit: &c%time%'
+          - ' '
+          - '&eKlicke zum Abbrechen'
+        flags: []
+        enchants: {}
+      Finished:
+        material: '%material%'
+        amount: 1
+        durability: 0
+        unbreakable: false
+        name: '&cWarteschlange'
+        lore:
+          - '&7Das Rezept ist &aabgeschlossen&7!'
+          - ' '
+          - '&eLinksklick zum Erhalten'
+          - '&eRechtsklick um alle zu Erhalten'
+        flags: []
+        enchants: {}
+    fillItem:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: ' '
+      lore: []
+      flags: []
+      enchants: {}
+  commands: {}
+
+recipes:
+  - name: commonheavybattleaxet1
+    category: Common Heavy Weaponsmithing
+    craftingTime: 300
+    hiding:
+      noPermission: true
+      craftingLimitReached: false
+    results:
+      item: DIVINITY_ITEMGENERATOR_commonheavybattleaxe:1:1:IRON_AXE
+      professionExp: 5
+      commands:
+        - delay: 0
+          as: CONSOLE
+          cmd: itemgenerator give {player} commonheavybattleaxe 1 1
+    conditions:
+      professionLevel: 1
+      mastery: false
+    costs:
+      money: 150.0
+      items:
+        - DIVINITY_CUSTOMITEMS_ironingot:5
+        - DIVINITY_CUSTOMITEMS_longpole:1

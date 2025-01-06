@@ -1,18 +1,27 @@
 package studio.magemonkey.fusion.data;
 
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.api.items.PrefixHelper;
 import studio.magemonkey.fusion.Fusion;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class ProfessionMigration {
     // Update this when there are new migrations available
-    private static final String                                         VERSION    = "1.1";
+    private static final String                                         VERSION    = "1.2";
     private static final Map<String, Function<FileConfiguration, Void>> migrations = new HashMap<>();
 
     private static boolean compareVersions(String version, String compareTo) {
@@ -97,6 +106,28 @@ public class ProfessionMigration {
 
             return null;
         });
+
+        migrations.put("1.2", (config) -> {
+            // The `pattern` key in the config is now called `recipePattern`
+            replaceSectionInConfig(config, "pattern", "recipePattern");
+
+            // TODO add settings section to the config
+            List<Map<?, ?>> recipes = config.getMapList("recipes");
+            for (Map<?, ?> recipe : recipes) {
+                Map<String, Object> settings = new LinkedHashMap<>();
+
+                // Hiding settings
+                settings.put("enableItemLore", true);
+                Map<String, Object> hiding = (Map<String, Object>) recipe.get("hiding");
+                if (hiding != null) {
+                    settings.put("hiding", hiding);
+                }
+                recipe.remove("hiding");
+
+                ((Map<String, Object>) recipe).put("settings", settings);
+            }
+            return null;
+        });
     }
 
     static String convertLegacyDivinityFormat(String oldItem) {
@@ -172,5 +203,20 @@ public class ProfessionMigration {
             case "runes", "ru" -> "runes";
             default -> null;
         };
+    }
+
+    // Replace the current section at the same position where the old one was before
+    public static void replaceSectionInConfig(FileConfiguration config, String oldSection, String newSection) {
+        String yamlContent = config.saveToString();
+
+        // Replace the section name while preserving the content
+        String regex = "(?m)^" + oldSection + ":";
+        yamlContent = yamlContent.replaceAll(regex, newSection + ":");
+
+        FileConfiguration modifiedConfig = YamlConfiguration.loadConfiguration(new java.io.StringReader(yamlContent));
+
+        // Clear and update the original config with modified content
+        config.getKeys(false).forEach(key -> config.set(key, null));
+        modifiedConfig.getKeys(false).forEach(key -> config.set(key, modifiedConfig.get(key)));
     }
 }
