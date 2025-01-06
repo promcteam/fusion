@@ -22,8 +22,8 @@ import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.BrowseGUI;
-import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
 import studio.magemonkey.fusion.gui.IngredientUsage;
+import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
 import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
@@ -50,8 +50,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 
                 ProfessionGuiRegistry eq = ProfessionsCfg.getGuiMap().get(profession);
 
-                if(professionArgs.length == 2) {
+                if (professionArgs.length == 2 && Fusion.getInstance().checkPermission(sender, "fusion.craft.use.categories")) {
                     category = ProfessionsCfg.getTable(profession).getCategory(professionArgs[1]);
+                } else if (professionArgs.length == 2) {
+                    CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noPermission", sender);
+                    return true;
                 }
 
                 if (eq == null) {
@@ -116,8 +119,8 @@ public class Commands implements CommandExecutor, TabCompleter {
                 }
             } else if (args[0].equalsIgnoreCase("master")) {
                 if (sender instanceof Player player) {
-                    String        guiName = args[1];
-                    CraftingTable table   = ProfessionsCfg.getTable(guiName);
+                    String guiName = args[1];
+                    CraftingTable table = ProfessionsCfg.getTable(guiName);
                     if (table == null) {
                         CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
                                 sender,
@@ -261,14 +264,14 @@ public class Commands implements CommandExecutor, TabCompleter {
                 }
                 BrowseGUI.open(player);
                 return true;
-            } else if(args[0].equalsIgnoreCase("show")) {
+            } else if (args[0].equalsIgnoreCase("show")) {
                 if (!(sender instanceof Player player)) {
                     CodexEngine.get()
                             .getMessageUtil()
                             .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
                     return true;
                 }
-                if(Fusion.getInstance().checkPermission(sender, "fusion.show")) {
+                if (Fusion.getInstance().checkPermission(sender, "fusion.show")) {
                     IngredientUsage.showIngredientUsage(player);
                 }
                 return true;
@@ -364,7 +367,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                 entries.add("auto");
             if (sender.hasPermission("fusion.reload") && "reload".startsWith(args[0]))
                 entries.add("reload");
-            if(sender.hasPermission("fusion.show") && "show".startsWith(args[0]))
+            if (sender.hasPermission("fusion.show") && "show".startsWith(args[0]))
                 entries.add("show");
         } else if (args.length == 2) {
             List<Profession> professions =
@@ -372,6 +375,16 @@ public class Commands implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("use")) {
                 for (String name : professions.stream().map(Profession::getName).toList()) {
                     if (name.startsWith(args[1])) entries.add(name);
+
+                }
+                if (sender.hasPermission("fusion.craft.use.categories") && args[1].contains(":")) {
+                    String profession = args[1].split(":")[0];
+                    if (ProfessionsCfg.getGuiMap().containsKey(profession)) {
+                        for (String category : ProfessionsCfg.getTable(profession).getCategories().keySet()) {
+                            if ((profession + ":" + category).startsWith(args[1]))
+                                entries.add((profession + ":" + category));
+                        }
+                    }
                 }
             } else if (args[0].equalsIgnoreCase("master")) {
                 for (String name : professions.stream()
@@ -410,7 +423,7 @@ public class Commands implements CommandExecutor, TabCompleter {
     }
 
     private void openGui(Player player, ProfessionGuiRegistry registry, Category category) {
-        if(category == null) {
+        if (category == null) {
             registry.open(player);
         } else {
             registry.open(player, category);

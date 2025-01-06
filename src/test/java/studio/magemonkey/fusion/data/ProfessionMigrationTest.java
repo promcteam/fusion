@@ -63,7 +63,6 @@ class ProfessionMigrationTest {
         ProfessionMigration.migrate(config);
 
         String configString = config.saveToString();
-        System.out.println(configString);
         assertTrue(configString.contains("version: '1.2'"));
         assertTrue(configString.contains("recipePattern"));
         assertTrue(configString.contains("categoryPattern"));
