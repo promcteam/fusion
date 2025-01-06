@@ -1,6 +1,7 @@
 package studio.magemonkey.fusion.data.professions.pattern;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -19,7 +20,8 @@ public class InventoryPattern implements ConfigurationSerializable {
     @Getter
     private final String[]                                 pattern; // - for ingredients, = for result.
     @Getter
-    private final HashMap<Character, ItemStack>            items;
+    @Setter
+    private HashMap<Character, ItemStack>            items;
     private final HashMap<Character, List<DelayedCommand>> commands          = new HashMap<>();
     @Getter
     private final List<Character>                          closeOnClickSlots = new ArrayList<>();

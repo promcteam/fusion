@@ -408,7 +408,7 @@ public class ProfessionsCfg {
 
     public static ItemStack getQueueSlot(String key) {
         FileConfiguration cfg = cfgs.get(key);
-        if (!cfg.isSet("pattern.items.queue-items.-")) {
+        if (!cfg.isSet("recipePattern.items.queue-items.-")) {
             Fusion.getInstance()
                     .getLogger()
                     .warning("Profession '" + key + "' does not have a queue slot. Using default.");
@@ -418,10 +418,10 @@ public class ProfessionsCfg {
                     .build();
         }
         Material material =
-                Material.getMaterial(cfg.getString("pattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE"));
+                Material.getMaterial(cfg.getString("recipePattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE"));
         return ItemBuilder.newItem(material)
-                .name(cfg.getString("pattern.items.queue-items.-.name", "&cQueue Slot"))
-                .lore(cfg.getStringList("pattern.items.queue-items.-.lore"))
+                .name(cfg.getString("recipePattern.items.queue-items.-.name", "&cQueue Slot"))
+                .lore(cfg.getStringList("recipePattern.items.queue-items.-.lore"))
                 .build();
     }
 
@@ -430,7 +430,7 @@ public class ProfessionsCfg {
         //System.out.println("Fetching queued item for " + key + " with item " + item.getRecipe().getResult().getItemStack().getType());
         FileConfiguration cfg = cfgs.get(key);
         String path =
-                item.isDone() ? "pattern.items.queue-items.Finished" : "pattern.items.queue-items.Unfinished";
+                item.isDone() ? "recipePattern.items.queue-items.Finished" : "recipePattern.items.queue-items.Unfinished";
 
 
         if (!cfg.isSet(path)) {

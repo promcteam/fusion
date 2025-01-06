@@ -178,7 +178,6 @@ public class RecipeGui implements Listener {
 
         int                           k     = -1;
         HashMap<Character, ItemStack> items = pattern.getItems();
-        Bukkit.getConsoleSender().sendMessage("Items: " + items);
 
         ArrayList<Integer> leaveBlank = new ArrayList<>();
         ArrayList<Integer> fill       = new ArrayList<>();
@@ -449,10 +448,8 @@ public class RecipeGui implements Listener {
 
     public void setPattern() {
         this.pattern = category.getPattern();
-        if(this.pattern.getItems().isEmpty()) {
-            for(Map.Entry<Character, ItemStack> entry : table.getRecipePattern().getItems().entrySet()) {
-                this.pattern.getItems().put(entry.getKey(), entry.getValue());
-            }
+        if(!pattern.getItems().containsKey('<') || pattern.getItems().containsKey('>') || pattern.getItems().containsKey('{') || pattern.getItems().containsKey('}')) {
+            this.pattern.setItems(table.getRecipePattern().getItems());
         }
         mapSlots();
     }
