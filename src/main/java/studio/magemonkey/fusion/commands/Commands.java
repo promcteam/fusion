@@ -19,6 +19,7 @@ import studio.magemonkey.fusion.cfg.sql.DatabaseType;
 import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.professions.Profession;
+import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
@@ -43,8 +44,16 @@ public class Commands implements CommandExecutor, TabCompleter {
                 if (!Utils.hasCraftingUsePermission(sender, null)) {
                     return true;
                 }
+                String[] professionArgs = args[1].split(":");
+                String profession = professionArgs[0];
+                Category category = null;
 
-                ProfessionGuiRegistry eq = ProfessionsCfg.getGuiMap().get(args[1]);
+                ProfessionGuiRegistry eq = ProfessionsCfg.getGuiMap().get(profession);
+
+                if(professionArgs.length == 2) {
+                    category = ProfessionsCfg.getTable(profession).getCategory(professionArgs[1]);
+                }
+
                 if (eq == null) {
                     CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
                             sender,
@@ -67,7 +76,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 
                     //TODO ?? Make sure they have unlocked this crafting menu
 
-                    eq.open(target);
+                    openGui(target, eq, category);
                     CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirmOther",
                             sender,
                             new MessageData("craftingInventory", eq),
@@ -82,7 +91,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                         //Make sure they have unlocked this crafting menu
                         if (!PlayerLoader.getPlayer(player).hasProfession(eq.getProfession())) {
                             if (player.isOp()) {
-                                eq.open(player);
+                                openGui(player, eq, category);
                                 CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirm",
                                         sender,
                                         new MessageData("craftingInventory", eq),
@@ -92,7 +101,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                             CodexEngine.get().getMessageUtil().sendMessage("fusion.error.notUnlocked", sender);
                             return true;
                         }
-                        eq.open((Player) sender);
+                        openGui(player, eq, category);
                         CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirm",
                                 sender,
                                 new MessageData("craftingInventory", eq),
@@ -398,5 +407,13 @@ public class Commands implements CommandExecutor, TabCompleter {
 
     public interface ConfirmationAction {
         void doAction();
+    }
+
+    private void openGui(Player player, ProfessionGuiRegistry registry, Category category) {
+        if(category == null) {
+            registry.open(player);
+        } else {
+            registry.open(player, category);
+        }
     }
 }
