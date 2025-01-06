@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import studio.magemonkey.fusion.Fusion;
 
-import java.io.Console;
 import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.logging.Logger;

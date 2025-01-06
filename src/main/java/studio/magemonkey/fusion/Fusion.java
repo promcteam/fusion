@@ -29,7 +29,6 @@ import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.recipes.*;
 import studio.magemonkey.fusion.deprecated.PConfigManager;
 import studio.magemonkey.fusion.gui.BrowseGUI;
-import studio.magemonkey.fusion.gui.show.ShowRecipesGui;
 import studio.magemonkey.fusion.util.ExperienceManager;
 import studio.magemonkey.fusion.util.LevelFunction;
 
