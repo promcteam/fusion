@@ -113,7 +113,7 @@ public class PatternItemEditor extends Editor implements Listener {
             }
             case 13 -> FusionEditorCommand.suggestUsage(player,
                     EditorCriteria.Pattern_Edit_Pattern,
-                    "/fusion-editor " + builder.getMaterial().name() + " " + builder.getAmount());
+                    "/fusion-editor " + builder.getMaterial().getNamespacedID() + " " + builder.getAmount());
             case 15 -> {
                 if (!builder.getEnchants().isEmpty()) {
                     builder.clearEnchants();

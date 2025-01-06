@@ -66,6 +66,22 @@ icons:
       - '&aShift click &7each to increase by 10.'
     flags: []
     enchants: {}
+  maxLevel:
+    material: NETHER_STAR
+    amount: 1
+    durability: 0
+    unbreakable: false
+    name: '&9Max Level'
+    lore:
+      - '&7Current: &a$<maxLevel>'
+      - '&7The maximum level for this profession.'
+      - '&7When &a0 &7is set, there is no limit.'
+      - '&8--------------------'
+      - '&aLeft click &7to increase the level.'
+      - '&aRight click &7to decrease the level.'
+      - '&aShift click &7each to increase by 10.'
+    flags: []
+    enchants: {}
   useCategories:
     material: BOOK
     amount: 1

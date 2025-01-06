@@ -166,7 +166,7 @@ public class PatternItemEditorCfg {
 
     public ItemStack getSubIcon(char c, ItemBuilder builder, Collection<DelayedCommand> commands, String icon) {
         Material material = Material.valueOf(config.getString("subEditor.icons." + icon + ".material", "STONE")
-                .replace(MessageUtil.getReplacement("material"), builder.getMaterial().name())
+                .replace(MessageUtil.getReplacement("material"), builder.getMaterial().getNamespace())
                 .toUpperCase());
         int amount = config.getInt("subEditor.icons." + icon + ".amount", 1);
         int durability = config.isString("subEditor.icons." + icon + ".durability") ?
@@ -245,7 +245,7 @@ public class PatternItemEditorCfg {
                             .replace(MessageUtil.getReplacement("glowing"),
                                     String.valueOf(!builder.getEnchants().isEmpty())))
                     .replace(MessageUtil.getReplacement("material"),
-                            builder.getMaterial().name())
+                            builder.getMaterial().getNamespace())
                     .replace(MessageUtil.getReplacement("amount"),
                             String.valueOf(builder.getAmount()))
             );

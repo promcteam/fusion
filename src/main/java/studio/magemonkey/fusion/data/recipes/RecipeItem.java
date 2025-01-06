@@ -146,7 +146,7 @@ public interface RecipeItem {
 
         // In case we face an enchantment book, properly handle the enchantments
         // in a seperated meta before handling the item later on
-        if (itemBuilder.getMaterial() == Material.ENCHANTED_BOOK) {
+        if (itemBuilder.getMaterial().create().getType() == Material.ENCHANTED_BOOK) {
             Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(itemBuilder.getEnchants());
             itemBuilder.clearEnchants();
             item = itemBuilder.build().clone();

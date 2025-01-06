@@ -83,7 +83,7 @@ public class ProfessionService {
             return;
         }
 
-        if(profession.getLevel() >= table.getMaxLevel()) {
+        if(table.getMaxLevel() > 0 && profession.getLevel() >= table.getMaxLevel()) {
             return;
         }
 
