@@ -83,6 +83,10 @@ public class ProfessionService {
             return;
         }
 
+        if(profession.getLevel() >= table.getMaxLevel()) {
+            return;
+        }
+
         ProfessionGainXpEvent event = new ProfessionGainXpEvent(table.getName(), player, xp);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {

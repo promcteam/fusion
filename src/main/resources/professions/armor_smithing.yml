@@ -17,6 +17,9 @@ masteryUnlock: 40
 # The fee to unlock mastery, requires Vault
 masteryFee: 500
 
+# The maximum level of the profession that can be reached. This prevents the player from getting further experience
+maxLevel: 100
+
 # The pattern setup of your recipe gui
 # This is the main pattern that is used overall when no categories are setup
 pattern:

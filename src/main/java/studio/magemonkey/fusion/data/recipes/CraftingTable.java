@@ -49,6 +49,8 @@ public class CraftingTable implements ConfigurationSerializable {
     private int masteryUnlock;
     private int masteryFee;
 
+    private int maxLevel = -1;
+
     public CraftingTable(String name,
                          String inventoryName,
                          ItemType iconItem,
@@ -107,6 +109,7 @@ public class CraftingTable implements ConfigurationSerializable {
                         : pattern;
         this.masteryUnlock = dw.getInt("masteryUnlock");
         this.masteryFee = dw.getInt("masteryFee");
+        this.maxLevel = dw.getInt("maxLevel", -1);
         this.useCategories = dw.getBoolean("useCategories", true);
         this.iconItem = CodexEngine.get()
                 .getItemManager()
@@ -353,6 +356,7 @@ public class CraftingTable implements ConfigurationSerializable {
                 .append("inventoryName", this.inventoryName)
                 .append("masteryUnlock", this.masteryUnlock)
                 .append("masteryFee", this.masteryFee)
+                .append("maxLevel", this.maxLevel)
                 .append("useCategories", useCategories)
                 .append("recipes", this.recipes.values().stream().map(Recipe::serialize).collect(Collectors.toList()))
                 .build();
@@ -381,6 +385,7 @@ public class CraftingTable implements ConfigurationSerializable {
         config.set("categoryPattern", catPatterntemsMap);
         config.set("masteryUnlock", map.get("masteryUnlock"));
         config.set("masteryFee", map.get("masteryFee"));
+        config.set("maxLevel", map.get("maxLevel"));
         config.set("useCategories", map.get("useCategories"));
         config.set("recipes", map.get("recipes"));
         try {

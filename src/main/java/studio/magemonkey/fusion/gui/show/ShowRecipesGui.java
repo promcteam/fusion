@@ -22,6 +22,7 @@ import studio.magemonkey.codex.api.DelayedCommand;
 import studio.magemonkey.codex.api.Replacer;
 import studio.magemonkey.codex.util.ItemUtils;
 import studio.magemonkey.codex.util.messages.MessageData;
+import studio.magemonkey.codex.util.messages.MessageUtil;
 import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.cfg.ShowRecipesCfg;
@@ -31,6 +32,7 @@ import studio.magemonkey.fusion.data.recipes.RecipeItem;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
 import studio.magemonkey.fusion.gui.slot.Slot;
 import studio.magemonkey.fusion.util.ChatUT;
+import studio.magemonkey.fusion.util.Utils;
 
 import java.util.*;
 
@@ -64,7 +66,7 @@ public class ShowRecipesGui implements Listener {
         this.resultSlots.clear();
         this.inventory = Bukkit.createInventory(null,
                 ShowRecipesCfg.getPattern().getInventorySize(),
-                ChatUT.hexString(ShowRecipesCfg.getName()));
+                ShowRecipesCfg.getInventoryName(recipes.values().stream().toList().get(0)));
         mapSlots();
         reloadRecipes();
     }
@@ -101,7 +103,7 @@ public class ShowRecipesGui implements Listener {
             }
 
             updateBlockedSlots(new MessageData[]{
-                    new MessageData("gui", ShowRecipesCfg.getName()),
+                    new MessageData("gui", ShowRecipesCfg.getInventoryName(recipes.values().stream().toList().get(0))),
                     new MessageData("player", player.getName()),
                     new MessageData("bal",
                             CodexEngine.get().getVault() == null ? 0

@@ -259,7 +259,9 @@ public class Commands implements CommandExecutor, TabCompleter {
                             .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
                     return true;
                 }
-                IngredientUsage.showIngredientUsage(player);
+                if(Fusion.getInstance().checkPermission(sender, "fusion.show")) {
+                    IngredientUsage.showIngredientUsage(player);
+                }
                 return true;
             } else if (args[0].equalsIgnoreCase("level")) {
                 if (!(sender instanceof Player)) {

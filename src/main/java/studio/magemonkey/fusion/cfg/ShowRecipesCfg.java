@@ -104,4 +104,8 @@ public class ShowRecipesCfg {
                 .replace(MessageUtil.getReplacement("name"), name)));
         return ItemBuilder.newItem(material).name(name).lore(lore).build();
     }
+
+    public static String getInventoryName(RecipeItem ingredient) {
+        return ChatUT.hexString(name.replace(MessageUtil.getReplacement("ingredient"), Utils.getItemName(ingredient.getItemStack())));
+    }
 }
