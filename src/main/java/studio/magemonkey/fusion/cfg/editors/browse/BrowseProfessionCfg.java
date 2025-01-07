@@ -118,7 +118,7 @@ public class BrowseProfessionCfg {
                     .replace(MessageUtil.getReplacement("costs.exp"),
                             String.valueOf(conditions.getExpCost()))
                     .replace(MessageUtil.getReplacement("conditions.rank"),
-                            String.valueOf(conditions.getRank()))
+                            String.valueOf(conditions.getPermission()))
             ));
         }
 
@@ -200,7 +200,7 @@ public class BrowseProfessionCfg {
                     .replace(MessageUtil.getReplacement("costs.exp"),
                             String.valueOf(conditions.getExpCost()))
                     .replace(MessageUtil.getReplacement("conditions.rank"),
-                            String.valueOf(conditions.getRank()))
+                            String.valueOf(conditions.getPermission()))
             ));
         }
         Map<Enchantment, Integer> enchants  = config.getEnchantmentSection("subEditor.icons." + icon + ".enchants");

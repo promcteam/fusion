@@ -41,8 +41,8 @@ public class RecipeItemEditor extends Editor implements Listener {
         setItem(14, getIcons().get("resultItem"));
         setItem(15, getIcons().get("professionExp"));
         setItem(16, getIcons().get("vanillaExp"));
-        setItem(19, getIcons().get("hiding_noPermission"));
-        setItem(20, getIcons().get("hiding_noRank"));
+        setItem(19, getIcons().get("enableItemLore"));
+        setItem(20, getIcons().get("hiding_noPermission"));
         setItem(21, getIcons().get("hiding_recipeLimitReached"));
         setItem(24, getIcons().get("commands"));
 
@@ -128,38 +128,30 @@ public class RecipeItemEditor extends Editor implements Listener {
                 }
             }
             case 19 -> {
-                if (event.isLeftClick()) {
-                    if (recipe.getHideNoPermission() == null) {
-                        recipe.setHideNoPermission(true);
-                    } else {
-                        recipe.setHideNoPermission(!recipe.getHideNoPermission());
-                    }
-                } else if (event.isRightClick()) {
-                    recipe.setHideNoPermission(null);
-                }
+                recipe.getSettings().setEnableLore(!recipe.getSettings().isEnableLore());
                 hasChanges = true;
             }
             case 20 -> {
                 if (event.isLeftClick()) {
-                    if (recipe.getHideNoRank() == null) {
-                        recipe.setHideNoRank(true);
+                    if (recipe.getSettings().getHideNoPermission() == null) {
+                        recipe.getSettings().setHideNoPermission(true);
                     } else {
-                        recipe.setHideNoRank(!recipe.getHideNoRank());
+                        recipe.getSettings().setHideNoPermission(!recipe.getSettings().getHideNoPermission());
                     }
                 } else if (event.isRightClick()) {
-                    recipe.setHideNoRank(null);
+                    recipe.getSettings().setHideNoPermission(null);
                 }
                 hasChanges = true;
             }
             case 21 -> {
                 if (event.isLeftClick()) {
-                    if (recipe.getHideRecipeLimitReached() == null) {
-                        recipe.setHideRecipeLimitReached(true);
+                    if (recipe.getSettings().getHideRecipeLimitReached() == null) {
+                        recipe.getSettings().setHideRecipeLimitReached(true);
                     } else {
-                        recipe.setHideRecipeLimitReached(!recipe.getHideRecipeLimitReached());
+                        recipe.getSettings().setHideRecipeLimitReached(!recipe.getSettings().getHideRecipeLimitReached());
                     }
                 } else if (event.isRightClick()) {
-                    recipe.setHideRecipeLimitReached(null);
+                    recipe.getSettings().setHideRecipeLimitReached(null);
                 }
                 hasChanges = true;
             }
@@ -238,9 +230,9 @@ public class RecipeItemEditor extends Editor implements Listener {
                             EditorCriteria.Profession_Recipe_Edit_Rank,
                             "/fusion-editor <rank>");
                 else if (event.isRightClick()) {
-                    if (recipe.getConditions().getRank() == null)
+                    if (recipe.getConditions().getPermission() == null)
                         return;
-                    recipe.getConditions().setRank(null);
+                    recipe.getConditions().setPermission(null);
                     hasChanges = true;
                 }
             }

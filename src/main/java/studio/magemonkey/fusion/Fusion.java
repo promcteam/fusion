@@ -27,7 +27,7 @@ import studio.magemonkey.fusion.commands.Commands;
 import studio.magemonkey.fusion.commands.FusionEditorCommand;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.recipes.*;
-import studio.magemonkey.fusion.deprecated.PConfigManager;
+import studio.magemonkey.fusion.cfg.migrations.PConfigManager;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.util.ExperienceManager;
 import studio.magemonkey.fusion.util.LevelFunction;

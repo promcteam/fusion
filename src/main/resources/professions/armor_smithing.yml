@@ -287,6 +287,10 @@ recipes:
     conditions:
       professionLevel: 10
       mastery: false
+    settings:
+      enableLore: true
+      lore:
+        - 'You need Armor smithing 10 here'
 
   # Chain boots which takes 15 seconds to craft
   - name: ChainBoots
@@ -310,3 +314,7 @@ recipes:
       mastery: false
       professions:
         weapon_smithing: 5
+    settings:
+      enableLore: true
+      lore:
+        - 'These are chain boots'

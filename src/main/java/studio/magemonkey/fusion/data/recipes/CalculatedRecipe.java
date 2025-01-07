@@ -18,10 +18,7 @@ import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.CraftingRequirementsCfg;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.player.PlayerRecipeLimit;
-import studio.magemonkey.fusion.util.ExperienceManager;
-import studio.magemonkey.fusion.util.InvalidPatternItemException;
-import studio.magemonkey.fusion.util.LevelFunction;
-import studio.magemonkey.fusion.util.Utils;
+import studio.magemonkey.fusion.util.*;
 
 import java.util.*;
 
@@ -51,8 +48,13 @@ public class CalculatedRecipe {
                             : recipe.getDivinityRecipeMeta().getIcon();
             List<String> resultLore = result.getItemMeta().getLore();
 
-            if ((resultLore != null) && !resultLore.isEmpty()) {
-                resultLore.forEach((str) -> lore.append(str).append('\n'));
+            if(!recipe.getSettings().isEnableLore()) {
+                if ((resultLore != null) && !resultLore.isEmpty()) {
+                    resultLore.forEach((str) -> lore.append(str).append('\n'));
+                    lore.append('\n');
+                }
+            } else if(recipe.getSettings().getLore() != null && !recipe.getSettings().getLore().isEmpty()) {
+                recipe.getSettings().getLore().forEach((str) -> lore.append(ChatUT.hexString(str)).append('\n'));
                 lore.append('\n');
             }
 
@@ -62,19 +64,11 @@ public class CalculatedRecipe {
 
             boolean canCraft = true;
 
-            //Rank line
-            String rankLine = null;
-            if (recipe.getConditions().getRank() != null && !player.hasPermission(
-                    "fusion.rank." + recipe.getConditions().getRank())) {
-                canCraft = false;
-                rankLine = CraftingRequirementsCfg.getRank("recipes", recipe.getConditions().getRank());
-            }
-
-            String permissionLine;
+            String recipePermissionLine;
             if (!Utils.hasCraftingPermission(player, recipe.getName())) {
                 canCraft = false;
             }
-            permissionLine = CraftingRequirementsCfg.getLearned("recipes",
+            recipePermissionLine = CraftingRequirementsCfg.getLearned("recipes",
                     Utils.hasCraftingPermission(player, recipe.getName()));
 
             String moneyLine = null;
@@ -228,10 +222,8 @@ public class CalculatedRecipe {
                 }
             }
 
-            lore.append("\n").append(permissionLine);
-
-            if (rankLine != null) {
-                lore.append('\n').append(rankLine);
+            if (recipePermissionLine != null) {
+                lore.append('\n').append(recipePermissionLine);
             }
 
             lore.append('\n').append(canCraftLine);

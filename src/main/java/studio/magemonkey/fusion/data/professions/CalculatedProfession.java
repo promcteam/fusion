@@ -51,9 +51,9 @@ public class CalculatedProfession {
 
             //Rank line
             String rankLine = null;
-            if (conditions.getRank() != null && !player.hasPermission("fusion.rank." + conditions.getRank())) {
+            if (conditions.getPermission() != null && !player.hasPermission("fusion.rank." + conditions.getPermission())) {
                 canJoin = false;
-                rankLine = CraftingRequirementsCfg.getRank("recipes", conditions.getRank());
+                rankLine = CraftingRequirementsCfg.getRank("recipes", conditions.getPermission());
             }
 
             // TODO: Might consider to make professions controllable by permissions

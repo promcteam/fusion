@@ -1,4 +1,4 @@
-package studio.magemonkey.fusion.data;
+package studio.magemonkey.fusion.cfg.migrations;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

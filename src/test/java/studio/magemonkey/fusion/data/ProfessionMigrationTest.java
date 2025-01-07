@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import studio.magemonkey.fusion.Fusion;
+import studio.magemonkey.fusion.cfg.migrations.ProfessionMigration;
 
 import java.io.InputStreamReader;
 import java.util.Objects;
