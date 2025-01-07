@@ -12,22 +12,17 @@ import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.util.messages.MessageData;
 import studio.magemonkey.fusion.Fusion;
-import studio.magemonkey.fusion.api.FusionAPI;
 import studio.magemonkey.fusion.cfg.Cfg;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
-import studio.magemonkey.fusion.cfg.sql.DatabaseType;
-import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
-import studio.magemonkey.fusion.data.recipes.CraftingTable;
-import studio.magemonkey.fusion.gui.BrowseGUI;
-import studio.magemonkey.fusion.gui.IngredientUsage;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
-import studio.magemonkey.fusion.util.LevelFunction;
-import studio.magemonkey.fusion.util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Commands implements CommandExecutor, TabCompleter {
 
@@ -38,311 +33,48 @@ public class Commands implements CommandExecutor, TabCompleter {
                              @NotNull Command command,
                              @NotNull String label,
                              String[] args) {
-        Fusion instance = Fusion.getInstance();
-        if ((args.length == 2) || (args.length == 3)) {
-            if (args[0].equalsIgnoreCase("use")) {
-                if (!Utils.hasCraftingUsePermission(sender, null)) {
-                    return true;
-                }
-                String[] professionArgs = args[1].split(":");
-                String profession = professionArgs[0];
-                Category category = null;
-
-                ProfessionGuiRegistry eq = ProfessionsCfg.getGuiMap().get(profession);
-
-                if (professionArgs.length == 2 && Fusion.getInstance().checkPermission(sender, "fusion.craft.use.categories")) {
-                    category = ProfessionsCfg.getTable(profession).getCategory(professionArgs[1]);
-                } else if (professionArgs.length == 2) {
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noPermission", sender);
-                    return true;
-                }
-
-                if (eq == null) {
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
-                            sender,
-                            new MessageData("name", args[1]),
-                            new MessageData("sender", sender));
-                    return true;
-                }
-                if (args.length == 3) {
-                    if (!instance.checkPermission(sender, "fusion.admin.use")) {
-                        return true;
-                    }
-                    Player target = Bukkit.getPlayer(args[2]);
-                    if (target == null) {
-                        CodexEngine.get().getMessageUtil().sendMessage("notAPlayer",
-                                sender,
-                                new MessageData("name", args[2]),
-                                new MessageData("sender", sender));
-                        return true;
-                    }
-
-                    //TODO ?? Make sure they have unlocked this crafting menu
-
-                    openGui(target, eq, category);
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirmOther",
-                            sender,
-                            new MessageData("craftingInventory", eq),
-                            new MessageData("sender", sender),
-                            new MessageData("target", target));
-                    return true;
-                } else {
-                    if (sender instanceof Player player) {
-                        if (!Utils.hasCraftingUsePermission(sender, eq.getProfession())) {
-                            return true;
-                        }
-                        //Make sure they have unlocked this crafting menu
-                        if (!PlayerLoader.getPlayer(player).hasProfession(eq.getProfession())) {
-                            if (player.isOp()) {
-                                openGui(player, eq, category);
-                                CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirm",
-                                        sender,
-                                        new MessageData("craftingInventory", eq),
-                                        new MessageData("player", sender));
-                                return true;
-                            }
-                            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.notUnlocked", sender);
-                            return true;
-                        }
-                        openGui(player, eq, category);
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.useConfirm",
-                                sender,
-                                new MessageData("craftingInventory", eq),
-                                new MessageData("player", sender));
-                        return true;
-                    } else {
-                        CodexEngine.get()
-                                .getMessageUtil()
-                                .sendMessage("fusion.help", sender, new MessageData("sender", sender),
-                                        new MessageData("text", label + " " + StringUtils.join(args, ' ')));
-                    }
-                }
-            } else if (args[0].equalsIgnoreCase("master")) {
-                if (sender instanceof Player player) {
-                    String guiName = args[1];
-                    CraftingTable table = ProfessionsCfg.getTable(guiName);
-                    if (table == null) {
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
-                                sender,
-                                new MessageData("name", args[1]),
-                                new MessageData("sender", sender));
-                        return true;
-                    }
-
-                    if (PlayerLoader.getPlayer(((Player) sender).getUniqueId()).hasMastered(table.getName())) {
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.error.alreadyMastered",
-                                sender,
-                                new MessageData("sender", sender),
-                                new MessageData("craftingTable", table));
-                        return true;
-                    }
-
-                    if (LevelFunction.getLevel(player, table) < table.getMasteryUnlock()) {
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noMasteryLevel",
-                                sender,
-                                new MessageData("sender", sender),
-                                new MessageData("craftingTable", table));
-                        return true;
-                    }
-
-                    if (!CodexEngine.get().getVault().canPay(player, table.getMasteryFee())) {
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noMasteryFunds",
-                                sender,
-                                new MessageData("sender", sender),
-                                new MessageData("craftingTable", table));
-                        return true;
-                    }
-                    FusionAPI.getEventServices().getProfessionService().masterProfession(table.getName(), player, true);
-                    PlayerLoader.getPlayer(((Player) sender).getUniqueId()).setMastered(table.getName(), true);
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.mastered",
-                            sender,
-                            new MessageData("sender", sender),
-                            new MessageData("craftingTable", table));
-                    return true;
-                } else {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("fusion.help", sender, new MessageData("sender", sender),
-                                    new MessageData("text", label + " " + StringUtils.join(args, ' ')));
-                }
-            } else if (args[0].equalsIgnoreCase("forget")) {
-                if (sender instanceof Player player) {
-                    CraftingTable table = ProfessionsCfg.getTable(args[1]);
-                    if (table == null) {
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
-                                sender,
-                                new MessageData("name", args[1]),
-                                new MessageData("sender", sender));
-                        return true;
-                    }
-                    ConfirmationAction action =
-                            () -> FusionAPI.getEventServices().getProfessionService().leaveProfession(table, player);
-
-                    confirmation.put(player.getUniqueId().toString(), action);
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.forget.confirm",
-                            sender,
-                            new MessageData("sender", sender),
-                            new MessageData("craftingTable", table));
-
-                    Bukkit.getScheduler().runTaskLater(Fusion.getInstance(),
-                            () -> confirmation.remove(player.getUniqueId().toString()), 15 * 20L);
-
-                    return true;
-                } else {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("fusion.help", sender, new MessageData("sender", sender),
-                                    new MessageData("text", label + " " + StringUtils.join(args, ' ')));
-                }
-            } else if (args[0].equalsIgnoreCase("storage")) {
-                String storage = args[1];
-                DatabaseType type =
-                        DatabaseType.valueOf(Objects.requireNonNull(Cfg.getConfig())
-                                .getString("storage.type", "LOCALE")
-                                .toUpperCase());
-                switch (storage.toLowerCase()) {
-                    case "local":
-                        if (type == DatabaseType.LOCAL) {
-                            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.alreadyUsedStorage",
-                                    sender,
-                                    new MessageData("storage", storage));
-                            return true;
-                        }
-                        SQLManager.swapToLocal();
-                        CodexEngine.get()
-                                .getMessageUtil()
-                                .sendMessage("fusion.storageChanged", sender, new MessageData("storage", storage));
-                        break;
-                    case "sql":
-                        if (type == DatabaseType.MARIADB || type == DatabaseType.MYSQL) {
-                            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.alreadyUsedStorage",
-                                    sender,
-                                    new MessageData("storage", storage));
-                            return true;
-                        }
-                        SQLManager.swapToSql();
-                        CodexEngine.get()
-                                .getMessageUtil()
-                                .sendMessage("fusion.storageChanged", sender, new MessageData("storage", storage));
-                        break;
-                    default:
-                        CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidStorage",
-                                sender,
-                                new MessageData("storage", storage));
-                        break;
-                }
-                return true;
-            } else if (args[0].equalsIgnoreCase("join")) {
-                if (sender instanceof Player player) {
-                    if (ProfessionsCfg.getGuiMap().containsKey(args[1])) {
-                        BrowseGUI.joinProfession(player, ProfessionsCfg.getGUI(args[1]));
-                    } else {
-                        CodexEngine.get()
-                                .getMessageUtil()
-                                .sendMessage("fusion.notACrafting",
-                                        sender,
-                                        new MessageData("name", args[1]),
-                                        new MessageData("sender", sender));
-                    }
-                } else {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
-                }
-                return true;
-            }
-        } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("browse")) {
-                if (!(sender instanceof Player player)) {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
-                    return true;
-                }
-                if (player.isPermissionSet("fusion.browse") && !player.hasPermission("fusion.browse")) {
-                    return true;
-                }
-                BrowseGUI.open(player);
-                return true;
-            } else if (args[0].equalsIgnoreCase("show")) {
-                if (!(sender instanceof Player player)) {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
-                    return true;
-                }
-                if (Fusion.getInstance().checkPermission(sender, "fusion.show")) {
-                    IngredientUsage.showIngredientUsage(player);
-                }
-                return true;
-            } else if (args[0].equalsIgnoreCase("level")) {
-                if (!(sender instanceof Player)) {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
-                    return true;
-                }
-                for (Profession profession : PlayerLoader.getPlayer(((Player) sender).getUniqueId()).getProfessions()) {
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.level.format", sender,
-                            new MessageData("category", profession.getName()),
-                            new MessageData("level", profession.getLevel()),
-                            new MessageData("experience",
-                                    PlayerLoader.getPlayer(((Player) sender).getUniqueId())
-                                            .getExperience(profession)));
-                }
-
-                return true;
-            } else if (args[0].equalsIgnoreCase("auto")) {
-                if (!(sender instanceof Player player)) {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("senderIsNotPlayer", sender, new MessageData("sender", sender));
-                    return true;
-                }
-                if (Cfg.craftingQueue) {
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.error.autoDisabled", sender);
-                    return true;
-                }
-                if (!instance.checkPermission(sender, "fusion.auto")) {
-                    return true;
-                }
-
-                boolean autoOn = PlayerLoader.getPlayer(player).isAutoCrafting();
-
-                PlayerLoader.getPlayer(player).setAutoCrafting((autoOn = !autoOn));
-                CodexEngine.get()
-                        .getMessageUtil()
-                        .sendMessage("fusion.autoToggle", player, new MessageData("state", autoOn ? "on" : "off"));
-
-                return true;
-            } else if (args[0].equalsIgnoreCase("confirm")) {
-                String id = sender instanceof Player ? ((Player) sender).getUniqueId().toString() : "console";
-
-                if (confirmation.containsKey(id)) {
-                    confirmation.get(id).doAction();
-                    confirmation.remove(id);
-                } else {
-                    CodexEngine.get()
-                            .getMessageUtil()
-                            .sendMessage("fusion.nothingToConfirm", sender, new MessageData("sender", sender));
-                }
-
-                return true;
-            } else if (args[0].equalsIgnoreCase("reload")) {
-                if (!instance.checkPermission(sender, "fusion.reload")) {
-                    return true;
-                }
-                instance.closeAll();
-                instance.reloadConfig();
-                instance.reloadLang();
-                CodexEngine.get()
-                        .getMessageUtil()
-                        .sendMessage("fusion.reload", sender, new MessageData("sender", sender));
-                return true;
-            }
+        if (args.length == 0) {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.help", sender, new MessageData("sender", sender),
+                    new MessageData("text", label + " " + StringUtils.join(args, ' ')));
+            return true;
         }
-        CodexEngine.get().getMessageUtil().sendMessage("fusion.help", sender, new MessageData("sender", sender),
-                new MessageData("text", label + " " + StringUtils.join(args, ' ')));
+
+        switch (args[0].toLowerCase()) {
+            case "auto" -> CommandMechanics.toggleAutoCrafting(sender);
+            case "browse" -> CommandMechanics.openBrowseGui(sender);
+            case "confirm" -> CommandMechanics.confirmAction(sender, confirmation);
+            case "forget" -> {
+                if (args.length == 2)
+                    CommandMechanics.forgetProfession(sender, args, confirmation);
+            }
+            case "join" -> {
+                if (args.length == 2)
+                    CommandMechanics.joinProfession(sender, args);
+            }
+            case "reload" -> CommandMechanics.reloadPlugin(sender);
+            case "stats" -> CommandMechanics.showLevels(sender);
+            case "master" -> {
+                if (args.length == 2)
+                    CommandMechanics.masterProfession(sender, args);
+                return true;
+            }
+            case "show" -> CommandMechanics.openIngredientGui(sender);
+            case "storage" -> {
+                if (args.length == 2) {
+                    CommandMechanics.setStorage(sender, args);
+                }
+                return true;
+            }
+            case "use" -> {
+                if (args.length >= 2) {
+                    CommandMechanics.useProfession(sender, args);
+                    return true;
+                }
+            }
+            default ->
+                    CodexEngine.get().getMessageUtil().sendMessage("fusion.help", sender, new MessageData("sender", sender),
+                            new MessageData("text", label + " " + StringUtils.join(args, ' ')));
+        }
         return true;
     }
 
@@ -420,13 +152,5 @@ public class Commands implements CommandExecutor, TabCompleter {
 
     public interface ConfirmationAction {
         void doAction();
-    }
-
-    private void openGui(Player player, ProfessionGuiRegistry registry, Category category) {
-        if (category == null) {
-            registry.open(player);
-        } else {
-            registry.open(player, category);
-        }
     }
 }
