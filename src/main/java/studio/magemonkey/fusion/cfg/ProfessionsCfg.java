@@ -246,15 +246,15 @@ public class ProfessionsCfg {
         if (cfg.isSet("categoryPattern")) {
             if (!cfg.isSet("categoryPattern.items.queue-items.-")) {
                 cfg.set("categoryPattern.items.queue-items.-",
-                        cfg.getConfigurationSection("pattern.items.queue-items.-").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.-").getValues(false));
             }
             if (!cfg.isSet("categoryPattern.items.queue-items.Unfinished")) {
                 cfg.set("categoryPattern.items.queue-items.Unfinished",
-                        cfg.getConfigurationSection("pattern.items.queue-items.Unfinished").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.Unfinished").getValues(false));
             }
             if (!cfg.isSet("categoryPattern.items.queue-items.Finished")) {
                 cfg.set("categoryPattern.items.queue-items.Finished",
-                        cfg.getConfigurationSection("pattern.items.queue-items.Finished").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.Finished").getValues(false));
             }
         }
 
@@ -399,10 +399,10 @@ public class ProfessionsCfg {
     }
 
     public static ItemStack getFillItem(String key) {
-        String       name = cfgs.get(key).getString("pattern.items.fillItem.name", " ");
-        List<String> lore = cfgs.get(key).getStringList("pattern.items.fillItem.lore");
+        String       name = cfgs.get(key).getString("recipePattern.items.fillItem.name", " ");
+        List<String> lore = cfgs.get(key).getStringList("recipePattern.items.fillItem.lore");
         Material material = Material.getMaterial(cfgs.get(key)
-                .getString("pattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE"));
+                .getString("recipePattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE"));
         return ItemBuilder.newItem(material).name(name).lore(lore).build();
     }
 

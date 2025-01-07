@@ -110,7 +110,7 @@ public class ProfessionMigration {
                 Map<String, Object> settings = new LinkedHashMap<>();
 
                 // Hiding settings
-                settings.put("enableItemLore", true);
+                settings.put("enableLore", true);
                 Map<String, Object> hiding = (Map<String, Object>) recipe.get("hiding");
                 if (hiding != null) {
                     settings.put("hiding", hiding);
