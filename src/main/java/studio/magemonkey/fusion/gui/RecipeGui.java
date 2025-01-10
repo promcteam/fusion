@@ -228,134 +228,135 @@ public class RecipeGui implements Listener {
     }
 
     public void reloadRecipes() {
-        Bukkit.getScheduler().runTaskAsynchronously(Fusion.getInstance(), () ->  {
-            if (!player.isOnline()) return;
-            try {
-                setPattern();
+        if (!player.isOnline()) return;
+        try {
+            setPattern();
 
-                /* Default setup */
-                ItemStack          fill       = table.getFillItem();
-                Collection<Recipe> allRecipes = new ArrayList<>(category.getRecipes());
-                allRecipes.removeIf(r -> r.isHidden(player));
-                int pageSize       = resultSlots.size();
-                int allRecipeCount = allRecipes.size();
-                int i              = 0;
-                int page           = this.page;
+            /* Default setup */
+            ItemStack          fill       = table.getFillItem();
+            Collection<Recipe> allRecipes = new ArrayList<>(category.getRecipes());
+            allRecipes.removeIf(r -> r.isHidden(player));
+            int pageSize       = resultSlots.size();
+            int allRecipeCount = allRecipes.size();
+            int i              = 0;
+            int page           = this.page;
 
-                int fullPages = allRecipeCount / pageSize;
-                int rest      = allRecipeCount % pageSize;
-                int pages     = (rest == 0) ? fullPages : (fullPages + 1);
-                if (player.isOnline() && page >= pages) {
-                    if (page > 0) {
-                        this.page = pages - 1;
-                    }
-
-                    // Add a check to prevent infinite recursion
-                    if (this.page != page) {  // Only reload if page has changed
-                        this.reloadRecipes();
-                    }
-                    return;
+            int fullPages = allRecipeCount / pageSize;
+            int rest      = allRecipeCount % pageSize;
+            int pages     = (rest == 0) ? fullPages : (fullPages + 1);
+            if (player.isOnline() && page >= pages) {
+                if (page > 0) {
+                    this.page = pages - 1;
                 }
 
-                Collection<ItemStack> playerItems = PlayerUtil.getPlayerItems(this.player);
-                CalculatedRecipe[] calculatedRecipes =
-                        new CalculatedRecipe[(page < pages) ? pageSize : ((rest == 0) ? pageSize : rest)];
-                Recipe[] allRecipesArray = allRecipes.toArray(new Recipe[allRecipeCount]);
-
-                Integer[] slots = resultSlots.toArray(new Integer[0]);
-                for (int slot : slots) {
-                    this.inventory.setItem(slot, null);
+                // Add a check to prevent infinite recursion
+                if (this.page != page) {  // Only reload if page has changed
+                    this.reloadRecipes();
                 }
+                return;
+            }
 
-                /* Additionally, when crafting_queue: true */
-                if (Cfg.craftingQueue) {
-                    this.queue.getQueuedItems().clear();
-                    Collection<QueueItem> allQueuedItems     = queue.getQueue();
-                    int                   queueAllItemsCount = allQueuedItems.size();
-                    if (!allQueuedItems.isEmpty()) {
-                        int queuePageSize = queuedSlots.size();
-                        if (queuePageSize > 0) {
-                            int j         = 0;
-                            int queuePage = this.queuePage;
+            Collection<ItemStack> playerItems = PlayerUtil.getPlayerItems(this.player);
+            CalculatedRecipe[] calculatedRecipes =
+                    new CalculatedRecipe[(page < pages) ? pageSize : ((rest == 0) ? pageSize : rest)];
+            Recipe[] allRecipesArray = allRecipes.toArray(new Recipe[allRecipeCount]);
 
-                            int queueFullPages = queueAllItemsCount / queuePageSize;
-                            int queueRest      = queueAllItemsCount % queuePageSize;
-                            int queuePages     = (queueRest == 0) ? queueFullPages : (queueFullPages + 1);
-                            if (queuePage >= queuePages) {
-                                if (queuePage > 0)
-                                    this.queuePage = queuePages - 1;
-                                this.reloadRecipes();
-                                return;
-                            }
+            Integer[] slots = resultSlots.toArray(new Integer[0]);
+            for (Integer slot : slots) {
+                if (slot != null) this.inventory.setItem(slot, null);
+            }
 
-                            QueueItem[] queuedItems        = new QueueItem[queuePageSize];
-                            QueueItem[] allQueueItemsArray = allQueuedItems.toArray(new QueueItem[queueAllItemsCount]);
-                            Integer[]   queuedSlots        = this.queuedSlots.toArray(new Integer[0]);
+            /* Additionally, when crafting_queue: true */
+            if (Cfg.craftingQueue) {
+                this.queue.getQueuedItems().clear();
+                Collection<QueueItem> allQueuedItems     = queue.getQueue();
+                int                   queueAllItemsCount = allQueuedItems.size();
+                if (!allQueuedItems.isEmpty()) {
+                    int queuePageSize = queuedSlots.size();
+                    if (queuePageSize > 0) {
+                        int j         = 0;
+                        int queuePage = this.queuePage;
 
-                            for (int k = (queuePage * queuePageSize), e = queuedSlots.length;
-                                 (k < allQueueItemsArray.length) && (j < e);
-                                 k++, j++) {
-                                QueueItem queueItem = allQueueItemsArray[k];
-                                int       slot      = queuedSlots[j];
-                                this.queue.getQueuedItems().put(slot, queuedItems[j] = queueItem);
-                                this.queue.getQueuedItems().get(slot).updateIcon();
+                        int queueFullPages = queueAllItemsCount / queuePageSize;
+                        int queueRest      = queueAllItemsCount % queuePageSize;
+                        int queuePages     = (queueRest == 0) ? queueFullPages : (queueFullPages + 1);
+                        if (queuePage >= queuePages) {
+                            if (queuePage > 0)
+                                this.queuePage = queuePages - 1;
+                            this.reloadRecipes();
+                            return;
+                        }
 
-                                this.inventory.setItem(slot, queuedItems[j].getIcon().clone());
-                            }
+                        QueueItem[] queuedItems        = new QueueItem[queuePageSize];
+                        QueueItem[] allQueueItemsArray = allQueuedItems.toArray(new QueueItem[queueAllItemsCount]);
+                        Integer[]   queuedSlots        = this.queuedSlots.toArray(new Integer[0]);
+
+                        for (int k = (queuePage * queuePageSize), e = queuedSlots.length;
+                             (k < allQueueItemsArray.length) && (j < e);
+                             k++, j++) {
+                            QueueItem queueItem = allQueueItemsArray[k];
+                            int       slot      = queuedSlots[j];
+                            this.queue.getQueuedItems().put(slot, queuedItems[j] = queueItem);
+                            this.queue.getQueuedItems().get(slot).updateIcon();
+
+                            this.inventory.setItem(slot, queuedItems[j].getIcon().clone());
                         }
                     }
-                    Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
-                    for (int slot : _queuedSlots) {
-                        this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
-                    }
                 }
-                updateBlockedSlots(new MessageData[]{
-                        new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(name))),
-                        new MessageData("category", category),
-                        new MessageData("gui", getName()),
-                        new MessageData("player", player.getName()),
-                        new MessageData("bal", CodexEngine.get().getVault().getBalance(player))
-                });
-
-                for (int k = (page * pageSize), e = Math.min(slots.length, calculatedRecipes.length);
-                     (k < allRecipesArray.length) && (i < e);
-                     k++, i++) {
-                    Recipe recipe = allRecipesArray[k];
-                    int    slot   = slots[i];
-                    try {
-                        CalculatedRecipe calculatedRecipe =
-                                CalculatedRecipe.create(recipe, playerItems, this.player, table);
-                        this.recipes.put(slot, calculatedRecipes[i] = calculatedRecipe);
-                        this.inventory.setItem(slot, calculatedRecipe.getIcon().clone());
-                    } catch (InvalidPatternItemException ignored) {
-                    }
-                }
-
-                for (int k = 0; k < inventory.getSize(); k++) {
-                    if (inventory.getItem(k) != null && inventory.getItem(k).getType() != Material.AIR)
-                        continue;
-                    inventory.setItem(k, fill);
-                }
-            } catch (
-                    Exception e) {
-                this.inventory.clear();
-                this.player.closeInventory();
-                throw new RuntimeException("Exception was thrown when reloading recipes for: " + this.player.getName(), e);
-            } finally {
-                if (Cfg.craftingQueue && !queue.getQueuedItems().isEmpty()) {
-                    boolean requiresUpdate = false;
-                    for (Map.Entry<Integer, QueueItem> entry : queue.getQueuedItems().entrySet()) {
-                        if (!entry.getValue().isDone()) {
-                            requiresUpdate = true;
-                            break;
-                        }
-                    }
-                    if (requiresUpdate) {
-                        Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), this::reloadRecipes, 20L);
-                    }
+                Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
+                for (int slot : _queuedSlots) {
+                    this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
                 }
             }
-        });
+            updateBlockedSlots(new MessageData[]{
+                    new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(name))),
+                    new MessageData("category", category),
+                    new MessageData("gui", getName()),
+                    new MessageData("player", player.getName()),
+                    new MessageData("bal",
+                            CodexEngine.get().getVault() == null ? 0
+                                    : CodexEngine.get().getVault().getBalance(player))
+            });
+
+            for (int k = (page * pageSize), e = Math.min(slots.length, calculatedRecipes.length);
+                 (k < allRecipesArray.length) && (i < e);
+                 k++, i++) {
+                Recipe recipe = allRecipesArray[k];
+                int    slot   = slots[i];
+                try {
+                    CalculatedRecipe calculatedRecipe =
+                            CalculatedRecipe.create(recipe, playerItems, this.player, table);
+                    this.recipes.put(slot, calculatedRecipes[i] = calculatedRecipe);
+                    this.inventory.setItem(slot, calculatedRecipe.getIcon().clone());
+                } catch (InvalidPatternItemException ignored) {
+                }
+            }
+
+            for (int k = 0; k < inventory.getSize(); k++) {
+                if (inventory.getItem(k) != null && inventory.getItem(k).getType() != Material.AIR)
+                    continue;
+                inventory.setItem(k, fill);
+            }
+        } catch (
+                Exception e) {
+            this.inventory.clear();
+            Bukkit.getScheduler().runTask(Fusion.getInstance(), this.player::closeInventory);
+            throw new RuntimeException("Exception was thrown when reloading recipes for: " + this.player.getName(),
+                    e);
+        } finally {
+            if (Cfg.craftingQueue && !queue.getQueuedItems().isEmpty()) {
+                boolean requiresUpdate = false;
+                for (Map.Entry<Integer, QueueItem> entry : queue.getQueuedItems().entrySet()) {
+                    if (!entry.getValue().isDone()) {
+                        requiresUpdate = true;
+                        break;
+                    }
+                }
+                if (requiresUpdate) {
+                    Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), this::reloadRecipes, 20L);
+                }
+            }
+        }
     }
 
     public void reloadRecipesTask() {
@@ -493,7 +494,8 @@ public class RecipeGui implements Listener {
                     .sendMessage("fusion.error.noXP", player, new MessageData("recipe", recipe));
             return false;
         }
-        if (!CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
+        if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null
+                && !CodexEngine.get().getVault().canPay(this.player, recipe.getConditions().getMoneyCost())) {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.error.noFunds", player, new MessageData("recipe", recipe));
@@ -663,7 +665,8 @@ public class RecipeGui implements Listener {
                 }
             });
         } else {
-            CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
+            if (recipe.getConditions().getMoneyCost() != 0 && CodexEngine.get().getVault() != null)
+                CodexEngine.get().getVault().take(this.player, recipe.getConditions().getMoneyCost());
             this.queue.addRecipe(this.recipes.get(slot).getRecipe());
         }
         return true;

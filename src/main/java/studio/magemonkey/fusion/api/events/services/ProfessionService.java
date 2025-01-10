@@ -5,6 +5,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.util.messages.MessageData;
+import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.api.FusionAPI;
 import studio.magemonkey.fusion.api.events.*;
 import studio.magemonkey.fusion.data.player.FusionPlayer;
@@ -72,13 +73,23 @@ public class ProfessionService {
      * @param xp The amount of experience the player gains.
      */
     public void giveProfessionExp(Player player, CraftingTable table, long xp) {
+        FusionPlayer fusionPlayer = FusionAPI.getPlayerManager().getPlayer(player);
+        Profession   profession   = fusionPlayer.getProfession(table);
+        if (profession == null) {
+            Fusion.getInstance()
+                    .getLogger()
+                    .warning("Failed to give experience to player " + player.getName() + " for table " + table.getName()
+                            + " as they do not have the profession.");
+            return;
+        }
+
         ProfessionGainXpEvent event = new ProfessionGainXpEvent(table.getName(), player, xp);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            FusionPlayer fusionPlayer  = event.getFusionPlayer();
-            int          previousLevel = fusionPlayer.getProfession(table).getLevel();
+
+            int previousLevel = profession.getLevel();
             FusionAPI.getPlayerManager().getPlayer(player).addExperience(table.getName(), event.getGainedExp());
-            int newLevel = fusionPlayer.getProfession(table).getLevel();
+            int newLevel = profession.getLevel();
             if (newLevel != previousLevel) {
                 levelUpProfession(player, table, previousLevel, newLevel);
             }

@@ -1,0 +1,39 @@
+version: 1.0
+recipes:
+  - name: commonheavybattleaxet1
+    category: Common Heavy Weaponsmithing
+    craftingTime: 300
+    results:
+      item: DIVINITY_ITEMGENERATOR_commonheavybattleaxe:1:1:IRON_AXE
+      professionExp: 5
+      commands:
+        - delay: 0
+          as: CONSOLE
+          cmd: itemgenerator give {player} commonheavybattleaxe 1 1
+    conditions:
+      professionLevel: 1
+      mastery: false
+    costs:
+      money: 150.0
+      items:
+        - DIVINITY_CUSTOMITEMS_ironingot:5
+        - DIVINITY_CUSTOMITEMS_longpole:1
+  - name: commonheavybattleaxet2
+    category: Common Heavy Weaponsmithing
+    craftingTime: 305
+    results:
+      item: DIVINITY_ITEMGENERATOR_commonheavybattleaxe:2:1:IRON_AXE
+      professionExp: 6
+      commands:
+        - delay: 0
+          as: CONSOLE
+          cmd: itemgenerator give {player} commonheavybattleaxe 2 1
+    conditions:
+      professionLevel: 2
+      mastery: false
+    costs:
+      money: 155.0
+      items:
+        - DIVINITY_CUSTOMITEMS_ironingot:5
+        - DIVINITY_CUSTOMITEMS_longpole:1
+        - DIVINITY_CUSTOMITEMS_fire_essenceq1:1

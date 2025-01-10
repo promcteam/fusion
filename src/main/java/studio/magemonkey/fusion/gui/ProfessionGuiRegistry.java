@@ -7,10 +7,7 @@ import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 public class ProfessionGuiRegistry {
 
@@ -37,14 +34,18 @@ public class ProfessionGuiRegistry {
     }
 
     public void closeAll() {
+        List<HumanEntity> toClose = new ArrayList<>();
+
         for (CategoryGui gui : new ArrayList<>(categoryGuis.values())) {
             gui.getInventory().getViewers().forEach(HumanEntity::closeInventory);
             for (RecipeGui recipeGui : gui.getCategories().values()) {
-                recipeGui.getInventory().getViewers().forEach(HumanEntity::closeInventory);
+                toClose.addAll(recipeGui.getInventory().getViewers());
             }
         }
         for (RecipeGui gui : new ArrayList<>(recipeGuis.values())) {
-            gui.getInventory().getViewers().forEach(HumanEntity::closeInventory);
+            toClose.addAll(gui.getInventory().getViewers());
         }
+
+        toClose.forEach(HumanEntity::closeInventory);
     }
 }

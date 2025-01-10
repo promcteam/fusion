@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
@@ -25,7 +26,7 @@ public class FusionPlayer {
     private final UUID uuid;
 
     private final Map<String, Profession>        professions        = new TreeMap<>();
-    private       Map<String, CraftingQueue>     cachedQeues        = new TreeMap<>();
+    private       Map<String, CraftingQueue>     cachedQueues       = new TreeMap<>();
     private       Map<String, PlayerRecipeLimit> cachedRecipeLimits = new TreeMap<>();
 
     private final Map<String, RecipeGui> cachedGuis = new TreeMap<>();
@@ -40,7 +41,7 @@ public class FusionPlayer {
         for (Profession profession : SQLManager.professions().getProfessions(uuid)) {
             professions.put(profession.getName(), profession);
         }
-        cachedQeues = SQLManager.queues().getCraftingQueues(getPlayer());
+        cachedQueues = SQLManager.queues().getCraftingQueues(getPlayer());
         cachedRecipeLimits = SQLManager.recipeLimits().getRecipeLimits(uuid);
     }
 
@@ -49,10 +50,10 @@ public class FusionPlayer {
     }
 
     public CraftingQueue getQueue(String profession, Category category) {
-        if (!cachedQeues.containsKey(profession)) {
-            cachedQeues.put(profession, new CraftingQueue(getPlayer(), profession, category));
+        if (!cachedQueues.containsKey(profession)) {
+            cachedQueues.put(profession, new CraftingQueue(getPlayer(), profession, category));
         }
-        return cachedQeues.get(profession);
+        return cachedQueues.get(profession);
     }
 
     public void cacheGui(String id, RecipeGui gui) {
@@ -100,10 +101,12 @@ public class FusionPlayer {
         return getExperience(table.getName());
     }
 
+    @Nullable
     public Profession getProfession(String profession) {
         return professions.get(profession);
     }
 
+    @Nullable
     public Profession getProfession(CraftingTable table) {
         return getProfession(table.getName());
     }
@@ -297,8 +300,8 @@ public class FusionPlayer {
     public int[] getQueueSizes(String profession, Category category) {
         int[]  limits = new int[]{0, 0, 0};
         String path   = profession + "." + category.getName();
-        limits[0] = cachedQeues.containsKey(path) ? cachedQeues.get(path).getQueue().size() : 0;
-        for (Map.Entry<String, CraftingQueue> queue : cachedQeues.entrySet()) {
+        limits[0] = cachedQueues.containsKey(path) ? cachedQueues.get(path).getQueue().size() : 0;
+        for (Map.Entry<String, CraftingQueue> queue : cachedQueues.entrySet()) {
             if (queue.getKey().contains(profession + ".")) {
                 limits[1] += queue.getValue().getQueue().size();
             }
@@ -309,7 +312,7 @@ public class FusionPlayer {
 
     public int getFinishedSize() {
         int size = 0;
-        for (CraftingQueue queue : cachedQeues.values()) {
+        for (CraftingQueue queue : cachedQueues.values()) {
             for (QueueItem item : queue.getQueue()) {
                 if (item.isDone()) {
                     size++;
@@ -324,12 +327,12 @@ public class FusionPlayer {
         for (Profession profession : professions.values()) {
             SQLManager.professions().setProfession(uuid, profession);
         }
-        for (CraftingQueue queue : cachedQeues.values()) {
+        for (CraftingQueue queue : cachedQueues.values()) {
             SQLManager.queues().saveCraftingQueue(queue);
         }
         SQLManager.recipeLimits().saveRecipeLimits(uuid, cachedRecipeLimits);
         cachedGuis.clear();
-        cachedQeues.clear();
+        cachedQueues.clear();
         cachedRecipeLimits.clear();
     }
 }
