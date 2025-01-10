@@ -70,7 +70,7 @@ class DivinityCfgTest {
                 "div-lore-4"
         ));
 
-        //divinityCfg.replaceLore(entry, 1, lore);
+        divinityCfg.replaceLore(entry, 1, lore);
 
         assertEquals(5, lore.size());
         assertEquals("div-lore-1", lore.get(0));
