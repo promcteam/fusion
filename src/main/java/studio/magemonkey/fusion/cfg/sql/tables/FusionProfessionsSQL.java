@@ -140,7 +140,7 @@ public class FusionProfessionsSQL {
             while (result.next()) {
                 long    id         = result.getLong("Id");
                 String  profession = result.getString("Profession");
-                double  exp        = result.getDouble("Experience");
+                long  exp        = result.getLong("Experience");
                 boolean mastered   = result.getBoolean("Mastered");
                 boolean joined1    = result.getBoolean("Joined");
                 entries.add(new Profession(id, uuid, profession, exp, mastered, joined1));

@@ -264,7 +264,7 @@ public class CommandMechanics {
         }
     }
 
-    public static void showLevels(CommandSender sender) {
+    public static void showStats(CommandSender sender) {
         if (!(sender instanceof Player)) {
             CodexEngine.get()
                     .getMessageUtil()
@@ -325,6 +325,82 @@ public class CommandMechanics {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.nothingToConfirm", sender, new MessageData("sender", sender));
+        }
+    }
+
+    public static void setProfessionExp(CommandSender sender, String[] args) {
+        String profession = args[2];
+
+        if(profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidProfession", sender);
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(args[3]);
+        if(player == null) {
+            CodexEngine.get().getMessageUtil().sendMessage("notAPlayer", sender, new MessageData("name", args[2]));
+            return;
+        }
+
+        try {
+            long exp = Long.parseLong(args[4]);
+            long expBefore = FusionAPI.getPlayerManager().getPlayer(player).getExperience(profession);
+            switch (args[1].toLowerCase()) {
+                case "add" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
+                case "take" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -exp);
+                case "set" -> {
+                    long diff = exp - expBefore;
+                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), diff);
+                }
+            }
+            long expAfter = FusionAPI.getPlayerManager().getPlayer(player).getExperience(profession);
+            CodexEngine.get().getMessageUtil().sendMessage("admin.expChanged", sender,
+                    new MessageData("sender", sender),
+                    new MessageData("player", player.getName()),
+                    new MessageData("profession", profession),
+                    new MessageData("exp_old", expBefore),
+                    new MessageData("exp_new", expAfter));
+        } catch (NumberFormatException e) {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidNumber", sender);
+        }
+    }
+
+    public static void setProfessionLevel(CommandSender sender, String[] args) {
+        String profession = args[2];
+
+        if(profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidProfession", sender);
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(args[3]);
+        if(player == null) {
+            CodexEngine.get().getMessageUtil().sendMessage("notAPlayer", sender, new MessageData("name", args[2]));
+            return;
+        }
+
+        try {
+            int level = Integer.parseInt(args[4]);
+            int levelBefore = FusionAPI.getPlayerManager().getPlayer(player).getLevel(profession);
+            Bukkit.getLogger().info("Level before: " + levelBefore);
+            Bukkit.getLogger().info("Level: " + level);
+            switch (args[1].toLowerCase()) {
+                case "add" -> FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, levelBefore + level);
+                case "take" -> FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, levelBefore - level);
+                case "set" -> {
+                    int diff = level - levelBefore;
+                    FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, diff);
+                }
+            }
+            int levelAfter = FusionAPI.getPlayerManager().getPlayer(player).getLevel(profession);
+            CodexEngine.get().getMessageUtil().sendMessage("admin.levelChanged", sender,
+                    new MessageData("sender", sender),
+                    new MessageData("player", player.getName()),
+                    new MessageData("profession", profession),
+                    new MessageData("level_old", levelBefore),
+                    new MessageData("level_new", levelAfter));
+        } catch (NumberFormatException e) {
+            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidNumber", sender);
         }
     }
 

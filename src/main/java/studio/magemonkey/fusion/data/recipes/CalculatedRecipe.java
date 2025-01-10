@@ -64,6 +64,7 @@ public class CalculatedRecipe {
 
             boolean canCraft = true;
 
+
             String recipePermissionLine;
             if (!Utils.hasCraftingPermission(player, recipe.getName())) {
                 canCraft = false;
@@ -138,6 +139,7 @@ public class CalculatedRecipe {
                     break;
                 }
             }
+
             List<Pair<ItemStack, Integer>> eqItems = Recipe.getItems(items);
 
 
@@ -291,7 +293,6 @@ public class CalculatedRecipe {
         }
 
         boolean isValid = true;
-
         // Check for lore
         if (im1.hasLore()) {
             List<String> lore1 = im1.getLore();
@@ -377,11 +378,9 @@ public class CalculatedRecipe {
             checkingLines.add(CraftingRequirementsCfg.getExtensionDurabilityLine(path, damage2, damage1));
         }
 
-        if (isValid)
-            return true;
         // If all those checks failed, try to check once more through the native item meta check
         // This is useful for custom items like from Divinity, etc.
-        return is1.isSimilar(is2);
+        return isValid || is1.isSimilar(is2);
     }
 
     @Override

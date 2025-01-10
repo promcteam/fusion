@@ -11,13 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.CodexEngine;
 import studio.magemonkey.codex.util.messages.MessageData;
-import studio.magemonkey.fusion.Fusion;
-import studio.magemonkey.fusion.cfg.Cfg;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.professions.Profession;
-import studio.magemonkey.fusion.data.professions.pattern.Category;
-import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +39,11 @@ public class Commands implements CommandExecutor, TabCompleter {
             case "auto" -> CommandMechanics.toggleAutoCrafting(sender);
             case "browse" -> CommandMechanics.openBrowseGui(sender);
             case "confirm" -> CommandMechanics.confirmAction(sender, confirmation);
+            case "exp" -> {
+                if(args.length == 5) {
+                    CommandMechanics.setProfessionExp(sender, args);
+                }
+            }
             case "forget" -> {
                 if (args.length == 2)
                     CommandMechanics.forgetProfession(sender, args, confirmation);
@@ -51,14 +52,19 @@ public class Commands implements CommandExecutor, TabCompleter {
                 if (args.length == 2)
                     CommandMechanics.joinProfession(sender, args);
             }
+            case "level" -> {
+                if(args.length == 5) {
+                    CommandMechanics.setProfessionLevel(sender, args);
+                }
+            }
             case "reload" -> CommandMechanics.reloadPlugin(sender);
-            case "stats" -> CommandMechanics.showLevels(sender);
             case "master" -> {
                 if (args.length == 2)
                     CommandMechanics.masterProfession(sender, args);
                 return true;
             }
             case "show" -> CommandMechanics.openIngredientGui(sender);
+            case "stats" -> CommandMechanics.showStats(sender);
             case "storage" -> {
                 if (args.length == 2) {
                     CommandMechanics.setStorage(sender, args);
@@ -88,6 +94,7 @@ public class Commands implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             if ("browse".startsWith(args[0])) entries.add("browse");
             if ("level".startsWith(args[0])) entries.add("level");
+            if ("stats".startsWith(args[0])) entries.add("stats");
             if ("confirm".startsWith(args[0])) entries.add("confirm");
             if ("use".startsWith(args[0])) entries.add("use");
             if ("master".startsWith(args[0])) entries.add("master");

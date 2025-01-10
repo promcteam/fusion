@@ -108,14 +108,17 @@ public class ProfessionService {
      * @param newLevel The new level of the player.
      */
     public void levelUpProfession(Player player, CraftingTable table, int previousLevel, int newLevel) {
+        if(newLevel < 0) {
+            newLevel = 0;
+        }
         ProfessionLevelUpEvent event = new ProfessionLevelUpEvent(table.getName(), player, previousLevel, newLevel);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            event.getFusionPlayer().getProfession(table).setLevel(newLevel);
+            event.getFusionPlayer().getProfession(table).setLevel(event.getNewLevel());
             CodexEngine.get().getMessageUtil().sendMessage("fusion.levelup",
                     player,
                     new MessageData("craftingTable", table),
-                    new MessageData("level", newLevel));
+                    new MessageData("level", event.getNewLevel()));
         }
     }
 

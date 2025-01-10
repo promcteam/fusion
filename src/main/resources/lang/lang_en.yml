@@ -4,15 +4,6 @@ fusion:
     noFundsMoney: "&cYou need &3$$<costs.money> &cto buy this!"
     noFundsExperience: "&cYou need &3$<costs.exp> exp &cto buy this!"
     noConditionLevel: "&cYou need to be at least level &a$<condition.level> &cin &a$<condition.name> &cto unlock this!"
-  conditionFormatting:
-    profession: "&3Profession &a$<profession>"
-    fabled: "&3Fabled &a$<class>"
-    mcmmo: "&3McMMO &a$<skill>"
-    jobs: "&3Job &a$<job>"
-    auraAbility: "&3Aura Ability &a$<ability>"
-    auraManaAbility: "&3Aura Mana Ability &a$<ability>"
-    auraSkill: "&3Aura Skill &a$<skill>"
-    auraStats: "&3Aura Stat &a$<stat>"
   error:
     alreadyMastered: "&cYou have already mastered this!"
     noMasteryLevel: "&cYou must be at least level $<craftingTable.masteryUnlock> to unlock this!"
@@ -113,3 +104,6 @@ editor:
   flagAlreadyExists: "&cThe flag &3$<flag> &calready exists."
 
 
+admin:
+  expChanged: "&aYou changed the experience of &3$<player> &afrom &3$<exp_old> &ato &3$<exp_new>"
+  levelChanged: "&aYou changed the level of &3$<player> &afrom &3$<level_old> &ato &3$<level_new>"
