@@ -551,14 +551,12 @@ public class RecipeGui implements Listener {
             for (ItemStack entry : PlayerUtil.getPlayerItems(player)) {
                 ItemStack item = entry.clone();
                 entry = entry.clone();
-                if (item.hasItemMeta() && Objects.requireNonNull(item.getItemMeta()).hasLore()) {
-                    item = item.clone();
-                    entry.setAmount(toTake.getAmount());
+                item = item.clone();
+                entry.setAmount(toTake.getAmount());
 
-                    if (CalculatedRecipe.isSimilar(toTake, item)) {
-                        toTake = entry;
-                        break;
-                    }
+                if (CalculatedRecipe.isSimilar(toTake, item)) {
+                    toTake = entry;
+                    break;
                 }
             }
 
