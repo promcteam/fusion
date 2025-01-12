@@ -12,6 +12,7 @@ import studio.magemonkey.fusion.data.player.FusionPlayer;
 import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.util.ExperienceManager;
+import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.PlayerUtil;
 
 public class ProfessionService {
@@ -100,6 +101,34 @@ public class ProfessionService {
         }
     }
 
+    public void setProfessionExp(Player player, CraftingTable table, long xp) {
+        FusionPlayer fusionPlayer = FusionAPI.getPlayerManager().getPlayer(player);
+        Profession   profession   = fusionPlayer.getProfession(table);
+        if (profession == null) {
+            Fusion.getInstance()
+                    .getLogger()
+                    .warning("Failed to give experience to player " + player.getName() + " for table " + table.getName()
+                            + " as they do not have the profession.");
+            return;
+        }
+
+        if(table.getMaxLevel() > 0 && LevelFunction.getLevel(profession.getExp() + xp) >= table.getMaxLevel()) {
+            return;
+        }
+
+        ProfessionGainXpEvent event = new ProfessionGainXpEvent(table.getName(), player, xp);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+
+            int previousLevel = profession.getLevel();
+            FusionAPI.getPlayerManager().getPlayer(player).setExperience(table.getName(), event.getGainedExp());
+            int newLevel = profession.getLevel();
+            if (newLevel != previousLevel) {
+                levelUpProfession(player, table, previousLevel, newLevel);
+            }
+        }
+    }
+
     /**
      * Call the ProfessionLevelUpEvent.
      * @param player The player that levels up.
@@ -114,7 +143,6 @@ public class ProfessionService {
         ProfessionLevelUpEvent event = new ProfessionLevelUpEvent(table.getName(), player, previousLevel, newLevel);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            event.getFusionPlayer().getProfession(table).setLevel(event.getNewLevel());
             CodexEngine.get().getMessageUtil().sendMessage("fusion.levelup",
                     player,
                     new MessageData("craftingTable", table),
