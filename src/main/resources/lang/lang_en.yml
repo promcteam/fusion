@@ -58,6 +58,8 @@ fusion:
         &8/&7craft &rlevel
         &8/&7craft &rmaster &8<&7profession&8>
         &8/&7craft &rforget &8<&7profession&8>
+        &8/&7craft &rexp <add|take|set> &8<&7profession&8> <&7player&8> <&7amount&8>
+        &8/&7craft &rlevel <add|take|set> &8<&7profession&8> <&7player&8> <&7amount&8>
         &8/&7craft &rreload
 editor:
   editorUsage: "&7Usage: '&8/fusion-editor &a$<syntax>&7'."
@@ -103,6 +105,8 @@ editor:
   professionAlreadyExists: "&cThe profession &3$<profession> &calready exists and cannot be overridden by other profession."
   flagAlreadyExists: "&cThe flag &3$<flag> &calready exists."
 
+player:
+  professionNotAvailable: "&cThe player &3$<player> &cdoes not have the profession &3$<profession>"
 
 admin:
   expChanged: "&aYou changed the experience of &3$<player> &afrom &3$<exp_old> &ato &3$<exp_new>"
