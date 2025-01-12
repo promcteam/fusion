@@ -233,6 +233,20 @@ public class FusionPlayer {
         addExperience(table.getName(), experience);
     }
 
+    public void setExperience(String profession, long experience) {
+        if (professions.containsKey(profession)) {
+            professions.get(profession).setExp(experience);
+        }
+    }
+
+    public void setExp(Profession profession, long experience) {
+        setExperience(profession.getName(), experience);
+    }
+
+    public void setExp(CraftingTable table, long experience) {
+        setExperience(table.getName(), experience);
+    }
+
     public void removeExperience(String profession, long experience) {
         if (professions.containsKey(profession)) {
             professions.get(profession).removeExp(experience);

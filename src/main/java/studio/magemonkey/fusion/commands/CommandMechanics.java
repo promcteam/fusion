@@ -348,10 +348,7 @@ public class CommandMechanics {
             switch (args[1].toLowerCase()) {
                 case "add" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
                 case "take" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -exp);
-                case "set" -> {
-                    long diff = exp - expBefore;
-                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), diff);
-                }
+                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
             }
             long expAfter = FusionAPI.getPlayerManager().getPlayer(player).getExperience(profession);
             CodexEngine.get().getMessageUtil().sendMessage("admin.expChanged", sender,
@@ -380,19 +377,24 @@ public class CommandMechanics {
         }
 
         try {
-            int level = Integer.parseInt(args[4]);
             int levelBefore = FusionAPI.getPlayerManager().getPlayer(player).getLevel(profession);
-            Bukkit.getLogger().info("Level before: " + levelBefore);
-            Bukkit.getLogger().info("Level: " + level);
+            int levelAfter = Integer.parseInt(args[4]);
+            long expBefore = (long) LevelFunction.getXP(levelBefore);
+            long expAfter = (long) LevelFunction.getXP(levelAfter);
+
+            Bukkit.getLogger().info("Level before: " + expBefore + " - " + levelBefore);
+            Bukkit.getLogger().info("Level before: " + expAfter + " - " + levelAfter);
             switch (args[1].toLowerCase()) {
-                case "add" -> FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, levelBefore + level);
-                case "take" -> FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, levelBefore - level);
-                case "set" -> {
-                    int diff = level - levelBefore;
-                    FusionAPI.getEventServices().getProfessionService().levelUpProfession(player, ProfessionsCfg.getTable(profession), levelBefore, diff);
+                case "add" -> {
+                    long expDiff = getExpDifference(expBefore, expAfter);
+                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), expDiff);
                 }
+                case "take" -> {
+                    long expDiff = getExpDifference(expBefore, expAfter);
+                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -expDiff);
+                }
+                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), expAfter);
             }
-            int levelAfter = FusionAPI.getPlayerManager().getPlayer(player).getLevel(profession);
             CodexEngine.get().getMessageUtil().sendMessage("admin.levelChanged", sender,
                     new MessageData("sender", sender),
                     new MessageData("player", player.getName()),
@@ -430,5 +432,13 @@ public class CommandMechanics {
         }
 
         new ShowRecipesGui(player, recipeUsage).open(player);
+    }
+
+    private static long getExpDifference(double expBefore, double expAfter) {
+        if(expBefore > expAfter) {
+            return (long) (expBefore - expAfter);
+        } else {
+            return (long) (expAfter - expBefore);
+        }
     }
 }
