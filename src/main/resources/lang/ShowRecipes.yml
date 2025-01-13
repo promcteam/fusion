@@ -51,7 +51,6 @@ pattern:
       enchants: {}
       data: null
 recipeItem:
-  material: $<material>
   lore:
     - '&8Profession: $<profession>'
     - '&8[&a$<amount>x &7$<ingredient>&8]'

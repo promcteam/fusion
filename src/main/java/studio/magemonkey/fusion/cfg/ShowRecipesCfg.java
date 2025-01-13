@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import studio.magemonkey.codex.legacy.item.ItemBuilder;
 import studio.magemonkey.codex.util.messages.MessageUtil;
 import studio.magemonkey.fusion.Fusion;
@@ -93,7 +94,6 @@ public class ShowRecipesCfg {
     }
 
     public static ItemStack getRecipeIcon(Recipe recipe, RecipeItem ingredient) {
-        Material material = Material.valueOf(config.getString("recipeItem.material", "$<material>").replace(MessageUtil.getReplacement("material"), recipe.getResults().getResultItem().getItemStack().getType().name()).toUpperCase());
         String itemName = Utils.getItemName(recipe.getResults().getResultItem().getItemStack());
         String name = ChatUT.hexString(config.getString("recipeItem.name", "&7$<name>").replace(MessageUtil.getReplacement("name"), itemName));
         List<String> lore = config.getStringList("recipeItem.lore");
@@ -101,7 +101,13 @@ public class ShowRecipesCfg {
                 .replace(MessageUtil.getReplacement("profession"), recipe.getTable().getInventoryName())
                 .replace(MessageUtil.getReplacement("amount"), String.valueOf(ingredient.getAmount()))
                 .replace(MessageUtil.getReplacement("name"), name)));
-        return ItemBuilder.newItem(material).name(name).lore(lore).build();
+
+        ItemStack icon = recipe.getResults().getResultItem().getItemStack().clone();
+        ItemMeta meta = icon.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        icon.setItemMeta(meta);
+        return icon;
     }
 
     public static String getInventoryName(RecipeItem ingredient) {
