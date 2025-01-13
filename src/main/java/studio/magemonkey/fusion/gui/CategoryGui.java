@@ -96,7 +96,7 @@ public class CategoryGui implements Listener {
             }
 
             updateBlockedSlots(new MessageData[]{
-                    new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(table.getName()))),
+                    new MessageData("level", table.getLevelFunction().getLevel(player)),
                     new MessageData("gui", table.getName()),
                     new MessageData("player", player.getName()),
                     new MessageData("bal",

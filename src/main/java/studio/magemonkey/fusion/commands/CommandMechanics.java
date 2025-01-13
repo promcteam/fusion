@@ -125,7 +125,7 @@ public class CommandMechanics {
                         new MessageData("craftingTable", table));
             }
 
-            if (LevelFunction.getLevel(player, table) < table.getMasteryUnlock()) {
+            if (table.getLevelFunction().getLevel(player) < table.getMasteryUnlock()) {
                 CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noMasteryLevel",
                         sender,
                         new MessageData("sender", sender),
@@ -390,19 +390,19 @@ public class CommandMechanics {
             int levelAfter = Integer.parseInt(args[4]);
             if(levelAfter <= 0)
                 levelBefore = 1;
-            long expBefore = (long) LevelFunction.getXP(levelBefore);
-            long expAfter = (long) LevelFunction.getXP(levelAfter);
+            long expBefore = (long) ProfessionsCfg.getTable(profession).getLevelFunction().getXP(levelBefore); //LevelFunction.getXP(levelBefore);
+            long expAfter = (long) ProfessionsCfg.getTable(profession).getLevelFunction().getXP(levelAfter);
 
             switch (args[1].toLowerCase()) {
                 case "add" -> {
                     long expDiff = getExpDifference(expBefore, expAfter);
-                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), expDiff + 1);
+                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), expDiff + (!Cfg.useCustomFormula ? 1 : 0));
                 }
                 case "take" -> {
                     long expDiff = getExpDifference(expBefore, expAfter);
                     FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -expDiff);
                 }
-                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), expAfter + 1);
+                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), expAfter + (!Cfg.useCustomFormula ? 1 : 0));
             }
             CodexEngine.get().getMessageUtil().sendMessage("admin.levelChanged", sender,
                     new MessageData("sender", sender),

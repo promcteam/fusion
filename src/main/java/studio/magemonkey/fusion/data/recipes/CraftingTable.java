@@ -17,6 +17,7 @@ import studio.magemonkey.codex.legacy.item.ItemBuilder;
 import studio.magemonkey.codex.util.DeserializationWorker;
 import studio.magemonkey.codex.util.SerializationBuilder;
 import studio.magemonkey.fusion.Fusion;
+import studio.magemonkey.fusion.cfg.ProfessionLevelCfg;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.cfg.hooks.ItemGenEntry;
 import studio.magemonkey.fusion.cfg.hooks.divinity.DivinityRecipeMeta;
@@ -44,6 +45,8 @@ public class CraftingTable implements ConfigurationSerializable {
     private boolean                         useCategories = true;
     @Getter
     private LinkedHashMap<String, Category> categories    = new LinkedHashMap<>();
+
+    private ProfessionLevelCfg levelFunction;
 
     //Mastery!
     private int masteryUnlock;

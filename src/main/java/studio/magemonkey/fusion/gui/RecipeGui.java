@@ -315,7 +315,7 @@ public class RecipeGui implements Listener {
                 }
             }
             updateBlockedSlots(new MessageData[]{
-                    new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(name))),
+                    new MessageData("level", table.getLevelFunction().getLevel(player)),
                     new MessageData("category", category),
                     new MessageData("gui", getName()),
                     new MessageData("player", player.getName()),
@@ -489,7 +489,7 @@ public class RecipeGui implements Listener {
         if (!Objects.equals(this.recipes.get(slot), calculatedRecipe)) {
             return false;
         }
-        if (LevelFunction.getLevel(player, table) < recipe.getConditions().getProfessionLevel()) {
+        if (table.getLevelFunction().getLevel(player) < recipe.getConditions().getProfessionLevel()) {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.error.noLevel", player, new MessageData("recipe", recipe));

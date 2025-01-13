@@ -3,6 +3,7 @@ package studio.magemonkey.fusion.data.professions;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.util.LevelFunction;
 
@@ -62,15 +63,15 @@ public class Profession {
     }
 
     public int getLevel() {
-        return LevelFunction.getLevel(exp);
+        return ProfessionsCfg.getTable(name).getLevelFunction().getLevel(exp);
     }
 
     public void setLevel(int level) {
         if(level < getLevel()) {
-            long diffExp = (long) (exp - LevelFunction.getXP(level));
+            long diffExp = (long) (exp - ProfessionsCfg.getTable(name).getLevelFunction().getXP(level));
             removeExp(diffExp);
         } else {
-            long requiredExp = (long) (LevelFunction.getXP(level) - exp);
+            long requiredExp = (long) (ProfessionsCfg.getTable(name).getLevelFunction().getXP(level) - exp);
             addExp(requiredExp);
         }
     }

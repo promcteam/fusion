@@ -157,7 +157,7 @@ public class Recipe implements ConfigurationSerializable {
             if (!Utils.hasCraftingPermission(p, getName())) {
                 return false;
             }
-            if (LevelFunction.getLevel(p, craftingTable) < this.conditions.getProfessionLevel()) {
+            if (table.getLevelFunction().getLevel(p) < this.conditions.getProfessionLevel()) {
                 return false;
             }
             if (!this.conditions.isValid(PlayerLoader.getPlayer(p))) {

@@ -117,6 +117,8 @@ public class ProfessionsCfg {
                     map.put(ct.getName(), ct);
                     cfgs.put(ct.getName(), cfg);
                     files.put(ct.getName(), file);
+                    injectProfessionLevelConfig(ct, file);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     Fusion.getInstance().getLogger().warning("Can't load crafting table: " + e.getMessage());
@@ -453,5 +455,11 @@ public class ProfessionsCfg {
         for (ProfessionGuiRegistry gui : guiMap.values()) {
             gui.closeAll();
         }
+    }
+
+    private static void injectProfessionLevelConfig(CraftingTable table, File file) {
+        File levelFile = new File(file.getPath().replace("professions", "levels"));
+        ProfessionLevelCfg levelCfg = new ProfessionLevelCfg(table, levelFile.getPath().replace("plugins/Fusion", ""));
+        table.setLevelFunction(levelCfg);
     }
 }

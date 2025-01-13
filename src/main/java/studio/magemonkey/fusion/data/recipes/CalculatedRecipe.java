@@ -97,11 +97,11 @@ public class CalculatedRecipe {
 
             String levelsLine = null;
             if (recipe.getConditions().getProfessionLevel() != 0) {
-                if (LevelFunction.getLevel(player, craftingTable) < recipe.getConditions().getProfessionLevel()) {
+                if (recipe.getTable().getLevelFunction().getLevel(player) < recipe.getConditions().getProfessionLevel()) {
                     canCraft = false;
                 }
                 levelsLine = CraftingRequirementsCfg.getProfessionLevel("recipes",
-                        LevelFunction.getLevel(player, craftingTable),
+                        recipe.getTable().getLevelFunction().getLevel(player),
                         recipe.getConditions().getProfessionLevel());
             }
 

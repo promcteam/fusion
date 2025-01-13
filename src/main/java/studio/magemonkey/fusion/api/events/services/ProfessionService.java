@@ -111,8 +111,7 @@ public class ProfessionService {
                             + " as they do not have the profession.");
             return;
         }
-
-        if(table.getMaxLevel() > 0 && LevelFunction.getLevel(profession.getExp() + xp) >= table.getMaxLevel()) {
+        if(table.getMaxLevel() > 0 && table.getLevelFunction().getLevel(profession.getExp() + xp) >= table.getMaxLevel()) {
             return;
         }
 
