@@ -649,10 +649,11 @@ public class RecipeGui implements Listener {
                     DelayedCommand.invoke(Fusion.getInstance(), player, recipe.getResults().getCommands());
 
                     //Experience
-                    if (recipe.getResults().getProfessionExp() > 0) {
+                    long professionExp = recipe.getResults().getProfessionExp() + (long) (recipe.getResults().getProfessionExp() * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
+                    if (professionExp > 0) {
                         FusionAPI.getEventServices()
                                 .getProfessionService()
-                                .giveProfessionExp(player, table, recipe.getResults().getProfessionExp());
+                                .giveProfessionExp(player, table, professionExp);
                     }
                     if (recipe.getResults().getVanillaExp() > 0) {
                         player.giveExp(recipe.getResults().getVanillaExp());

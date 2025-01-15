@@ -41,6 +41,22 @@ public class PlayerUtil {
         return ret;
     }
 
+    public static double getProfessionExpBonusThroughPermissions(Player player, String profession) {
+        int chance = 0;
+        for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {
+            String ps = perm.getPermission();
+            if (ps.startsWith("fusion.experience." + profession.toLowerCase() + ".boost")) {
+                String end = ps.substring(ps.lastIndexOf('.') + 1);
+                try {
+                    chance += Integer.parseInt(end);
+                } catch (NumberFormatException e) {
+                    Fusion.getInstance().log.warning("Could not get numeric permission value from '" + end + "'");
+                }
+            }
+        }
+        return (double) chance / 100;
+    }
+
     public static List<String> getPlayerNames() {
         List<String> entries = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> entries.add(player.getName()));

@@ -15,6 +15,7 @@ import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.data.queue.CraftingQueue;
 import studio.magemonkey.fusion.data.queue.QueueItem;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
+import studio.magemonkey.fusion.util.PlayerUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -157,12 +158,13 @@ public class QueueService {
             }
 
             //Experience
-            if (item.getRecipe().getResults().getProfessionExp() > 0) {
+            long professionExp = item.getRecipe().getResults().getProfessionExp() + (long) (item.getRecipe().getResults().getProfessionExp() * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
+            if (professionExp > 0) {
                 FusionAPI.getEventServices()
                         .getProfessionService()
                         .giveProfessionExp(player,
                                 event.getCraftingTable(),
-                                event.getQueueItem().getRecipe().getResults().getProfessionExp());
+                                professionExp);
             }
             if (item.getRecipe().getResults().getVanillaExp() > 0) {
                 player.giveExp(event.getQueueItem().getRecipe().getResults().getVanillaExp());
