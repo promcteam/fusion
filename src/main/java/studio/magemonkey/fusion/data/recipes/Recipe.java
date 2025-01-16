@@ -19,7 +19,6 @@ import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.professions.ProfessionConditions;
 import studio.magemonkey.fusion.data.professions.ProfessionResults;
 import studio.magemonkey.fusion.data.professions.ProfessionSettings;
-import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
 import java.util.*;
@@ -45,7 +44,7 @@ public class Recipe implements ConfigurationSerializable {
 
     private final ProfessionResults    results;
     private final ProfessionConditions conditions;
-    private final ProfessionSettings settings;
+    private final ProfessionSettings   settings;
 
     // This is a optional meta information that is usually empty, until a recipe uses the ItemGenerator function from Divinity.
     // I might outsource this someday but for now it's urgent and requires this solution.
@@ -265,9 +264,9 @@ public class Recipe implements ConfigurationSerializable {
         if (conditions.getPermission() != null) {
             if (Cfg.hideRecipesNoPermission && !player.hasPermission(conditions.getPermission())) {
                 isHidden = true;
-                if (settings.getHideNoPermission()  != null) isHidden = settings.getHideNoPermission() ;
+                if (settings.getHideNoPermission() != null) isHidden = settings.getHideNoPermission();
             } else if (!Utils.hasCraftingPermission(player, getName())) {
-                if (settings.getHideNoPermission()  != null) isHidden = settings.getHideNoPermission() ;
+                if (settings.getHideNoPermission() != null) isHidden = settings.getHideNoPermission();
             }
             if (isHidden) return true;
         }
@@ -275,7 +274,7 @@ public class Recipe implements ConfigurationSerializable {
         FusionPlayer fusionPlayer = PlayerLoader.getPlayer(player);
         if (Cfg.hideRecipesLimitReached && fusionPlayer.hasRecipeLimitReached(this)) {
             isHidden = true;
-            if (settings.getHideRecipeLimitReached()  != null) isHidden = settings.getHideRecipeLimitReached();
+            if (settings.getHideRecipeLimitReached() != null) isHidden = settings.getHideRecipeLimitReached();
         } else if (fusionPlayer.hasRecipeLimitReached(this)) {
             if (settings.getHideRecipeLimitReached() != null) isHidden = settings.getHideRecipeLimitReached();
         }

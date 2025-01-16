@@ -21,7 +21,7 @@ public class InventoryPattern implements ConfigurationSerializable {
     private final String[]                                 pattern; // - for ingredients, = for result.
     @Getter
     @Setter
-    private HashMap<Character, ItemStack>            items;
+    private       HashMap<Character, ItemStack>            items;
     private final HashMap<Character, List<DelayedCommand>> commands          = new HashMap<>();
     @Getter
     private final List<Character>                          closeOnClickSlots = new ArrayList<>();

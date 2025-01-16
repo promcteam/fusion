@@ -19,16 +19,16 @@ public class ProfessionSettings implements ConfigurationSerializable {
     private final String profession;
 
     @Setter
-    private boolean enableLore;
+    private boolean      enableLore;
     @Setter
     private List<String> lore;
     @Setter
-    private Boolean hideNoPermission;
+    private Boolean      hideNoPermission;
     @Setter
-    private Boolean hideRecipeLimitReached;
+    private Boolean      hideRecipeLimitReached;
 
     public ProfessionSettings(String profession, boolean enableItemLore, List<String> lore, Boolean hideNoPermission,
-            Boolean hideRecipeLimitReached) {
+                              Boolean hideRecipeLimitReached) {
         this.profession = profession;
         this.enableLore = enableItemLore;
         this.lore = lore;
@@ -48,7 +48,7 @@ public class ProfessionSettings implements ConfigurationSerializable {
         this.profession = profession;
         Map<String, Object> settingsSection = dw.getSection("settings");
 
-        if(settingsSection == null) {
+        if (settingsSection == null) {
             this.enableLore = true;
             this.lore = new ArrayList<>();
             this.hideNoPermission = null;
@@ -59,7 +59,8 @@ public class ProfessionSettings implements ConfigurationSerializable {
 
             Map<String, Object> hiding = (Map<String, Object>) settingsSection.get("hiding");
             this.hideNoPermission =
-                    (hiding != null && hiding.get("noPermission") != null) ? (boolean) hiding.get("noPermission") : null;
+                    (hiding != null && hiding.get("noPermission") != null) ? (boolean) hiding.get("noPermission")
+                            : null;
             this.hideRecipeLimitReached = (hiding != null && hiding.get("recipeLimitReached") != null)
                     ? (boolean) hiding.get("recipeLimitReached") : null;
         }

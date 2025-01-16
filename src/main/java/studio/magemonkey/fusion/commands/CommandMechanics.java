@@ -22,7 +22,6 @@ import studio.magemonkey.fusion.data.recipes.RecipeItem;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
 import studio.magemonkey.fusion.gui.show.ShowRecipesGui;
-import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
 import java.util.HashMap;
@@ -36,8 +35,8 @@ public class CommandMechanics {
             return;
         }
         String[] professionArgs = args[1].split(":");
-        String profession = professionArgs[0];
-        Category category = null;
+        String   profession     = professionArgs[0];
+        Category category       = null;
 
         ProfessionGuiRegistry eq = ProfessionsCfg.getGuiMap().get(profession);
 
@@ -101,15 +100,17 @@ public class CommandMechanics {
                         new MessageData("craftingInventory", eq),
                         new MessageData("player", sender));
             } else {
-                CodexEngine.get().getMessageUtil().sendMessage("fusion.help", sender, new MessageData("sender", sender));
+                CodexEngine.get()
+                        .getMessageUtil()
+                        .sendMessage("fusion.help", sender, new MessageData("sender", sender));
             }
         }
     }
 
     public static void masterProfession(CommandSender sender, String[] args) {
         if (sender instanceof Player player) {
-            String guiName = args[1];
-            CraftingTable table = ProfessionsCfg.getTable(guiName);
+            String        guiName = args[1];
+            CraftingTable table   = ProfessionsCfg.getTable(guiName);
             if (table == null) {
                 CodexEngine.get().getMessageUtil().sendMessage("fusion.notACrafting",
                         sender,
@@ -151,7 +152,9 @@ public class CommandMechanics {
         }
     }
 
-    public static void forgetProfession(CommandSender sender, String[] args, Map<String, Commands.ConfirmationAction> confirmation) {
+    public static void forgetProfession(CommandSender sender,
+                                        String[] args,
+                                        Map<String, Commands.ConfirmationAction> confirmation) {
         if (sender instanceof Player player) {
             CraftingTable table = ProfessionsCfg.getTable(args[1]);
             if (table == null) {
@@ -306,7 +309,7 @@ public class CommandMechanics {
 
     public static void reloadPlugin(CommandSender sender) {
         if (!Fusion.getInstance().checkPermission(sender, "fusion.reload")) {
-            return ;
+            return;
         }
         Fusion.getInstance().closeAll();
         Fusion.getInstance().reloadConfig();
@@ -331,29 +334,35 @@ public class CommandMechanics {
     public static void setProfessionExp(CommandSender sender, String[] args) {
         String profession = args[2];
 
-        if(profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
+        if (profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
             CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidProfession", sender);
             return;
         }
 
         Player player = Bukkit.getPlayer(args[3]);
-        if(player == null) {
+        if (player == null) {
             CodexEngine.get().getMessageUtil().sendMessage("notAPlayer", sender, new MessageData("name", args[2]));
             return;
         }
 
-        if(FusionAPI.getPlayerManager().getPlayer(player).getProfession(profession) == null) {
+        if (FusionAPI.getPlayerManager().getPlayer(player).getProfession(profession) == null) {
             CodexEngine.get().getMessageUtil().sendMessage("player.professionNotAvailable", sender);
             return;
         }
 
         try {
-            long exp = Long.parseLong(args[4]);
+            long exp       = Long.parseLong(args[4]);
             long expBefore = FusionAPI.getPlayerManager().getPlayer(player).getExperience(profession);
             switch (args[1].toLowerCase()) {
-                case "add" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
-                case "take" -> FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -exp);
-                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
+                case "add" -> FusionAPI.getEventServices()
+                        .getProfessionService()
+                        .giveProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
+                case "take" -> FusionAPI.getEventServices()
+                        .getProfessionService()
+                        .giveProfessionExp(player, ProfessionsCfg.getTable(profession), -exp);
+                case "set" -> FusionAPI.getEventServices()
+                        .getProfessionService()
+                        .setProfessionExp(player, ProfessionsCfg.getTable(profession), exp);
             }
             long expAfter = FusionAPI.getPlayerManager().getPlayer(player).getExperience(profession);
             CodexEngine.get().getMessageUtil().sendMessage("admin.expChanged", sender,
@@ -370,39 +379,51 @@ public class CommandMechanics {
     public static void setProfessionLevel(CommandSender sender, String[] args) {
         String profession = args[2];
 
-        if(profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
+        if (profession == null || !ProfessionsCfg.getMap().containsKey(profession)) {
             CodexEngine.get().getMessageUtil().sendMessage("fusion.error.invalidProfession", sender);
             return;
         }
 
         Player player = Bukkit.getPlayer(args[3]);
-        if(player == null) {
+        if (player == null) {
             CodexEngine.get().getMessageUtil().sendMessage("notAPlayer", sender, new MessageData("name", args[2]));
             return;
         }
 
-        if(FusionAPI.getPlayerManager().getPlayer(player).getProfession(profession) == null) {
+        if (FusionAPI.getPlayerManager().getPlayer(player).getProfession(profession) == null) {
             CodexEngine.get().getMessageUtil().sendMessage("player.professionNotAvailable", sender);
             return;
         }
         try {
             int levelBefore = FusionAPI.getPlayerManager().getPlayer(player).getLevel(profession);
-            int levelAfter = Integer.parseInt(args[4]);
-            if(levelAfter <= 0)
+            int levelAfter  = Integer.parseInt(args[4]);
+            if (levelAfter <= 0)
                 levelBefore = 1;
-            long expBefore = (long) ProfessionsCfg.getTable(profession).getLevelFunction().getXP(levelBefore); //LevelFunction.getXP(levelBefore);
-            long expAfter = (long) ProfessionsCfg.getTable(profession).getLevelFunction().getXP(levelAfter);
+            long expBefore = (long) ProfessionsCfg.getTable(profession)
+                    .getLevelFunction()
+                    .getXP(levelBefore); //LevelFunction.getXP(levelBefore);
+            long expAfter  = (long) ProfessionsCfg.getTable(profession).getLevelFunction().getXP(levelAfter);
 
             switch (args[1].toLowerCase()) {
                 case "add" -> {
                     long expDiff = getExpDifference(expBefore, expAfter);
-                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), expDiff + (!Cfg.useCustomFormula ? 1 : 0));
+                    FusionAPI.getEventServices()
+                            .getProfessionService()
+                            .giveProfessionExp(player,
+                                    ProfessionsCfg.getTable(profession),
+                                    expDiff + (!Cfg.useCustomFormula ? 1 : 0));
                 }
                 case "take" -> {
                     long expDiff = getExpDifference(expBefore, expAfter);
-                    FusionAPI.getEventServices().getProfessionService().giveProfessionExp(player, ProfessionsCfg.getTable(profession), -expDiff);
+                    FusionAPI.getEventServices()
+                            .getProfessionService()
+                            .giveProfessionExp(player, ProfessionsCfg.getTable(profession), -expDiff);
                 }
-                case "set" -> FusionAPI.getEventServices().getProfessionService().setProfessionExp(player, ProfessionsCfg.getTable(profession), expAfter + (!Cfg.useCustomFormula ? 1 : 0));
+                case "set" -> FusionAPI.getEventServices()
+                        .getProfessionService()
+                        .setProfessionExp(player,
+                                ProfessionsCfg.getTable(profession),
+                                expAfter + (!Cfg.useCustomFormula ? 1 : 0));
             }
             CodexEngine.get().getMessageUtil().sendMessage("admin.levelChanged", sender,
                     new MessageData("sender", sender),
@@ -444,7 +465,7 @@ public class CommandMechanics {
     }
 
     private static long getExpDifference(double expBefore, double expAfter) {
-        if(expBefore > expAfter) {
+        if (expBefore > expAfter) {
             return (long) (expBefore - expAfter);
         } else {
             return (long) (expAfter - expBefore);

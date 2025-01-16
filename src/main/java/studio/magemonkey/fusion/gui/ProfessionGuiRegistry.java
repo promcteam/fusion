@@ -38,14 +38,20 @@ public class ProfessionGuiRegistry {
     public void open(Player player, Category category) {
         CraftingTable table = ProfessionsCfg.getTable(profession);
         if (table.getUseCategories() && !table.getCategories().isEmpty()) {
-            if(table.getCategories().containsKey(category.getName())) {
+            if (table.getCategories().containsKey(category.getName())) {
                 categoryGuis.put(player.getUniqueId(), new CategoryGui(player, table));
                 categoryGuis.get(player.getUniqueId()).open(player, category);
             } else {
-                CodexEngine.get().getMessageUtil().sendMessage("fusion.error.categoryNotAvailable", player, new MessageData("sender", player.getPlayer()));
+                CodexEngine.get()
+                        .getMessageUtil()
+                        .sendMessage("fusion.error.categoryNotAvailable",
+                                player,
+                                new MessageData("sender", player.getPlayer()));
             }
         } else {
-            CodexEngine.get().getMessageUtil().sendMessage("fusion.error.noCategories", player, new MessageData("sender", player.getPlayer()));
+            CodexEngine.get()
+                    .getMessageUtil()
+                    .sendMessage("fusion.error.noCategories", player, new MessageData("sender", player.getPlayer()));
         }
 
     }

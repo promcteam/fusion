@@ -12,7 +12,6 @@ import studio.magemonkey.fusion.data.player.FusionPlayer;
 import studio.magemonkey.fusion.data.professions.Profession;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.util.ExperienceManager;
-import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.PlayerUtil;
 
 public class ProfessionService {
@@ -84,7 +83,7 @@ public class ProfessionService {
             return;
         }
 
-        if(table.getMaxLevel() > 0 && profession.getLevel() >= table.getMaxLevel()) {
+        if (table.getMaxLevel() > 0 && profession.getLevel() >= table.getMaxLevel()) {
             return;
         }
 
@@ -111,7 +110,8 @@ public class ProfessionService {
                             + " as they do not have the profession.");
             return;
         }
-        if(table.getMaxLevel() > 0 && table.getLevelFunction().getLevel(profession.getExp() + xp) >= table.getMaxLevel()) {
+        if (table.getMaxLevel() > 0
+                && table.getLevelFunction().getLevel(profession.getExp() + xp) >= table.getMaxLevel()) {
             return;
         }
 
@@ -136,7 +136,7 @@ public class ProfessionService {
      * @param newLevel The new level of the player.
      */
     public void levelUpProfession(Player player, CraftingTable table, int previousLevel, int newLevel) {
-        if(newLevel < 0) {
+        if (newLevel < 0) {
             newLevel = 0;
         }
         ProfessionLevelUpEvent event = new ProfessionLevelUpEvent(table.getName(), player, previousLevel, newLevel);

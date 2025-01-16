@@ -107,7 +107,7 @@ public class ProfessionsCfg {
                     addDefs(cfg);
 
                     // Perform migrations
-                    ProfessionMigration.migrate(cfg);
+                    ProfessionMigration.migrate(cfg, ProfessionMigration.VERSION);
 
                     cfg.save(file);
                     cfg.load(file);
@@ -420,7 +420,8 @@ public class ProfessionsCfg {
                     .build();
         }
         Material material =
-                Material.getMaterial(cfg.getString("recipePattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE"));
+                Material.getMaterial(cfg.getString("recipePattern.items.queue-items.-.material",
+                        "GRAY_STAINED_GLASS_PANE"));
         return ItemBuilder.newItem(material)
                 .name(cfg.getString("recipePattern.items.queue-items.-.name", "&cQueue Slot"))
                 .lore(cfg.getStringList("recipePattern.items.queue-items.-.lore"))
@@ -432,7 +433,8 @@ public class ProfessionsCfg {
         //System.out.println("Fetching queued item for " + key + " with item " + item.getRecipe().getResult().getItemStack().getType());
         FileConfiguration cfg = cfgs.get(key);
         String path =
-                item.isDone() ? "recipePattern.items.queue-items.Finished" : "recipePattern.items.queue-items.Unfinished";
+                item.isDone() ? "recipePattern.items.queue-items.Finished"
+                        : "recipePattern.items.queue-items.Unfinished";
 
 
         if (!cfg.isSet(path)) {
@@ -458,8 +460,8 @@ public class ProfessionsCfg {
     }
 
     private static void injectProfessionLevelConfig(CraftingTable table, File file) {
-        File levelFile = new File(file.getPath().replace("professions", "levels"));
-        ProfessionLevelCfg levelCfg = new ProfessionLevelCfg(table, levelFile.getPath().replace("plugins/Fusion", ""));
+        File               levelFile = new File(file.getPath().replace("professions", "levels"));
+        ProfessionLevelCfg levelCfg  = new ProfessionLevelCfg(table, levelFile.getPath().replace("plugins/Fusion", ""));
         table.setLevelFunction(levelCfg);
     }
 }

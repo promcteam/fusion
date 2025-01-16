@@ -14,18 +14,20 @@ import java.util.Optional;
 public class ProfessionLevelCfg {
 
     private final Map<Integer, Double> levelMap = new LinkedHashMap<>();
-    private final CraftingTable table;
-    private YamlParser config;
+    private final CraftingTable        table;
+    private       YamlParser           config;
 
     public ProfessionLevelCfg(CraftingTable table, String filePath) {
         this.table = table;
 
         // If the custom-formula is enabled, we load the custom levels from the file
-        if(Cfg.useCustomFormula) {
+        if (Cfg.useCustomFormula) {
             config = YamlParser.loadOrExtract(Fusion.getInstance(), filePath);
 
-            if(config.getDoubleList("level-exp").isEmpty()) {
-                Fusion.getInstance().getLogger().warning("No levels found in " + filePath + "! Generating default levels.");
+            if (config.getDoubleList("level-exp").isEmpty()) {
+                Fusion.getInstance()
+                        .getLogger()
+                        .warning("No levels found in " + filePath + "! Generating default levels.");
                 // Since we make no use of the Double, we are initiating natural numbers to avoid decimals
                 List<Integer> levels = List.of(50, 300, 500, 750, 1300, 1600, 3500, 7000, 15000, 30000);
                 config.set("level-exp", levels);
@@ -69,7 +71,7 @@ public class ProfessionLevelCfg {
     }
 
     public void reload() {
-        if(Cfg.useCustomFormula) {
+        if (Cfg.useCustomFormula) {
             config.reload();
             levelMap.clear();
 

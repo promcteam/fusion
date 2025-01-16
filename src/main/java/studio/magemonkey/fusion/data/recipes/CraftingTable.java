@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class CraftingTable implements ConfigurationSerializable {
     private String                          name;
     private String                          inventoryName;
-    private InventoryPattern recipePattern;
+    private InventoryPattern                recipePattern;
     private InventoryPattern                catPattern;
     private ItemStack                       fillItem;
     private Map<String, Recipe>             recipes;
@@ -371,8 +371,8 @@ public class CraftingTable implements ConfigurationSerializable {
         File                file   = ProfessionsCfg.getFiles().get(this.name);
         Map<String, Object> map    = this.serialize();
 
-        Map<String, Object> recipePatterntemsMap    = (Map<String, Object>) map.get("recipePattern");
-        Map<String, Object> catPatterntemsMap = (Map<String, Object>) map.get("categoryPattern");
+        Map<String, Object> recipePatterntemsMap = (Map<String, Object>) map.get("recipePattern");
+        Map<String, Object> catPatterntemsMap    = (Map<String, Object>) map.get("categoryPattern");
         recipePatterntemsMap.remove("f");
         recipePatterntemsMap.remove("q");
         recipePatterntemsMap.remove("o");

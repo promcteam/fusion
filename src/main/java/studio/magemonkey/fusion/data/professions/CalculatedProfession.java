@@ -51,7 +51,8 @@ public class CalculatedProfession {
 
             //Rank line
             String rankLine = null;
-            if (conditions.getPermission() != null && !player.hasPermission("fusion.rank." + conditions.getPermission())) {
+            if (conditions.getPermission() != null && !player.hasPermission(
+                    "fusion.rank." + conditions.getPermission())) {
                 canJoin = false;
                 rankLine = CraftingRequirementsCfg.getRank("recipes", conditions.getPermission());
             }

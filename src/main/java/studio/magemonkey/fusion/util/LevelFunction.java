@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LevelFunction {
-    private static final Map<Integer, Double> map = new HashMap<>();
+    static final Map<Integer, Double> map = new HashMap<>();
+    static final Map<Integer, Double> pre = new HashMap<>();
 
     public static void generate(int levels) {
         map.clear();
@@ -23,6 +24,7 @@ public class LevelFunction {
             }
 
             try {
+                pre.put(level, xp);
                 xp = Maths.eval(Cfg.finalMod.replace("x", format.format(xp)));
             } catch (RuntimeException e) {
                 Fusion.getInstance()
