@@ -17,7 +17,13 @@ class LevelFunctionTest {
     void generate() {
         LevelFunction.generate(10);
         assertEquals(10, LevelFunction.map.size());
-        System.out.println(LevelFunction.pre);
-        System.out.println(LevelFunction.map);
+
+        assertEquals(0, LevelFunction.pre.get(1));
+        assertEquals(2, LevelFunction.pre.get(2));
+        assertEquals(5, LevelFunction.pre.get(3));
+
+        assertEquals(0, LevelFunction.map.get(1));
+        assertEquals(0.5, LevelFunction.map.get(2));
+        assertEquals(1.25, LevelFunction.map.get(3));
     }
 }
