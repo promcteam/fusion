@@ -94,7 +94,7 @@ public class CraftingQueue {
     }
 
     public void finishAllRecipes() {
-        for(QueueItem item : queue) {
+        for (QueueItem item : queue) {
             Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), () -> finishRecipe(item), 1);
         }
     }

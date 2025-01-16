@@ -148,7 +148,8 @@ public class RecipeItemEditor extends Editor implements Listener {
                     if (recipe.getSettings().getHideRecipeLimitReached() == null) {
                         recipe.getSettings().setHideRecipeLimitReached(true);
                     } else {
-                        recipe.getSettings().setHideRecipeLimitReached(!recipe.getSettings().getHideRecipeLimitReached());
+                        recipe.getSettings()
+                                .setHideRecipeLimitReached(!recipe.getSettings().getHideRecipeLimitReached());
                     }
                 } else if (event.isRightClick()) {
                     recipe.getSettings().setHideRecipeLimitReached(null);

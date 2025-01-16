@@ -56,7 +56,7 @@ public class ProfessionConditions implements ConfigurationSerializable {
     @Setter
     private boolean isMastery;
     @Setter
-    private String permission;
+    private String  permission;
 
     private final Map<String, Integer> professionConditions      = new LinkedHashMap<>();
     private final Map<String, Integer> fabledClassConditions     = new LinkedHashMap<>();
@@ -321,7 +321,9 @@ public class ProfessionConditions implements ConfigurationSerializable {
 
         if (permission != null && !player.getPlayer().hasPermission("fusion.rank." + permission)) {
             _player.playSound(_player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1f, 1f);
-            CodexEngine.get().getMessageUtil().sendMessage("fusion.gui.professions.rank." + permission, player.getPlayer());
+            CodexEngine.get()
+                    .getMessageUtil()
+                    .sendMessage("fusion.gui.professions.rank." + permission, player.getPlayer());
             return false;
         }
 

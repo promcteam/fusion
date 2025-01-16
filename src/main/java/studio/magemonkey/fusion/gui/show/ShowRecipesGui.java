@@ -31,16 +31,16 @@ import java.util.Map;
 
 public class ShowRecipesGui implements Listener {
 
-    private final Player player;
+    private final Player                  player;
     private final Map<Recipe, RecipeItem> recipes;
 
     private final Map<Integer, Recipe> recipeSlots = new HashMap<>();
 
     @Getter
     @Setter
-    private Inventory inventory;
-    private Slot[] slots;
-    private final ArrayList<Integer> resultSlots = new ArrayList<>(20);
+    private       Inventory          inventory;
+    private       Slot[]             slots;
+    private final ArrayList<Integer> resultSlots  = new ArrayList<>(20);
     private final ArrayList<Integer> blockedSlots = new ArrayList<>(20);
 
     private int page = 0;
@@ -68,15 +68,15 @@ public class ShowRecipesGui implements Listener {
         if (!player.isOnline()) return;
         try {
             /* Default setup */
-            ItemStack fill = ShowRecipesCfg.getFillItem();
-            int pageSize = resultSlots.size();
-            int allRecipesCount = recipes.size();
-            int i = 0;
-            int page = this.page;
+            ItemStack fill            = ShowRecipesCfg.getFillItem();
+            int       pageSize        = resultSlots.size();
+            int       allRecipesCount = recipes.size();
+            int       i               = 0;
+            int       page            = this.page;
 
             int fullPages = allRecipesCount / pageSize;
-            int rest = allRecipesCount % pageSize;
-            int pages = (rest == 0) ? fullPages : (fullPages + 1);
+            int rest      = allRecipesCount % pageSize;
+            int pages     = (rest == 0) ? fullPages : (fullPages + 1);
             if (player.isOnline() && page >= pages) {
                 if (page > 0) {
                     this.page = pages - 1;
@@ -107,7 +107,7 @@ public class ShowRecipesGui implements Listener {
                  (k < allRecipesArray.length) && (i < e);
                  k++, i++) {
                 Recipe recipe = allRecipesArray[k];
-                int slot = slots[i];
+                int    slot   = slots[i];
                 this.recipeSlots.put(slot, recipe);
                 this.inventory.setItem(slot, ShowRecipesCfg.getRecipeIcon(recipe, recipes.get(recipe)));
             }
@@ -132,17 +132,17 @@ public class ShowRecipesGui implements Listener {
 
     public void updateBlockedSlots(MessageData[] data) {
         int totalItems = recipes.size();
-        int fullPages = totalItems / resultSlots.size();
-        int rest = totalItems % resultSlots.size();
-        int pages = (rest == 0) ? fullPages : (fullPages + 1);
+        int fullPages  = totalItems / resultSlots.size();
+        int rest       = totalItems % resultSlots.size();
+        int pages      = (rest == 0) ? fullPages : (fullPages + 1);
 
         boolean includeBack = false;
 
-        int k = -1;
+        int                           k     = -1;
         HashMap<Character, ItemStack> items = ShowRecipesCfg.getPattern().getItems();
 
         ArrayList<Integer> leaveBlank = new ArrayList<>();
-        ArrayList<Integer> fill = new ArrayList<>();
+        ArrayList<Integer> fill       = new ArrayList<>();
         for (String row : ShowRecipesCfg.getPattern().getPattern()) {
             for (char c : row.toCharArray()) {
                 k++;
@@ -179,7 +179,7 @@ public class ShowRecipesGui implements Listener {
     private void mapSlots() {
         this.resultSlots.clear();
         this.slots = new Slot[ShowRecipesCfg.getPattern().getPattern().length * 9];
-        int k = -1;
+        int k        = -1;
         int prevPage = -1, nextPage = -1;
         for (String row : ShowRecipesCfg.getPattern().getPattern()) {
             for (char c : row.toCharArray()) {
@@ -215,13 +215,13 @@ public class ShowRecipesGui implements Listener {
             this.reloadRecipesTask();
             return false;
         }
-        int pageSize = resultSlots.size();
+        int pageSize  = resultSlots.size();
         int fullCount = recipes.size();
-        int page = this.page;
+        int page      = this.page;
 
         int fullPages = fullCount / pageSize;
-        int rest = fullCount % pageSize;
-        int pages = (rest == 0) ? fullPages : (fullPages + 1);
+        int rest      = fullCount % pageSize;
+        int pages     = (rest == 0) ? fullPages : (fullPages + 1);
         if (page >= pages) {
             this.page = pages;
             this.reloadRecipesTask();
@@ -287,8 +287,8 @@ public class ShowRecipesGui implements Listener {
         }
 
         if (recipeSlots.containsKey(slot)) {
-            Recipe recipe = recipeSlots.get(slot);
-            CraftingTable table = recipe.getTable();
+            Recipe        recipe = recipeSlots.get(slot);
+            CraftingTable table  = recipe.getTable();
             ProfessionsCfg.getGuiMap().get(table.getName()).open(player, table.getCategory(recipe.getCategory()));
         }
     }

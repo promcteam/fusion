@@ -18,7 +18,10 @@ import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.CraftingRequirementsCfg;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.player.PlayerRecipeLimit;
-import studio.magemonkey.fusion.util.*;
+import studio.magemonkey.fusion.util.ChatUT;
+import studio.magemonkey.fusion.util.ExperienceManager;
+import studio.magemonkey.fusion.util.InvalidPatternItemException;
+import studio.magemonkey.fusion.util.Utils;
 
 import java.util.*;
 
@@ -48,12 +51,12 @@ public class CalculatedRecipe {
                             : recipe.getDivinityRecipeMeta().getIcon();
             List<String> resultLore = result.getItemMeta().getLore();
 
-            if(!recipe.getSettings().isEnableLore()) {
+            if (!recipe.getSettings().isEnableLore()) {
                 if ((resultLore != null) && !resultLore.isEmpty()) {
                     resultLore.forEach((str) -> lore.append(str).append('\n'));
                     lore.append('\n');
                 }
-            } else if(recipe.getSettings().getLore() != null && !recipe.getSettings().getLore().isEmpty()) {
+            } else if (recipe.getSettings().getLore() != null && !recipe.getSettings().getLore().isEmpty()) {
                 recipe.getSettings().getLore().forEach((str) -> lore.append(ChatUT.hexString(str)).append('\n'));
                 lore.append('\n');
             }
@@ -97,7 +100,8 @@ public class CalculatedRecipe {
 
             String levelsLine = null;
             if (recipe.getConditions().getProfessionLevel() != 0) {
-                if (recipe.getTable().getLevelFunction().getLevel(player) < recipe.getConditions().getProfessionLevel()) {
+                if (recipe.getTable().getLevelFunction().getLevel(player) < recipe.getConditions()
+                        .getProfessionLevel()) {
                     canCraft = false;
                 }
                 levelsLine = CraftingRequirementsCfg.getProfessionLevel("recipes",

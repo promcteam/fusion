@@ -140,9 +140,10 @@ public class QueueService {
                 return;
             }
             // Items if no commands exist
-            if(item.getRecipe().getResults().getCommands().isEmpty()) {
-                ItemStack result = event.getQueueItem().getRecipe().getDivinityRecipeMeta() == null ? event.getResultItem()
-                        : event.getQueueItem().getRecipe().getDivinityRecipeMeta().generateItem();
+            if (item.getRecipe().getResults().getCommands().isEmpty()) {
+                ItemStack result =
+                        event.getQueueItem().getRecipe().getDivinityRecipeMeta() == null ? event.getResultItem()
+                                : event.getQueueItem().getRecipe().getDivinityRecipeMeta().generateItem();
                 result.setAmount(event.getResultAmount());
                 // If there is no space in the inventory, drop the items
                 Collection<ItemStack> notAdded = player.getInventory().addItem(result).values();
@@ -158,7 +159,9 @@ public class QueueService {
             }
 
             //Experience
-            long professionExp = item.getRecipe().getResults().getProfessionExp() + (long) (item.getRecipe().getResults().getProfessionExp() * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
+            long professionExp = item.getRecipe().getResults().getProfessionExp() + (long) (
+                    item.getRecipe().getResults().getProfessionExp()
+                            * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
             if (professionExp > 0) {
                 FusionAPI.getEventServices()
                         .getProfessionService()

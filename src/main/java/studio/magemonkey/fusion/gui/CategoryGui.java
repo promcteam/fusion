@@ -23,7 +23,6 @@ import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.slot.Slot;
 import studio.magemonkey.fusion.util.ChatUT;
-import studio.magemonkey.fusion.util.LevelFunction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -254,10 +253,10 @@ public class CategoryGui implements Listener {
     }
 
     public void open(Player player, Category category) {
-        if(category == null) open(player);
+        if (category == null) open(player);
         else {
-            for(RecipeGui gui : categories.values()) {
-                if(gui.getCategory().equals(category)) {
+            for (RecipeGui gui : categories.values()) {
+                if (gui.getCategory().equals(category)) {
                     gui.open(player);
                     return;
                 }

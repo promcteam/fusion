@@ -40,7 +40,7 @@ public class Commands implements CommandExecutor, TabCompleter {
             case "browse" -> CommandMechanics.openBrowseGui(sender);
             case "confirm" -> CommandMechanics.confirmAction(sender, confirmation);
             case "exp" -> {
-                if(args.length == 5) {
+                if (args.length == 5) {
                     CommandMechanics.setProfessionExp(sender, args);
                 }
             }
@@ -53,7 +53,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                     CommandMechanics.joinProfession(sender, args);
             }
             case "level" -> {
-                if(args.length == 5) {
+                if (args.length == 5) {
                     CommandMechanics.setProfessionLevel(sender, args);
                 }
             }
@@ -77,8 +77,9 @@ public class Commands implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
-            default ->
-                    CodexEngine.get().getMessageUtil().sendMessage("fusion.help", sender, new MessageData("sender", sender),
+            default -> CodexEngine.get()
+                    .getMessageUtil()
+                    .sendMessage("fusion.help", sender, new MessageData("sender", sender),
                             new MessageData("text", label + " " + StringUtils.join(args, ' ')));
         }
         return true;
@@ -90,8 +91,9 @@ public class Commands implements CommandExecutor, TabCompleter {
                                       @NotNull Command command,
                                       @NotNull String label,
                                       @NotNull String[] args) {
-        List<String> entries = new ArrayList<>();
-        List<Profession> professions = new ArrayList<>(PlayerLoader.getPlayer(((Player) sender).getUniqueId()).getProfessions());
+        List<String>     entries     = new ArrayList<>();
+        List<Profession> professions =
+                new ArrayList<>(PlayerLoader.getPlayer(((Player) sender).getUniqueId()).getProfessions());
         if (args.length == 1) {
             if ("browse".startsWith(args[0])) entries.add("browse");
             if ("stats".startsWith(args[0])) entries.add("stats");
@@ -108,7 +110,7 @@ public class Commands implements CommandExecutor, TabCompleter {
                 entries.add("reload");
             if (sender.hasPermission("fusion.show") && "show".startsWith(args[0]))
                 entries.add("show");
-            if(sender.hasPermission("fusion.admin") && "exp".startsWith(args[0])) entries.add("exp");
+            if (sender.hasPermission("fusion.admin") && "exp".startsWith(args[0])) entries.add("exp");
             if (sender.hasPermission("fusion.admin") && "level".startsWith(args[0])) entries.add("level");
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("use")) {
@@ -145,25 +147,28 @@ public class Commands implements CommandExecutor, TabCompleter {
             } else if (args[0].equalsIgnoreCase("storage") && sender.hasPermission("fusion.admin")) {
                 if ("local".startsWith(args[1])) entries.add("local");
                 if ("sql".startsWith(args[1])) entries.add("sql");
-            } else if((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission("fusion.admin")) {
-                if("add".startsWith(args[1].toLowerCase())) entries.add("add");
-                if("set".startsWith(args[1].toLowerCase())) entries.add("set");
-                if("take".startsWith(args[1].toLowerCase())) entries.add("take");
+            } else if ((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission(
+                    "fusion.admin")) {
+                if ("add".startsWith(args[1].toLowerCase())) entries.add("add");
+                if ("set".startsWith(args[1].toLowerCase())) entries.add("set");
+                if ("take".startsWith(args[1].toLowerCase())) entries.add("take");
             }
         } else if (args.length == 3) {
             if (sender.hasPermission("fusion.admin.use") && args[0].equalsIgnoreCase("use")) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getName().startsWith(args[2])) entries.add(player.getName());
                 }
-            } else if((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission("fusion.admin")) {
+            } else if ((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission(
+                    "fusion.admin")) {
                 for (String name : professions.stream().map(Profession::getName).toList()) {
                     if (name.startsWith(args[2])) entries.add(name);
                 }
             }
-        } else if(args.length == 4) {
-            if((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission("fusion.admin")) {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().startsWith(args[3])) entries.add(player.getName());
+        } else if (args.length == 4) {
+            if ((args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("level")) && sender.hasPermission(
+                    "fusion.admin")) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.getName().startsWith(args[3])) entries.add(player.getName());
                 }
             }
         }
