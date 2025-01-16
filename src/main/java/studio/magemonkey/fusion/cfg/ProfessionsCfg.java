@@ -107,7 +107,7 @@ public class ProfessionsCfg {
                     addDefs(cfg);
 
                     // Perform migrations
-                    ProfessionMigration.migrate(cfg);
+                    ProfessionMigration.migrate(cfg, ProfessionMigration.VERSION);
 
                     cfg.save(file);
                     cfg.load(file);

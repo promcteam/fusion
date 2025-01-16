@@ -42,10 +42,10 @@ class ProfessionMigrationTest {
                                 "migrate/recipes.yml")));
         FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
 
-        ProfessionMigration.migrate(config);
+        ProfessionMigration.migrate(config, "1.1");
 
         String configString = config.saveToString();
-        //assertTrue(configString.contains("version: '1.1'"));
+        assertTrue(configString.contains("version: '1.1'"));
         assertFalse(configString.contains("CUSTOMITEMS"));
         assertTrue(configString.contains("DIVINITY_custom_items"));
         assertTrue(configString.contains("~level"));
@@ -60,7 +60,7 @@ class ProfessionMigrationTest {
                                 "migrate/patterns.yml")));
         FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
 
-        ProfessionMigration.migrate(config);
+        ProfessionMigration.migrate(config, "1.2");
 
         String configString = config.saveToString();
         assertTrue(configString.contains("version: '1.2'"));
@@ -68,5 +68,4 @@ class ProfessionMigrationTest {
         assertTrue(configString.contains("categoryPattern"));
         assertTrue(configString.contains("settings:"));
     }
-
 }

@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 public class ProfessionMigration {
     // Update this when there are new migrations available
-    private static final String                                         VERSION    = "1.2";
+    public static final  String                                         VERSION    = "1.2";
     private static final Map<String, Function<FileConfiguration, Void>> migrations = new HashMap<>();
 
     private static boolean compareVersions(String version, String compareTo) {
@@ -27,18 +27,18 @@ public class ProfessionMigration {
         return aMajor < bMajor || (aMajor == bMajor && aMinor < bMinor);
     }
 
-    public static void migrate(FileConfiguration config) {
+    public static void migrate(FileConfiguration config, String toVersion) {
         String version = config.getString("version", "1.0");
-        if (compareVersions(version, VERSION)) {
+        if (compareVersions(version, toVersion)) {
             Fusion.getInstance()
                     .getLogger()
-                    .info("Migrating profession data to version " + VERSION + " for file " + config.getCurrentPath());
+                    .info("Migrating profession data to version " + toVersion);
             for (Map.Entry<String, Function<FileConfiguration, Void>> entry : migrations.entrySet()) {
                 if (compareVersions(version, entry.getKey())) {
                     entry.getValue().apply(config);
                 }
             }
-            config.set("version", VERSION);
+            config.set("version", toVersion);
         }
     }
 

@@ -2,10 +2,8 @@ package studio.magemonkey.fusion.data.professions;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 import studio.magemonkey.fusion.cfg.sql.SQLManager;
-import studio.magemonkey.fusion.util.LevelFunction;
 
 import java.util.UUID;
 
@@ -13,15 +11,15 @@ import java.util.UUID;
 
 public class Profession {
 
-    private final long id;
-    private final UUID uuid;
-    private final String name;
+    private final long    id;
+    private final UUID    uuid;
+    private final String  name;
     @Setter
-    private long exp;
+    private       long    exp;
     @Setter
-    private boolean mastered;
+    private       boolean mastered;
     @Setter
-    private boolean joined;
+    private       boolean joined;
 
     public Profession(long id, UUID uuid, String name, long exp, boolean mastered, boolean joined) {
         this.id = id;
@@ -67,7 +65,7 @@ public class Profession {
     }
 
     public void setLevel(int level) {
-        if(level < getLevel()) {
+        if (level < getLevel()) {
             long diffExp = (long) (exp - ProfessionsCfg.getTable(name).getLevelFunction().getXP(level));
             removeExp(diffExp);
         } else {
