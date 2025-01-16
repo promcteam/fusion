@@ -59,9 +59,6 @@ public class Fusion extends RisePlugin implements Listener {
     @Getter
     private static HookManager hookManager;
 
-    @Getter
-    private static BukkitAudiences audiences;
-
     @Override
     public void reloadConfig() {
         super.reloadConfig();
