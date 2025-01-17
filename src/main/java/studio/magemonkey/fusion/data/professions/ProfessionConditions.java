@@ -717,7 +717,7 @@ public class ProfessionConditions implements ConfigurationSerializable {
         return new ProfessionConditions(conditions.getProfession(),
                 conditions.getMoneyCost(),
                 conditions.getExpCost(),
-                new LinkedList<>(conditions.getRequiredItemNames()),
+                new LinkedList<>(conditions.getRequiredItemNames() != null ? conditions.getRequiredItemNames() : new LinkedList<>()),
                 conditions.getProfessionLevel(),
                 conditions.isMastery(),
                 conditions.getPermission(),
