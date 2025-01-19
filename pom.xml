@@ -12,7 +12,7 @@
 
     <artifactId>fusion</artifactId>
     <name>Fusion</name>
-    <version>1.0.1-R0.8-SNAPSHOT</version>
+    <version>1.0.1-R0.9-SNAPSHOT</version>
 
     <properties>
         <java.version>16</java.version>
