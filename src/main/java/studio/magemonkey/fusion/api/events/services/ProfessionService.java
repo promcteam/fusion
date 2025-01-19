@@ -146,7 +146,7 @@ public class ProfessionService {
                     player,
                     new MessageData("craftingTable", table),
                     new MessageData("level", event.getNewLevel()));
-            if(event.isModified()) {
+            if (event.isModified()) {
                 FusionAPI.getPlayerManager().getPlayer(player).getProfession(table).setLevel(event.getNewLevel());
             }
         }
