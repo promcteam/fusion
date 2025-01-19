@@ -2,9 +2,7 @@ package studio.magemonkey.fusion.data.recipes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.CodexEngine;
@@ -16,7 +14,6 @@ import studio.magemonkey.codex.legacy.item.ItemBuilder;
 import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.hooks.divinity.DivinityRecipeMeta;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,7 +66,7 @@ public interface RecipeItem {
                         }
                     }
 
-                    result = new RecipeCustomItem(type.create(), amount, false);
+                    result = new RecipeCustomItem(type, amount, false);
                 }
             } catch (MissingProviderException | MissingItemException e) {
                 throw new RuntimeException(e);
@@ -121,7 +118,7 @@ public interface RecipeItem {
                 }
             }
 
-            result = new RecipeCustomItem(itemBuilder.build(), 1, true);
+            result = new RecipeCustomItem(itemBuilder, 1, true);
         } else if (srrs.length == 2) {
             try {
                 RecipeEconomyItem recipeEconomyItem = new RecipeEconomyItem(srrs[0], Integer.parseInt(srrs[1]));
@@ -142,28 +139,10 @@ public interface RecipeItem {
 
     private static @NotNull RecipeItem getItemBuilder(Map<String, Object> obj) {
         ItemBuilder itemBuilder = new ItemBuilder(obj);
-        ItemStack   item;
-
-        // In case we face an enchantment book, properly handle the enchantments
-        // in a seperated meta before handling the item later on
-        if (itemBuilder.getMaterial() == Material.ENCHANTED_BOOK) {
-            Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(itemBuilder.getEnchants());
-            itemBuilder.clearEnchants();
-            item = itemBuilder.build().clone();
-            EnchantmentStorageMeta storage = (EnchantmentStorageMeta) item.getItemMeta();
-            if (storage != null) {
-                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                    storage.addStoredEnchant(entry.getKey(), entry.getValue(), true);
-                }
-                item.setItemMeta(storage);
-            }
-            return new RecipeCustomItem(item, itemBuilder.getAmount(), false);
-        }
-
-        return new RecipeCustomItem(itemBuilder.build(), itemBuilder.getAmount(), false);
+        return new RecipeCustomItem(itemBuilder, itemBuilder.getAmount(), false);
     }
 
     static RecipeItem fromDivinityRecipeMeta(DivinityRecipeMeta meta) {
-        return new RecipeCustomItem(meta.generateItem(), meta.getAmount(), false);
+        return new RecipeCustomItem(meta);
     }
 }
