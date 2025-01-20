@@ -15,6 +15,7 @@ import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.data.queue.CraftingQueue;
 import studio.magemonkey.fusion.data.queue.QueueItem;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
+import studio.magemonkey.fusion.util.PlayerUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -138,35 +139,45 @@ public class QueueService {
                         new MessageData("limit", event.getQueueItem().getRecipe().getCraftingLimit()));
                 return;
             }
-            //Commands
-            DelayedCommand.invoke(Fusion.getInstance(), player, item.getRecipe().getResults().getCommands());
-            //Experience
+            // Items if no commands exist
+            if (item.getRecipe().getResults().getCommands().isEmpty()) {
+                ItemStack result =
+                        event.getQueueItem().getRecipe().getDivinityRecipeMeta() == null ? event.getResultItem()
+                                : event.getQueueItem().getRecipe().getDivinityRecipeMeta().generateItem();
+                result.setAmount(event.getResultAmount());
+                // If there is no space in the inventory, drop the items
+                Collection<ItemStack> notAdded = player.getInventory().addItem(result).values();
+                if (!notAdded.isEmpty()) {
+                    for (ItemStack _item : notAdded) {
+                        Objects.requireNonNull(player.getLocation().getWorld())
+                                .dropItemNaturally(player.getLocation(), _item);
+                    }
+                }
+            } else {
+                // If there are commands, we need to delay the item giving
+                DelayedCommand.invoke(Fusion.getInstance(), player, item.getRecipe().getResults().getCommands());
+            }
 
-            if (item.getRecipe().getResults().getProfessionExp() > 0) {
+            //Experience
+            long professionExp = item.getRecipe().getResults().getProfessionExp() + (long) (
+                    item.getRecipe().getResults().getProfessionExp()
+                            * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
+            if (professionExp > 0) {
                 FusionAPI.getEventServices()
                         .getProfessionService()
                         .giveProfessionExp(player,
                                 event.getCraftingTable(),
-                                event.getQueueItem().getRecipe().getResults().getProfessionExp());
+                                professionExp);
             }
             if (item.getRecipe().getResults().getVanillaExp() > 0) {
                 player.giveExp(event.getQueueItem().getRecipe().getResults().getVanillaExp());
             }
 
-            ItemStack result = event.getQueueItem().getRecipe().getDivinityRecipeMeta() == null ? event.getResultItem()
-                    : event.getQueueItem().getRecipe().getDivinityRecipeMeta().generateItem();
-            result.setAmount(event.getResultAmount());
-            // If there is no space in the inventory, drop the items
-            Collection<ItemStack> notAdded = player.getInventory().addItem(result).values();
-            if (!notAdded.isEmpty()) {
-                for (ItemStack _item : notAdded) {
-                    Objects.requireNonNull(player.getLocation().getWorld())
-                            .dropItemNaturally(player.getLocation(), _item);
-                }
-            }
+            // Increment the limit if existent
             if (event.getQueueItem().getRecipe().getCraftingLimit() > 0)
                 event.getFusionPlayer().incrementLimit(event.getQueueItem().getRecipe());
 
+            // Remove the item from the queue
             event.getQueue().removeRecipe(event.getQueueItem(), false);
         }
     }

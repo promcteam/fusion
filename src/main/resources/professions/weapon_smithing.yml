@@ -16,6 +16,8 @@ useCategories: true
 masteryUnlock: 40
 # The fee to unlock mastery, requires Vault
 masteryFee: 500
+# The maximum level of the profession that can be reached. This prevents the player from getting further experience
+maxLevel: 100
 
 # The pattern setup of your recipe gui
 # This is the main pattern that is used overall when no categories are setup
@@ -171,7 +173,8 @@ pattern:
           - ' '
           - '&7The item is &afinished&7!'
           - ' '
-          - '&eClick to obtain'
+          - '&eLeft Click to obtain'
+          - '&eRight Click to obtain all'
         flags: []
         enchants: {}
     # The fill item used in the pattern. It can also be `f` instead

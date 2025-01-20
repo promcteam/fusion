@@ -4,15 +4,6 @@ fusion:
     noFundsMoney: "&cYou need &3$$<costs.money> &cto buy this!"
     noFundsExperience: "&cYou need &3$<costs.exp> exp &cto buy this!"
     noConditionLevel: "&cYou need to be at least level &a$<condition.level> &cin &a$<condition.name> &cto unlock this!"
-  conditionFormatting:
-    profession: "&3Profession &a$<profession>"
-    fabled: "&3Fabled &a$<class>"
-    mcmmo: "&3McMMO &a$<skill>"
-    jobs: "&3Job &a$<job>"
-    auraAbility: "&3Aura Ability &a$<ability>"
-    auraManaAbility: "&3Aura Mana Ability &a$<ability>"
-    auraSkill: "&3Aura Skill &a$<skill>"
-    auraStats: "&3Aura Stat &a$<stat>"
   error:
     alreadyMastered: "&cYou have already mastered this!"
     noMasteryLevel: "&cYou must be at least level $<craftingTable.masteryUnlock> to unlock this!"
@@ -30,6 +21,8 @@ fusion:
     noJoin: "&cYou can't join this profession due to lack of finished requirements."
     recipeLimitReached: "&cYou have already crafted &3$<amount>/$<recipe.limit> &cof this recipe."
     profNotAvailable: "&cThis profession is not available."
+    categoryNotAvailable: "&cThe category for this profession is not available."
+    noCategories: "&cThere are no categories available for this profession."
   storageChanged: "&7You have swapped to &3$<storage> storage."
   unlockedProfession: "&aYou unlocked &3$<profession>. &7($<unlocked>/$<limit>)"
   notACrafting: "&cThere is no crafting inventory named \"$<name>\"!"
@@ -65,6 +58,8 @@ fusion:
         &8/&7craft &rlevel
         &8/&7craft &rmaster &8<&7profession&8>
         &8/&7craft &rforget &8<&7profession&8>
+        &8/&7craft &rexp <add|take|set> &8<&7profession&8> <&7player&8> <&7amount&8>
+        &8/&7craft &rlevel <add|take|set> &8<&7profession&8> <&7player&8> <&7amount&8>
         &8/&7craft &rreload
 editor:
   editorUsage: "&7Usage: '&8/fusion-editor &a$<syntax>&7'."
@@ -110,4 +105,9 @@ editor:
   professionAlreadyExists: "&cThe profession &3$<profession> &calready exists and cannot be overridden by other profession."
   flagAlreadyExists: "&cThe flag &3$<flag> &calready exists."
 
+player:
+  professionNotAvailable: "&cThe player &3$<player> &cdoes not have the profession &3$<profession>"
 
+admin:
+  expChanged: "&aYou changed the experience of &3$<player> &afrom &3$<exp_old> &ato &3$<exp_new>"
+  levelChanged: "&aYou changed the level of &3$<player> &afrom &3$<level_old> &ato &3$<level_new>"

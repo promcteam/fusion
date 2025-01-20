@@ -49,7 +49,7 @@ public class PatternItemEditor extends Editor implements Listener {
         this.table = table;
         this.c = c;
         this.isCategoryPattern = isCategoryPattern;
-        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getPattern();
+        this.pattern = isCategoryPattern ? table.getCatPattern() : table.getRecipePattern();
         this.browseEditor = null;
 
         ItemStack item = pattern.getItems().get(c);
@@ -113,7 +113,7 @@ public class PatternItemEditor extends Editor implements Listener {
             }
             case 13 -> FusionEditorCommand.suggestUsage(player,
                     EditorCriteria.Pattern_Edit_Pattern,
-                    "/fusion-editor " + builder.getMaterial().name() + " " + builder.getAmount());
+                    "/fusion-editor " + builder.getMaterial().getNamespacedID() + " " + builder.getAmount());
             case 15 -> {
                 if (!builder.getEnchants().isEmpty()) {
                     builder.clearEnchants();
@@ -203,7 +203,7 @@ public class PatternItemEditor extends Editor implements Listener {
             if (isCategoryPattern) {
                 table.getCatPattern().getItems().put(c, builder.build());
             } else {
-                table.getPattern().getItems().put(c, builder.build());
+                table.getRecipePattern().getItems().put(c, builder.build());
             }
         } else {
             browseEditor.getBrowsePattern().getItems().put(c, builder.build());

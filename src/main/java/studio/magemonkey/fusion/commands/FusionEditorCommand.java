@@ -283,7 +283,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
                                 .getRecipeItemEditor()
                                 .getRecipe()
                                 .getConditions()
-                                .getRank());
+                                .getPermission());
                     }
                     break;
                 case Profession_Recipe_Edit_Name:
@@ -346,7 +346,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
                         entries.add(browseEditor.getBrowseProfessionsEditor()
                                 .getBrowseProfessionEditor()
                                 .getConditions()
-                                .getRank());
+                                .getPermission());
                     }
                     break;
                 case Pattern_Edit_Name:
@@ -1252,7 +1252,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             return;
         }
         String rank = args[0];
-        professionEditor.getRecipeEditor().getRecipeItemEditor().getRecipe().getConditions().setRank(rank);
+        professionEditor.getRecipeEditor().getRecipeItemEditor().getRecipe().getConditions().setPermission(rank);
         CodexEngine.get()
                 .getMessageUtil()
                 .sendMessage("editor.recipeRankUpdated", player, new MessageData("rank", rank));
@@ -1574,7 +1574,7 @@ public class FusionEditorCommand implements CommandExecutor, TabCompleter {
             return;
         }
         String rank = args[0];
-        browseEditor.getBrowseProfessionsEditor().getBrowseProfessionEditor().getConditions().setRank(rank);
+        browseEditor.getBrowseProfessionsEditor().getBrowseProfessionEditor().getConditions().setPermission(rank);
         CodexEngine.get()
                 .getMessageUtil()
                 .sendMessage("editor.browseRankUpdated", player, new MessageData("rank", rank));

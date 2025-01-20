@@ -1,6 +1,7 @@
 package studio.magemonkey.fusion;
 
 import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,20 +17,17 @@ import studio.magemonkey.codex.legacy.placeholder.PlaceholderRegistry;
 import studio.magemonkey.codex.legacy.placeholder.PlaceholderType;
 import studio.magemonkey.codex.util.ItemUtils;
 import studio.magemonkey.fusion.api.FusionAPI;
-import studio.magemonkey.fusion.cfg.BrowseConfig;
-import studio.magemonkey.fusion.cfg.Cfg;
-import studio.magemonkey.fusion.cfg.CraftingRequirementsCfg;
-import studio.magemonkey.fusion.cfg.ProfessionsCfg;
+import studio.magemonkey.fusion.cfg.*;
 import studio.magemonkey.fusion.cfg.editors.EditorRegistry;
 import studio.magemonkey.fusion.cfg.hooks.HookManager;
 import studio.magemonkey.fusion.cfg.hooks.HookType;
 import studio.magemonkey.fusion.cfg.hooks.divinity.DivinityService;
+import studio.magemonkey.fusion.cfg.migrations.PConfigManager;
 import studio.magemonkey.fusion.cfg.sql.SQLManager;
 import studio.magemonkey.fusion.commands.Commands;
 import studio.magemonkey.fusion.commands.FusionEditorCommand;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.recipes.*;
-import studio.magemonkey.fusion.deprecated.PConfigManager;
 import studio.magemonkey.fusion.gui.BrowseGUI;
 import studio.magemonkey.fusion.util.ExperienceManager;
 import studio.magemonkey.fusion.util.LevelFunction;
@@ -77,6 +75,7 @@ public class Fusion extends RisePlugin implements Listener {
             EditorRegistry.reload();
             SQLManager.init();
             BrowseConfig.load();
+            ShowRecipesCfg.load();
             DivinityService.init();
         });
     }

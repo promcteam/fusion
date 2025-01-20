@@ -96,8 +96,8 @@ public class RecipeEditorCfg {
                                     (result != null && !result.getType().isAir()) && result.hasItemMeta() ? result.getItemMeta()
                                             .getDisplayName() : result.getType().name()))
                     .replace(MessageUtil.getReplacement("conditions.rank"),
-                            recipe.getConditions().getRank() == null ? getUnsetFormat()
-                                    : recipe.getConditions().getRank())
+                            recipe.getConditions().getPermission() == null ? getUnsetFormat()
+                                    : recipe.getConditions().getPermission())
             );
         }
 
@@ -225,18 +225,15 @@ public class RecipeEditorCfg {
                             .replace(MessageUtil.getReplacement("conditions.mastery"),
                                     String.valueOf(recipe.getConditions().isMastery()))
                             .replace(MessageUtil.getReplacement("conditions.rank"),
-                                    String.valueOf(recipe.getConditions().getRank()))
+                                    String.valueOf(recipe.getConditions().getPermission()))
                             .replace(MessageUtil.getReplacement("category"),
                                     recipe.getCategory() == null ? "master" : recipe.getCategory()))
                     .replace(MessageUtil.getReplacement("hidings.noPermission"),
-                            recipe.getHideNoPermission() == null ? getUnsetFormat()
-                                    : String.valueOf(recipe.getHideNoPermission().booleanValue()))
-                    .replace(MessageUtil.getReplacement("hidings.noRank"),
-                            recipe.getHideNoRank() == null ? getUnsetFormat()
-                                    : String.valueOf(recipe.getHideNoRank().booleanValue()))
+                            recipe.getSettings().getHideNoPermission() == null ? getUnsetFormat()
+                                    : String.valueOf(recipe.getSettings().getHideNoPermission().booleanValue()))
                     .replace(MessageUtil.getReplacement("hidings.recipeLimitReached"),
-                            recipe.getHideRecipeLimitReached() == null ? getUnsetFormat()
-                                    : String.valueOf(recipe.getHideRecipeLimitReached().booleanValue()))
+                            recipe.getSettings().getHideRecipeLimitReached() == null ? getUnsetFormat()
+                                    : String.valueOf(recipe.getSettings().getHideRecipeLimitReached().booleanValue()))
             );
         }
         Map<Enchantment, Integer> enchants  = config.getEnchantmentSection("subEditor.icons." + icon + ".enchants");

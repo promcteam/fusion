@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import studio.magemonkey.fusion.Fusion;
+import studio.magemonkey.fusion.cfg.migrations.ProfessionMigration;
 
 import java.io.InputStreamReader;
 import java.util.Objects;
@@ -41,7 +42,7 @@ class ProfessionMigrationTest {
                                 "migrate/recipes.yml")));
         FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
 
-        ProfessionMigration.migrate(config);
+        ProfessionMigration.migrate(config, "1.1");
 
         String configString = config.saveToString();
         assertTrue(configString.contains("version: '1.1'"));
@@ -49,5 +50,22 @@ class ProfessionMigrationTest {
         assertTrue(configString.contains("DIVINITY_custom_items"));
         assertTrue(configString.contains("~level"));
         assertTrue(configString.contains("fire_essenceq1:1"));
+    }
+
+    @Test
+    void test1_02Conversion() {
+        InputStreamReader reader =
+                new InputStreamReader(Objects.requireNonNull(
+                        getClass().getClassLoader().getResourceAsStream(
+                                "migrate/patterns.yml")));
+        FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
+
+        ProfessionMigration.migrate(config, "1.2");
+
+        String configString = config.saveToString();
+        assertTrue(configString.contains("version: '1.2'"));
+        assertTrue(configString.contains("recipePattern"));
+        assertTrue(configString.contains("categoryPattern"));
+        assertTrue(configString.contains("settings:"));
     }
 }

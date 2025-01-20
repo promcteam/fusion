@@ -62,7 +62,7 @@ public interface RecipeItem {
                             Fusion.getInstance()
                                     .getLogger()
                                     .warning("Invalid amount found in configuration: "
-                                            + amountSplit[amountSplit.length - 1]);
+                                            + amountSplit[amountSplit.length - 1] + " for item " + itemKey);
                         }
                     }
 

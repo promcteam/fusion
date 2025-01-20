@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import studio.magemonkey.codex.legacy.item.ItemBuilder;
 import studio.magemonkey.fusion.Fusion;
-import studio.magemonkey.fusion.data.ProfessionMigration;
+import studio.magemonkey.fusion.cfg.migrations.ProfessionMigration;
 import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.queue.QueueItem;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
@@ -102,12 +102,12 @@ public class ProfessionsCfg {
             if (file.getName().endsWith(".yml")) {
                 FileConfiguration cfg = new YamlConfiguration();
                 try {
-                    Bukkit.getConsoleSender().sendMessage("loading " + file.getName());
+                    Bukkit.getConsoleSender().sendMessage("Loading " + file.getName());
                     cfg.load(file);
                     addDefs(cfg);
 
                     // Perform migrations
-                    ProfessionMigration.migrate(cfg);
+                    ProfessionMigration.migrate(cfg, ProfessionMigration.VERSION);
 
                     cfg.save(file);
                     cfg.load(file);
@@ -117,6 +117,8 @@ public class ProfessionsCfg {
                     map.put(ct.getName(), ct);
                     cfgs.put(ct.getName(), cfg);
                     files.put(ct.getName(), file);
+                    injectProfessionLevelConfig(ct, file);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     Fusion.getInstance().getLogger().warning("Can't load crafting table: " + e.getMessage());
@@ -146,115 +148,115 @@ public class ProfessionsCfg {
         if (!cfg.isSet("useCategories")) {
             cfg.set("useCategories", false);
         }
-        if (!cfg.isSet("pattern.pattern")) {
+        if (!cfg.isSet("recipePattern.pattern")) {
             List<String> pattern =
                     new ArrayList<>(Arrays.asList("fffffffff", "fooooooof", "fooooooof", "ff-----ff", "f{<f0f>}f"));
-            cfg.set("pattern.pattern", pattern);
+            cfg.set("recipePattern.pattern", pattern);
         }
-        if (!cfg.isSet("pattern.items.}")) {
-            cfg.set("pattern.items.}.material", "LIME_DYE");
-            cfg.set("pattern.items.}.amount", 1);
-            cfg.set("pattern.items.}.durability", 0);
-            cfg.set("pattern.items.}.unbreakable", false);
-            cfg.set("pattern.items.}.name", "Next queued items");
-            cfg.set("pattern.items.}.lore", List.of());
-            cfg.set("pattern.items.}.flags", List.of());
-            cfg.set("pattern.items.}.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.}")) {
+            cfg.set("recipePattern.items.}.material", "LIME_DYE");
+            cfg.set("recipePattern.items.}.amount", 1);
+            cfg.set("recipePattern.items.}.durability", 0);
+            cfg.set("recipePattern.items.}.unbreakable", false);
+            cfg.set("recipePattern.items.}.name", "Next queued items");
+            cfg.set("recipePattern.items.}.lore", List.of());
+            cfg.set("recipePattern.items.}.flags", List.of());
+            cfg.set("recipePattern.items.}.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.>")) {
-            cfg.set("pattern.items.>.material", "GREEN_DYE");
-            cfg.set("pattern.items.>.amount", 1);
-            cfg.set("pattern.items.>.durability", 0);
-            cfg.set("pattern.items.>.unbreakable", false);
-            cfg.set("pattern.items.>.name", "Next recipes");
-            cfg.set("pattern.items.>.lore", List.of());
-            cfg.set("pattern.items.>.flags", List.of());
-            cfg.set("pattern.items.>.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.>")) {
+            cfg.set("recipePattern.items.>.material", "GREEN_DYE");
+            cfg.set("recipePattern.items.>.amount", 1);
+            cfg.set("recipePattern.items.>.durability", 0);
+            cfg.set("recipePattern.items.>.unbreakable", false);
+            cfg.set("recipePattern.items.>.name", "Next recipes");
+            cfg.set("recipePattern.items.>.lore", List.of());
+            cfg.set("recipePattern.items.>.flags", List.of());
+            cfg.set("recipePattern.items.>.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.<")) {
-            cfg.set("pattern.items.<.material", "GREEN_DYE");
-            cfg.set("pattern.items.<.amount", 1);
-            cfg.set("pattern.items.<.durability", 0);
-            cfg.set("pattern.items.<.unbreakable", false);
-            cfg.set("pattern.items.<.name", "Previous recipes");
-            cfg.set("pattern.items.<.lore", List.of());
-            cfg.set("pattern.items.<.flags", List.of());
-            cfg.set("pattern.items.<.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.<")) {
+            cfg.set("recipePattern.items.<.material", "GREEN_DYE");
+            cfg.set("recipePattern.items.<.amount", 1);
+            cfg.set("recipePattern.items.<.durability", 0);
+            cfg.set("recipePattern.items.<.unbreakable", false);
+            cfg.set("recipePattern.items.<.name", "Previous recipes");
+            cfg.set("recipePattern.items.<.lore", List.of());
+            cfg.set("recipePattern.items.<.flags", List.of());
+            cfg.set("recipePattern.items.<.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.{")) {
-            cfg.set("pattern.items.{.material", "LIME_DYE");
-            cfg.set("pattern.items.{.amount", 1);
-            cfg.set("pattern.items.{.durability", 0);
-            cfg.set("pattern.items.{.unbreakable", false);
-            cfg.set("pattern.items.{.name", "Previous queued items");
-            cfg.set("pattern.items.{.lore", List.of());
-            cfg.set("pattern.items.{.flags", List.of());
-            cfg.set("pattern.items.{.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.{")) {
+            cfg.set("recipePattern.items.{.material", "LIME_DYE");
+            cfg.set("recipePattern.items.{.amount", 1);
+            cfg.set("recipePattern.items.{.durability", 0);
+            cfg.set("recipePattern.items.{.unbreakable", false);
+            cfg.set("recipePattern.items.{.name", "Previous queued items");
+            cfg.set("recipePattern.items.{.lore", List.of());
+            cfg.set("recipePattern.items.{.flags", List.of());
+            cfg.set("recipePattern.items.{.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.queue-items.-")) {
-            cfg.set("pattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE");
-            cfg.set("pattern.items.queue-items.-.amount", 1);
-            cfg.set("pattern.items.queue-items.-.durability", 0);
-            cfg.set("pattern.items.queue-items.-.unbreakable", false);
-            cfg.set("pattern.items.queue-items.-.name", "&cQueue Slot");
-            cfg.set("pattern.items.queue-items.-.lore", List.of("&7This slot is empty."));
-            cfg.set("pattern.items.queue-items.-.flags", List.of());
-            cfg.set("pattern.items.queue-items.-.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.queue-items.-")) {
+            cfg.set("recipePattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE");
+            cfg.set("recipePattern.items.queue-items.-.amount", 1);
+            cfg.set("recipePattern.items.queue-items.-.durability", 0);
+            cfg.set("recipePattern.items.queue-items.-.unbreakable", false);
+            cfg.set("recipePattern.items.queue-items.-.name", "&cQueue Slot");
+            cfg.set("recipePattern.items.queue-items.-.lore", List.of("&7This slot is empty."));
+            cfg.set("recipePattern.items.queue-items.-.flags", List.of());
+            cfg.set("recipePattern.items.queue-items.-.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.queue-items.Unfinished")) {
-            cfg.set("pattern.items.queue-items.Unfinished.material", "%material%");
-            cfg.set("pattern.items.queue-items.Unfinished.amount", 1);
-            cfg.set("pattern.items.queue-items.Unfinished.durability", 0);
-            cfg.set("pattern.items.queue-items.Unfinished.unbreakable", false);
-            cfg.set("pattern.items.queue-items.Unfinished.name", "&cQueue Slot");
-            cfg.set("pattern.items.queue-items.Unfinished.lore",
+        if (!cfg.isSet("recipePattern.items.queue-items.Unfinished")) {
+            cfg.set("recipePattern.items.queue-items.Unfinished.material", "%material%");
+            cfg.set("recipePattern.items.queue-items.Unfinished.amount", 1);
+            cfg.set("recipePattern.items.queue-items.Unfinished.durability", 0);
+            cfg.set("recipePattern.items.queue-items.Unfinished.unbreakable", false);
+            cfg.set("recipePattern.items.queue-items.Unfinished.name", "&cQueue Slot");
+            cfg.set("recipePattern.items.queue-items.Unfinished.lore",
                     List.of("&7&oThis item is in the crafting queue",
                             " ",
                             "&7Time left: &c%time%",
                             " ",
                             "&eClick to cancel"));
-            cfg.set("pattern.items.queue-items.Unfinished.flags", List.of());
-            cfg.set("pattern.items.queue-items.Unfinished.enchants", Map.of());
+            cfg.set("recipePattern.items.queue-items.Unfinished.flags", List.of());
+            cfg.set("recipePattern.items.queue-items.Unfinished.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.queue-items.Finished")) {
-            cfg.set("pattern.items.queue-items.Finished.material", "%material%");
-            cfg.set("pattern.items.queue-items.Finished.amount", 1);
-            cfg.set("pattern.items.queue-items.Finished.durability", 0);
-            cfg.set("pattern.items.queue-items.Finished.unbreakable", false);
-            cfg.set("pattern.items.queue-items.Finished.name", "&cQueue Slot");
-            cfg.set("pattern.items.queue-items.Finished.lore",
+        if (!cfg.isSet("recipePattern.items.queue-items.Finished")) {
+            cfg.set("recipePattern.items.queue-items.Finished.material", "%material%");
+            cfg.set("recipePattern.items.queue-items.Finished.amount", 1);
+            cfg.set("recipePattern.items.queue-items.Finished.durability", 0);
+            cfg.set("recipePattern.items.queue-items.Finished.unbreakable", false);
+            cfg.set("recipePattern.items.queue-items.Finished.name", "&cQueue Slot");
+            cfg.set("recipePattern.items.queue-items.Finished.lore",
                     List.of("&7&oThis item is in the crafting queue",
                             " ",
                             "&7The item is &afinished&7!",
                             " ",
                             "&eClick to obtain"));
-            cfg.set("pattern.items.queue-items.Finished.flags", List.of());
-            cfg.set("pattern.items.queue-items.Finished.enchants", Map.of());
+            cfg.set("recipePattern.items.queue-items.Finished.flags", List.of());
+            cfg.set("recipePattern.items.queue-items.Finished.enchants", Map.of());
         }
-        if (!cfg.isSet("pattern.items.fillItem")) {
-            cfg.set("pattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE");
-            cfg.set("pattern.items.fillItem.amount", 1);
-            cfg.set("pattern.items.fillItem.durability", 0);
-            cfg.set("pattern.items.fillItem.unbreakable", false);
-            cfg.set("pattern.items.fillItem.name", " ");
-            cfg.set("pattern.items.fillItem.lore", List.of());
-            cfg.set("pattern.items.fillItem.flags", List.of());
-            cfg.set("pattern.items.fillItem.enchants", Map.of());
+        if (!cfg.isSet("recipePattern.items.fillItem")) {
+            cfg.set("recipePattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE");
+            cfg.set("recipePattern.items.fillItem.amount", 1);
+            cfg.set("recipePattern.items.fillItem.durability", 0);
+            cfg.set("recipePattern.items.fillItem.unbreakable", false);
+            cfg.set("recipePattern.items.fillItem.name", " ");
+            cfg.set("recipePattern.items.fillItem.lore", List.of());
+            cfg.set("recipePattern.items.fillItem.flags", List.of());
+            cfg.set("recipePattern.items.fillItem.enchants", Map.of());
         }
 
         // TODO correct serialization for catPattern without queue-items
         if (cfg.isSet("categoryPattern")) {
             if (!cfg.isSet("categoryPattern.items.queue-items.-")) {
                 cfg.set("categoryPattern.items.queue-items.-",
-                        cfg.getConfigurationSection("pattern.items.queue-items.-").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.-").getValues(false));
             }
             if (!cfg.isSet("categoryPattern.items.queue-items.Unfinished")) {
                 cfg.set("categoryPattern.items.queue-items.Unfinished",
-                        cfg.getConfigurationSection("pattern.items.queue-items.Unfinished").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.Unfinished").getValues(false));
             }
             if (!cfg.isSet("categoryPattern.items.queue-items.Finished")) {
                 cfg.set("categoryPattern.items.queue-items.Finished",
-                        cfg.getConfigurationSection("pattern.items.queue-items.Finished").getValues(false));
+                        cfg.getConfigurationSection("recipePattern.items.queue-items.Finished").getValues(false));
             }
         }
 
@@ -399,16 +401,16 @@ public class ProfessionsCfg {
     }
 
     public static ItemStack getFillItem(String key) {
-        String       name = cfgs.get(key).getString("pattern.items.fillItem.name", " ");
-        List<String> lore = cfgs.get(key).getStringList("pattern.items.fillItem.lore");
+        String       name = cfgs.get(key).getString("recipePattern.items.fillItem.name", " ");
+        List<String> lore = cfgs.get(key).getStringList("recipePattern.items.fillItem.lore");
         Material material = Material.getMaterial(cfgs.get(key)
-                .getString("pattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE"));
+                .getString("recipePattern.items.fillItem.material", "BLACK_STAINED_GLASS_PANE"));
         return ItemBuilder.newItem(material).name(name).lore(lore).build();
     }
 
     public static ItemStack getQueueSlot(String key) {
         FileConfiguration cfg = cfgs.get(key);
-        if (!cfg.isSet("pattern.items.queue-items.-")) {
+        if (!cfg.isSet("recipePattern.items.queue-items.-")) {
             Fusion.getInstance()
                     .getLogger()
                     .warning("Profession '" + key + "' does not have a queue slot. Using default.");
@@ -418,10 +420,11 @@ public class ProfessionsCfg {
                     .build();
         }
         Material material =
-                Material.getMaterial(cfg.getString("pattern.items.queue-items.-.material", "GRAY_STAINED_GLASS_PANE"));
+                Material.getMaterial(cfg.getString("recipePattern.items.queue-items.-.material",
+                        "GRAY_STAINED_GLASS_PANE"));
         return ItemBuilder.newItem(material)
-                .name(cfg.getString("pattern.items.queue-items.-.name", "&cQueue Slot"))
-                .lore(cfg.getStringList("pattern.items.queue-items.-.lore"))
+                .name(cfg.getString("recipePattern.items.queue-items.-.name", "&cQueue Slot"))
+                .lore(cfg.getStringList("recipePattern.items.queue-items.-.lore"))
                 .build();
     }
 
@@ -430,7 +433,8 @@ public class ProfessionsCfg {
         //System.out.println("Fetching queued item for " + key + " with item " + item.getRecipe().getResult().getItemStack().getType());
         FileConfiguration cfg = cfgs.get(key);
         String path =
-                item.isDone() ? "pattern.items.queue-items.Finished" : "pattern.items.queue-items.Unfinished";
+                item.isDone() ? "recipePattern.items.queue-items.Finished"
+                        : "recipePattern.items.queue-items.Unfinished";
 
 
         if (!cfg.isSet(path)) {
@@ -453,5 +457,11 @@ public class ProfessionsCfg {
         for (ProfessionGuiRegistry gui : guiMap.values()) {
             gui.closeAll();
         }
+    }
+
+    private static void injectProfessionLevelConfig(CraftingTable table, File file) {
+        File               levelFile = new File(file.getPath().replace("professions", "levels"));
+        ProfessionLevelCfg levelCfg  = new ProfessionLevelCfg(table, levelFile.getPath().replace("plugins/Fusion", ""));
+        table.setLevelFunction(levelCfg);
     }
 }

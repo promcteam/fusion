@@ -1,0 +1,58 @@
+name: '&8Ingredient usage: &a$<ingredient>'
+pattern:
+  pattern:
+    - '111101111'
+    - ooooooooo
+    - ooooooooo
+    - ooooooooo
+    - '111111111'
+  commands: {}
+  items:
+    <:
+      material: ARROW
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §7Previous Page
+      lore: []
+      flags: []
+      enchants: {}
+      data: null
+    '>':
+      material: ARROW
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §7Next Page
+      lore: []
+      flags: []
+      enchants: {}
+      data: null
+    '0':
+      material: BIRCH_SIGN
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: §8Possible Recipes
+      lore:
+        - §7Your ingredient can be used
+        - §7in the following recipes.
+      flags: []
+      enchants: {}
+      data: null
+    '1':
+      material: GRAY_STAINED_GLASS_PANE
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: ' '
+      lore: []
+      flags: []
+      enchants: {}
+      data: null
+recipeItem:
+  lore:
+    - '&8Profession: $<profession>'
+    - '&8[&a$<amount>x &7$<ingredient>&8]'
+    - '&7Click to navigate to recipe'
+  name: '&7$<name>'

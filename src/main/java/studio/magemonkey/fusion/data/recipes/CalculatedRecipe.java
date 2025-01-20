@@ -18,9 +18,9 @@ import studio.magemonkey.fusion.Fusion;
 import studio.magemonkey.fusion.cfg.CraftingRequirementsCfg;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.player.PlayerRecipeLimit;
+import studio.magemonkey.fusion.util.ChatUT;
 import studio.magemonkey.fusion.util.ExperienceManager;
 import studio.magemonkey.fusion.util.InvalidPatternItemException;
-import studio.magemonkey.fusion.util.LevelFunction;
 import studio.magemonkey.fusion.util.Utils;
 
 import java.util.*;
@@ -51,8 +51,13 @@ public class CalculatedRecipe {
                             : recipe.getDivinityRecipeMeta().getIcon();
             List<String> resultLore = result.getItemMeta().getLore();
 
-            if ((resultLore != null) && !resultLore.isEmpty()) {
-                resultLore.forEach((str) -> lore.append(str).append('\n'));
+            if (!recipe.getSettings().isEnableLore()) {
+                if ((resultLore != null) && !resultLore.isEmpty()) {
+                    resultLore.forEach((str) -> lore.append(str).append('\n'));
+                    lore.append('\n');
+                }
+            } else if (recipe.getSettings().getLore() != null && !recipe.getSettings().getLore().isEmpty()) {
+                recipe.getSettings().getLore().forEach((str) -> lore.append(ChatUT.hexString(str)).append('\n'));
                 lore.append('\n');
             }
 
@@ -62,19 +67,12 @@ public class CalculatedRecipe {
 
             boolean canCraft = true;
 
-            //Rank line
-            String rankLine = null;
-            if (recipe.getConditions().getRank() != null && !player.hasPermission(
-                    "fusion.rank." + recipe.getConditions().getRank())) {
-                canCraft = false;
-                rankLine = CraftingRequirementsCfg.getRank("recipes", recipe.getConditions().getRank());
-            }
 
-            String permissionLine;
+            String recipePermissionLine;
             if (!Utils.hasCraftingPermission(player, recipe.getName())) {
                 canCraft = false;
             }
-            permissionLine = CraftingRequirementsCfg.getLearned("recipes",
+            recipePermissionLine = CraftingRequirementsCfg.getLearned("recipes",
                     Utils.hasCraftingPermission(player, recipe.getName()));
 
             String moneyLine = null;
@@ -102,11 +100,12 @@ public class CalculatedRecipe {
 
             String levelsLine = null;
             if (recipe.getConditions().getProfessionLevel() != 0) {
-                if (LevelFunction.getLevel(player, craftingTable) < recipe.getConditions().getProfessionLevel()) {
+                if (recipe.getTable().getLevelFunction().getLevel(player) < recipe.getConditions()
+                        .getProfessionLevel()) {
                     canCraft = false;
                 }
                 levelsLine = CraftingRequirementsCfg.getProfessionLevel("recipes",
-                        LevelFunction.getLevel(player, craftingTable),
+                        recipe.getTable().getLevelFunction().getLevel(player),
                         recipe.getConditions().getProfessionLevel());
             }
 
@@ -144,6 +143,7 @@ public class CalculatedRecipe {
                     break;
                 }
             }
+
             List<Pair<ItemStack, Integer>> eqItems = Recipe.getItems(items);
 
 
@@ -228,10 +228,8 @@ public class CalculatedRecipe {
                 }
             }
 
-            lore.append("\n").append(permissionLine);
-
-            if (rankLine != null) {
-                lore.append('\n').append(rankLine);
+            if (recipePermissionLine != null) {
+                lore.append('\n').append(recipePermissionLine);
             }
 
             lore.append('\n').append(canCraftLine);
@@ -299,7 +297,6 @@ public class CalculatedRecipe {
         }
 
         boolean isValid = true;
-
         // Check for lore
         if (im1.hasLore()) {
             List<String> lore1 = im1.getLore();
@@ -385,11 +382,9 @@ public class CalculatedRecipe {
             checkingLines.add(CraftingRequirementsCfg.getExtensionDurabilityLine(path, damage2, damage1));
         }
 
-        if (isValid)
-            return true;
         // If all those checks failed, try to check once more through the native item meta check
         // This is useful for custom items like from Divinity, etc.
-        return is1.isSimilar(is2);
+        return isValid || is1.isSimilar(is2);
     }
 
     @Override

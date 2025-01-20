@@ -75,9 +75,9 @@ public class BrowseProfessionEditor extends Editor implements Listener {
                             EditorCriteria.Browse_Profession_Edit_Rank,
                             "/fusion-editor <rank>");
                 } else if (event.isRightClick()) {
-                    if (conditions.getRank() == null)
+                    if (conditions.getPermission() == null)
                         return;
-                    conditions.setRank(null);
+                    conditions.setPermission(null);
                     hasChanges = true;
                 }
             }

@@ -1,4 +1,4 @@
-package studio.magemonkey.fusion.deprecated;
+package studio.magemonkey.fusion.cfg.migrations;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

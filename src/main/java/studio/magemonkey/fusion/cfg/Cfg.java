@@ -25,6 +25,8 @@ public final class Cfg {
     public static boolean hideRecipesNoRank       = false;
     public static boolean hideRecipesLimitReached = false;
 
+    public static boolean useCustomFormula = true;
+
     public static String finishMessage = "&aYou have crafting items ready for pickup! ($<amount>)";
 
 
@@ -89,6 +91,8 @@ public final class Cfg {
         if (!cfg.isSet("storage.database")) cfg.set("storage.database", storageDatabase);
         if (!cfg.isSet("storage.user")) cfg.set("storage.user", storageUser);
         if (!cfg.isSet("storage.password")) cfg.set("storage.password", storagePassword);
+
+        if (!cfg.isSet("useCustomFormula")) cfg.set("useCustomFormula", useCustomFormula);
     }
 
     public static void init() {
@@ -110,6 +114,8 @@ public final class Cfg {
         hideRecipesNoPermission = cfg.getBoolean("hideRecipesDefault.noPermission");
         hideRecipesNoRank = cfg.getBoolean("hideRecipesDefault.noRank");
         hideRecipesLimitReached = cfg.getBoolean("hideRecipesDefault.recipeLimitReached");
+
+        useCustomFormula = cfg.getBoolean("useCustomFormula");
 
         migrateOldTypes(cfg);
     }

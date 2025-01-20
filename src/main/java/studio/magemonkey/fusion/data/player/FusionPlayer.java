@@ -85,20 +85,36 @@ public class FusionPlayer {
         return getRecipeLimit(recipe.getRecipePath()).getLimit() >= recipe.getCraftingLimit();
     }
 
-    public int getExperience(String profession) {
-        int experience = 0;
+    public long getExperience(String profession) {
+        long experience = 0;
         if (professions.containsKey(profession)) {
             experience = (int) professions.get(profession).getExp();
         }
         return experience;
     }
 
-    public int getExperience(Profession profession) {
+    public long getExperience(Profession profession) {
         return getExperience(profession.getName());
     }
 
-    public int getExperience(CraftingTable table) {
+    public long getExperience(CraftingTable table) {
         return getExperience(table.getName());
+    }
+
+    public int getLevel(String profession) {
+        int level = 0;
+        if (professions.containsKey(profession)) {
+            level = professions.get(profession).getLevel();
+        }
+        return level;
+    }
+
+    public int getLevel(Profession profession) {
+        return getLevel(profession.getName());
+    }
+
+    public int getLevel(CraftingTable table) {
+        return getLevel(table.getName());
     }
 
     @Nullable
@@ -215,6 +231,20 @@ public class FusionPlayer {
 
     public void addExp(CraftingTable table, long experience) {
         addExperience(table.getName(), experience);
+    }
+
+    public void setExperience(String profession, long experience) {
+        if (professions.containsKey(profession)) {
+            professions.get(profession).setExp(experience);
+        }
+    }
+
+    public void setExp(Profession profession, long experience) {
+        setExperience(profession.getName(), experience);
+    }
+
+    public void setExp(CraftingTable table, long experience) {
+        setExperience(table.getName(), experience);
     }
 
     public void removeExperience(String profession, long experience) {

@@ -51,6 +51,7 @@ public class ProfessionEditor extends Editor implements Listener {
         setItem(11, getIcons().get("icon"));
         setItem(12, getIcons().get("masteryUnlock"));
         setItem(13, getIcons().get("masteryCost"));
+        setItem(14, getIcons().get("maxLevel"));
         setItem(16, getIcons().get("recipes"));
         setItem(28, getIcons().get("useCategories"));
         setItem(29, getIcons().get("patternItems"));
@@ -96,6 +97,17 @@ public class ProfessionEditor extends Editor implements Listener {
                 } else if (event.isRightClick()) {
                     if (table.getMasteryFee() == 0) return;
                     table.setMasteryFee(Math.max(table.getMasteryFee() - amount, 0));
+                    hasChanges = true;
+                }
+            }
+            case 14 -> {
+                int amount = event.isShiftClick() ? 10 : 1;
+                if (event.isLeftClick()) {
+                    table.setMaxLevel(table.getMaxLevel() + amount);
+                    hasChanges = true;
+                } else if (event.isRightClick()) {
+                    if (table.getMaxLevel() == 0) return;
+                    table.setMaxLevel(Math.max(table.getMaxLevel() - amount, 0));
                     hasChanges = true;
                 }
             }

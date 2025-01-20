@@ -55,6 +55,7 @@ public class ProfessionEditorCfg {
                     .replace(MessageUtil.getReplacement("profession"), table.getName())
                     .replace(MessageUtil.getReplacement("masteryUnlock"),
                             String.valueOf(table.getMasteryUnlock()))
+                    .replace(MessageUtil.getReplacement("maxLevel"), String.valueOf(table.getMaxLevel()))
                     .replace(MessageUtil.getReplacement("masteryCost"),
                             String.valueOf(table.getMasteryFee()))
                     .replace(MessageUtil.getReplacement("useCategories"),

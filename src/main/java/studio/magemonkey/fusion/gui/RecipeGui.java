@@ -45,7 +45,10 @@ import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.data.recipes.Recipe;
 import studio.magemonkey.fusion.data.recipes.RecipeItem;
 import studio.magemonkey.fusion.gui.slot.Slot;
-import studio.magemonkey.fusion.util.*;
+import studio.magemonkey.fusion.util.ChatUT;
+import studio.magemonkey.fusion.util.ExperienceManager;
+import studio.magemonkey.fusion.util.InvalidPatternItemException;
+import studio.magemonkey.fusion.util.PlayerUtil;
 
 import java.util.*;
 
@@ -97,9 +100,12 @@ public class RecipeGui implements Listener {
         this.name = table.getName();
         this.inventoryName = ChatUT.hexString(table.getInventoryName());
         this.recipes = new HashMap<>(20);
-        this.category = category != null ? category : new Category("master", "PAPER", table.getPattern(), 1);
+        this.category = category != null ? category : new Category("master", "PAPER", this.table.getRecipePattern(), 1);
+        if (this.category.getPattern() == null)
+            this.category.setPattern(table.getRecipePattern());
+
         if (this.category.getName().equals("master")) {
-            this.category.getRecipes().addAll(table.getRecipes().values());
+            this.category.getRecipes().addAll(this.table.getRecipes().values());
         }
         setPattern();
         if (Cfg.craftingQueue && pattern != null) {
@@ -268,6 +274,13 @@ public class RecipeGui implements Listener {
 
             /* Additionally, when crafting_queue: true */
             if (Cfg.craftingQueue) {
+
+                // Clear all queue slots
+                Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
+                for (int slot : _queuedSlots) {
+                    this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
+                }
+
                 this.queue.getQueuedItems().clear();
                 Collection<QueueItem> allQueuedItems     = queue.getQueue();
                 int                   queueAllItemsCount = allQueuedItems.size();
@@ -303,13 +316,9 @@ public class RecipeGui implements Listener {
                         }
                     }
                 }
-                Integer[] _queuedSlots = queuedSlots.toArray(new Integer[0]);
-                for (int slot : _queuedSlots) {
-                    this.inventory.setItem(slot, ProfessionsCfg.getQueueSlot(table.getName()));
-                }
             }
             updateBlockedSlots(new MessageData[]{
-                    new MessageData("level", LevelFunction.getLevel(player, ProfessionsCfg.getTable(name))),
+                    new MessageData("level", table.getLevelFunction().getLevel(player)),
                     new MessageData("category", category),
                     new MessageData("gui", getName()),
                     new MessageData("player", player.getName()),
@@ -441,14 +450,16 @@ public class RecipeGui implements Listener {
     }
 
     public void setPattern() {
-        this.pattern = this.category.getPattern();
-        if (this.pattern == null)
-            this.pattern = table.getPattern();
+        this.pattern = category.getPattern();
+        if (!pattern.getItems().containsKey('<') || pattern.getItems().containsKey('>') || pattern.getItems()
+                .containsKey('{') || pattern.getItems().containsKey('}')) {
+            this.pattern.setItems(table.getRecipePattern().getItems());
+        }
         mapSlots();
     }
 
     public void resetPattern() {
-        this.pattern = table.getPattern();
+        this.pattern = category.getPattern();
         mapSlots();
     }
 
@@ -482,7 +493,7 @@ public class RecipeGui implements Listener {
         if (!Objects.equals(this.recipes.get(slot), calculatedRecipe)) {
             return false;
         }
-        if (LevelFunction.getLevel(player, table) < recipe.getConditions().getProfessionLevel()) {
+        if (table.getLevelFunction().getLevel(player) < recipe.getConditions().getProfessionLevel()) {
             CodexEngine.get()
                     .getMessageUtil()
                     .sendMessage("fusion.error.noLevel", player, new MessageData("recipe", recipe));
@@ -642,10 +653,13 @@ public class RecipeGui implements Listener {
                     DelayedCommand.invoke(Fusion.getInstance(), player, recipe.getResults().getCommands());
 
                     //Experience
-                    if (recipe.getResults().getProfessionExp() > 0) {
+                    long professionExp =
+                            recipe.getResults().getProfessionExp() + (long) (recipe.getResults().getProfessionExp()
+                                    * PlayerUtil.getProfessionExpBonusThroughPermissions(player, table.getName()));
+                    if (professionExp > 0) {
                         FusionAPI.getEventServices()
                                 .getProfessionService()
-                                .giveProfessionExp(player, table, recipe.getResults().getProfessionExp());
+                                .giveProfessionExp(player, table, professionExp);
                     }
                     if (recipe.getResults().getVanillaExp() > 0) {
                         player.giveExp(recipe.getResults().getVanillaExp());
@@ -817,9 +831,15 @@ public class RecipeGui implements Listener {
                 QueueItem item = queue.getQueuedItems().get(event.getSlot());
                 if (item == null) return;
                 if (item.isDone()) {
-                    // Remove the item from the queue
-                    queue.finishRecipe(item);
-                    this.reloadRecipes();
+                    if (event.isLeftClick()) {
+                        queue.finishRecipe(item);
+                        this.reloadRecipes();
+                    } else if (event.isRightClick()) {
+                        int queueSize =
+                                queue.getQueue().size(); // Estimated time that is required to finish all recipes
+                        queue.finishAllRecipes();
+                        Bukkit.getScheduler().runTaskLater(Fusion.getInstance(), this::reloadRecipes, queueSize + 1);
+                    }
                 } else {
                     queue.removeRecipe(item, true);
                 }

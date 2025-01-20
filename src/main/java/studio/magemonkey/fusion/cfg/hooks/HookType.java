@@ -11,9 +11,6 @@ public enum HookType {
     Vault("Vault");
 
 
-
-
-
     private final String pluginName;
 
     HookType(String pluginName) {

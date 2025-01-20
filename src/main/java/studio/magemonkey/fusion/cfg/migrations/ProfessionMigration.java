@@ -1,18 +1,20 @@
-package studio.magemonkey.fusion.data;
+package studio.magemonkey.fusion.cfg.migrations;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import studio.magemonkey.codex.api.items.PrefixHelper;
 import studio.magemonkey.fusion.Fusion;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class ProfessionMigration {
     // Update this when there are new migrations available
-    private static final String                                         VERSION    = "1.1";
+    public static final  String                                         VERSION    = "1.2";
     private static final Map<String, Function<FileConfiguration, Void>> migrations = new HashMap<>();
 
     private static boolean compareVersions(String version, String compareTo) {
@@ -25,18 +27,18 @@ public class ProfessionMigration {
         return aMajor < bMajor || (aMajor == bMajor && aMinor < bMinor);
     }
 
-    public static void migrate(FileConfiguration config) {
+    public static void migrate(FileConfiguration config, String toVersion) {
         String version = config.getString("version", "1.0");
-        if (compareVersions(version, VERSION)) {
+        if (compareVersions(version, toVersion)) {
             Fusion.getInstance()
                     .getLogger()
-                    .info("Migrating profession data to version " + VERSION + " for file " + config.getCurrentPath());
+                    .info("Migrating profession data to version " + toVersion);
             for (Map.Entry<String, Function<FileConfiguration, Void>> entry : migrations.entrySet()) {
                 if (compareVersions(version, entry.getKey())) {
                     entry.getValue().apply(config);
                 }
             }
-            config.set("version", VERSION);
+            config.set("version", toVersion);
         }
     }
 
@@ -95,6 +97,28 @@ public class ProfessionMigration {
 
             config.set("categories", categories);
 
+            return null;
+        });
+
+        migrations.put("1.2", (config) -> {
+            // The `pattern` key in the config is now called `recipePattern`
+            replaceSectionInConfig(config, "pattern", "recipePattern");
+
+            // TODO add settings section to the config
+            List<Map<?, ?>> recipes = config.getMapList("recipes");
+            for (Map<?, ?> recipe : recipes) {
+                Map<String, Object> settings = new LinkedHashMap<>();
+
+                // Hiding settings
+                settings.put("enableLore", true);
+                Map<String, Object> hiding = (Map<String, Object>) recipe.get("hiding");
+                if (hiding != null) {
+                    settings.put("hiding", hiding);
+                }
+                recipe.remove("hiding");
+
+                ((Map<String, Object>) recipe).put("settings", settings);
+            }
             return null;
         });
     }
@@ -172,5 +196,20 @@ public class ProfessionMigration {
             case "runes", "ru" -> "runes";
             default -> null;
         };
+    }
+
+    // Replace the current section at the same position where the old one was before
+    public static void replaceSectionInConfig(FileConfiguration config, String oldSection, String newSection) {
+        String yamlContent = config.saveToString();
+
+        // Replace the section name while preserving the content
+        String regex = "(?m)^" + oldSection + ":";
+        yamlContent = yamlContent.replaceAll(regex, newSection + ":");
+
+        FileConfiguration modifiedConfig = YamlConfiguration.loadConfiguration(new java.io.StringReader(yamlContent));
+
+        // Clear and update the original config with modified content
+        config.getKeys(false).forEach(key -> config.set(key, null));
+        modifiedConfig.getKeys(false).forEach(key -> config.set(key, modifiedConfig.get(key)));
     }
 }

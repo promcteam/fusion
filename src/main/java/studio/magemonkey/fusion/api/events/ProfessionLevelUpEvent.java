@@ -1,7 +1,6 @@
 package studio.magemonkey.fusion.api.events;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.entity.Player;
 import studio.magemonkey.fusion.cfg.ProfessionsCfg;
 
@@ -16,8 +15,8 @@ public class ProfessionLevelUpEvent extends FusionEvent {
     /**
      * The new level of the profession
      */
-    @Setter
-    private int newLevel;
+    private int     newLevel;
+    private boolean isModified = false;
 
     /**
      * Constructor for the ProfessionLevelUpEvent
@@ -40,5 +39,10 @@ public class ProfessionLevelUpEvent extends FusionEvent {
      */
     public int getLevelDifference() {
         return newLevel - previousLevel;
+    }
+
+    public void setNewLevel(int newLevel) {
+        this.newLevel = newLevel;
+        isModified = true;
     }
 }

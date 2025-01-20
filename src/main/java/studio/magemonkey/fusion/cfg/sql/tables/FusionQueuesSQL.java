@@ -105,8 +105,7 @@ public class FusionQueuesSQL {
 
     public List<QueueItem> getQueueItems(UUID uuid, String profession, Category category) {
         List<QueueItem> entries = new ArrayList<>();
-
-        String sql = "SELECT * FROM " + Table + " WHERE UUID=? AND RecipePath LIKE ?";
+        String          sql     = "SELECT * FROM " + Table + " WHERE UUID=? AND RecipePath LIKE ?";
 
         try (PreparedStatement select = SQLManager.connection().prepareStatement(sql)) {
             select.setString(1, uuid.toString());

@@ -18,7 +18,7 @@ import studio.magemonkey.fusion.data.player.FusionPlayer;
 import studio.magemonkey.fusion.data.player.PlayerLoader;
 import studio.magemonkey.fusion.data.professions.ProfessionConditions;
 import studio.magemonkey.fusion.data.professions.ProfessionResults;
-import studio.magemonkey.fusion.util.LevelFunction;
+import studio.magemonkey.fusion.data.professions.ProfessionSettings;
 import studio.magemonkey.fusion.util.Utils;
 
 import java.util.*;
@@ -44,14 +44,7 @@ public class Recipe implements ConfigurationSerializable {
 
     private final ProfessionResults    results;
     private final ProfessionConditions conditions;
-
-    /* Things were recipes could be hidden */
-    @Setter
-    private Boolean hideNoPermission;
-    @Setter
-    private Boolean hideNoRank;
-    @Setter
-    private Boolean hideRecipeLimitReached;
+    private final ProfessionSettings   settings;
 
     // This is a optional meta information that is usually empty, until a recipe uses the ItemGenerator function from Divinity.
     // I might outsource this someday but for now it's urgent and requires this solution.
@@ -68,15 +61,9 @@ public class Recipe implements ConfigurationSerializable {
         this.craftingLimit = dw.getInt("craftingLimit");
         this.craftingLimitCooldown = dw.getInt("craftingLimitCooldown");
 
-        Map<String, Object> hiding = dw.getSection("hiding");
-        this.hideNoPermission =
-                (hiding != null && hiding.get("noPermission") != null) ? (boolean) hiding.get("noPermission") : null;
-        this.hideNoRank = (hiding != null && hiding.get("noRank") != null) ? (boolean) hiding.get("noRank") : null;
-        this.hideRecipeLimitReached = (hiding != null && hiding.get("recipeLimitReached") != null)
-                ? (boolean) hiding.get("recipeLimitReached") : null;
-
         this.results = new ProfessionResults(name, dw);
         this.conditions = new ProfessionConditions(name, dw);
+        this.settings = new ProfessionSettings(name, dw);
     }
 
     public Recipe(CraftingTable table, Map<String, Object> map, DivinityRecipeMeta meta) {
@@ -89,15 +76,9 @@ public class Recipe implements ConfigurationSerializable {
         this.craftingLimit = dw.getInt("craftingLimit");
         this.craftingLimitCooldown = dw.getInt("craftingLimitCooldown");
 
-        Map<String, Object> hiding = dw.getSection("hiding");
-        this.hideNoPermission =
-                (hiding != null && hiding.get("noPermission") != null) ? (boolean) hiding.get("noPermission") : null;
-        this.hideNoRank = (hiding != null && hiding.get("noRank") != null) ? (boolean) hiding.get("noRank") : null;
-        this.hideRecipeLimitReached = (hiding != null && hiding.get("recipeLimitReached") != null)
-                ? (boolean) hiding.get("recipeLimitReached") : null;
-
         this.results = new ProfessionResults(name, dw);
         this.conditions = new ProfessionConditions(name, dw);
+        this.settings = new ProfessionSettings(name, dw);
 
         if (meta != null) {
             this.divinityRecipeMeta = meta;
@@ -113,9 +94,7 @@ public class Recipe implements ConfigurationSerializable {
                   int craftingLimitCooldown,
                   ProfessionResults results,
                   ProfessionConditions conditions,
-                  Boolean hideNoPermission,
-                  Boolean hideNoRank,
-                  Boolean hideLimitReached,
+                  ProfessionSettings settings,
                   DivinityRecipeMeta meta) {
         this.table = table;
         this.name = name;
@@ -125,9 +104,7 @@ public class Recipe implements ConfigurationSerializable {
         this.craftingLimitCooldown = craftingLimitCooldown;
         this.results = results;
         this.conditions = conditions;
-        this.hideNoPermission = hideNoPermission;
-        this.hideNoRank = hideNoRank;
-        this.hideRecipeLimitReached = hideLimitReached;
+        this.settings = settings;
         if (meta != null) {
             this.divinityRecipeMeta = meta;
             this.results.setResultItem(RecipeItem.fromDivinityRecipeMeta(meta));
@@ -179,7 +156,7 @@ public class Recipe implements ConfigurationSerializable {
             if (!Utils.hasCraftingPermission(p, getName())) {
                 return false;
             }
-            if (LevelFunction.getLevel(p, craftingTable) < this.conditions.getProfessionLevel()) {
+            if (table.getLevelFunction().getLevel(p) < this.conditions.getProfessionLevel()) {
                 return false;
             }
             if (!this.conditions.isValid(PlayerLoader.getPlayer(p))) {
@@ -256,19 +233,13 @@ public class Recipe implements ConfigurationSerializable {
             builder.append("category", this.category);
         }
 
-        Map<String, Object> hiding = new HashMap<>(3);
-        if (hideNoPermission != null) hiding.put("noPermission", hideNoPermission);
-        if (hideNoRank != null) hiding.put("noRank", hideNoRank);
-        if (hideRecipeLimitReached != null) hiding.put("recipeLimitReached", hideRecipeLimitReached);
-
-        if (!hiding.isEmpty()) {
-            builder.append("hiding", hiding);
-        }
-
         for (Entry<String, Object> entry : this.results.serialize().entrySet()) {
             builder.append(entry.getKey(), entry.getValue());
         }
         for (Entry<String, Object> entry : this.conditions.serialize().entrySet()) {
+            builder.append(entry.getKey(), entry.getValue());
+        }
+        for (Entry<String, Object> entry : this.settings.serialize().entrySet()) {
             builder.append(entry.getKey(), entry.getValue());
         }
         return builder.build();
@@ -283,28 +254,19 @@ public class Recipe implements ConfigurationSerializable {
                 recipe.getCraftingLimitCooldown(),
                 ProfessionResults.copy(recipe.getResults()),
                 ProfessionConditions.copy(recipe.getConditions()),
-                recipe.getHideNoPermission(),
-                recipe.getHideNoRank(),
-                recipe.getHideRecipeLimitReached(),
+                ProfessionSettings.copy(recipe.getSettings()),
                 recipe.getDivinityRecipeMeta());
     }
 
     public boolean isHidden(Player player) {
         boolean isHidden = false;
-        if (Cfg.hideRecipesNoPermission && !Utils.hasCraftingPermission(player, getName())) {
-            isHidden = true;
-            if (hideNoPermission != null) isHidden = hideNoPermission;
-        } else if (!Utils.hasCraftingPermission(player, getName())) {
-            if (hideNoPermission != null) isHidden = hideNoPermission;
-        }
-        if (isHidden) return true;
 
-        if (conditions.getRank() != null) {
-            if (Cfg.hideRecipesNoPermission && !player.hasPermission("fusion.rank." + conditions.getRank())) {
+        if (conditions.getPermission() != null) {
+            if (Cfg.hideRecipesNoPermission && !player.hasPermission(conditions.getPermission())) {
                 isHidden = true;
-                if (hideNoPermission != null) isHidden = hideNoPermission;
+                if (settings.getHideNoPermission() != null) isHidden = settings.getHideNoPermission();
             } else if (!Utils.hasCraftingPermission(player, getName())) {
-                if (hideNoPermission != null) isHidden = hideNoPermission;
+                if (settings.getHideNoPermission() != null) isHidden = settings.getHideNoPermission();
             }
             if (isHidden) return true;
         }
@@ -312,9 +274,9 @@ public class Recipe implements ConfigurationSerializable {
         FusionPlayer fusionPlayer = PlayerLoader.getPlayer(player);
         if (Cfg.hideRecipesLimitReached && fusionPlayer.hasRecipeLimitReached(this)) {
             isHidden = true;
-            if (hideRecipeLimitReached != null) isHidden = hideRecipeLimitReached;
+            if (settings.getHideRecipeLimitReached() != null) isHidden = settings.getHideRecipeLimitReached();
         } else if (fusionPlayer.hasRecipeLimitReached(this)) {
-            if (hideRecipeLimitReached != null) isHidden = hideRecipeLimitReached;
+            if (settings.getHideRecipeLimitReached() != null) isHidden = settings.getHideRecipeLimitReached();
         }
         return isHidden;
     }

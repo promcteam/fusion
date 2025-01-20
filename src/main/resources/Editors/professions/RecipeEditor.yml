@@ -203,6 +203,19 @@ subEditor:
         - '&aShift click &7each to increase by 10.'
       flags: [ ]
       enchants: { }
+    enableItemLore:
+      material: PAPER
+      amount: 1
+      durability: 0
+      unbreakable: false
+      name: '&9Enable Item Lore'
+      lore:
+        - '&7Current: &a$<enableItemLore>'
+        - '&7&etrue &7if the settings-lore should be displayed.'
+        - '&7&efalse &7if the result-lore should be displayed.'
+        - '&8--------------------'
+        - '&aLeft Click &7to toggle.'
+        - '&aRight Click &7to unset.'
     hiding_noPermission:
       material: lever
       amount: 1
@@ -213,19 +226,6 @@ subEditor:
         - '&7Current: &a$<hidings.noPermission>'
         - '&7Rather the recipe is hidden'
         - '&7if the player dont have the permission.'
-        - '&8--------------------'
-        - '&aLeft Click &7to toggle.'
-        - '&aRight Click &7to unset.'
-    hiding_noRank:
-      material: lever
-      amount: 1
-      durability: 0
-      unbreakable: false
-      name: '&9Hiding if no rank'
-      lore:
-        - '&7Current: &a$<hidings.noRank>'
-        - '&7Rather the recipe is hidden'
-        - '&7if the player dont have the rank.'
         - '&8--------------------'
         - '&aLeft Click &7to toggle.'
         - '&aRight Click &7to unset.'
