@@ -13,6 +13,7 @@ import studio.magemonkey.fusion.data.professions.pattern.Category;
 import studio.magemonkey.fusion.data.queue.QueueItem;
 import studio.magemonkey.fusion.data.recipes.CraftingTable;
 import studio.magemonkey.fusion.gui.ProfessionGuiRegistry;
+import studio.magemonkey.fusion.hook.NexoHook;
 import studio.magemonkey.fusion.util.Utils;
 
 import java.io.File;
@@ -30,8 +31,6 @@ public class ProfessionsCfg {
     private static final Map<String, File>                  files  = new HashMap<>(4);
 
     public static void init() {
-        map.clear();
-        guiMap.clear();
         File professionFolder = new File(Fusion.getInstance().getDataFolder(), "professions");
         if (!professionFolder.exists()) {
             professionFolder.mkdirs();
@@ -42,11 +41,11 @@ public class ProfessionsCfg {
             YamlParser.loadOrExtract(Fusion.getInstance(), "professions/weapon_smithing.yml");
         }
 
-        loadProfessions(professionFolder);
-
-        for (Map.Entry<String, CraftingTable> entry : map.entrySet()) {
-            String key = entry.getKey();
-            guiMap.put(key, new ProfessionGuiRegistry(key));
+        // If Nexo plugin is on the server and enabled, wait for it to load before loading professions
+        if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
+            new NexoHook(Fusion.getInstance(), aVoid -> loadProfessions(professionFolder));
+        } else {
+            loadProfessions(professionFolder);
         }
     }
 
@@ -98,6 +97,9 @@ public class ProfessionsCfg {
     }
 
     private static void loadProfessions(File root) {
+        map.clear();
+        guiMap.clear();
+
         for (File file : Objects.requireNonNull(root.listFiles())) {
             if (file.getName().endsWith(".yml")) {
                 FileConfiguration cfg = new YamlConfiguration();
@@ -126,6 +128,11 @@ public class ProfessionsCfg {
             } else if (file.isDirectory()) {
                 loadProfessions(file);
             }
+        }
+
+        for (Map.Entry<String, CraftingTable> entry : map.entrySet()) {
+            String key = entry.getKey();
+            guiMap.put(key, new ProfessionGuiRegistry(key));
         }
     }
 

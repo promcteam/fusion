@@ -39,6 +39,11 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/releases/</url>
         </repository>
+        <repository>
+            <id>nexo</id>
+            <name>Nexo Repository</name>
+            <url>https://repo.nexomc.com/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -66,6 +71,12 @@
             <artifactId>mcMMO</artifactId>
             <version>2.2.029</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
@@ -84,6 +95,19 @@
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nexomc</groupId>
+            <artifactId>nexo</artifactId>
+            <version>0.10.0-dev.27</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
