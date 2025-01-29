@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public interface RecipeItem {
     String  CUSTOM_PREFIX   = "@ ";
     Pattern divinityPattern =
-            Pattern.compile("DIVINITY_([\\w-]+:)?([\\w-]+)\\b((~level:(\\d+))|(~material:([\\w-]+)\\b)){0,2}");
+            Pattern.compile("DIVINITY_([\\w-]+:)?([^:~]+)\\b((~level:(\\d+))|(~material:([\\w-]+)\\b)){0,2}");
 
     int getAmount();
 
